@@ -6,6 +6,7 @@ use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\StatusBarangController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PermintaanBarangKeluarController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,19 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/user', function () {
+        return view('user.index');
+    });
+
+    Route::get('/customer', [CustomerController::class, 'index'])->name('customer.index');
+    Route::get('/customer/create', [CustomerController::class, 'create'])->name('customer.create');
+    Route::post('/customer/store', [CustomerController::class, 'store'])->name('customer.store');
+    Route::get('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
+    Route::put('/customer/update/{id}', [CustomerController::class, 'update'])->name('customer.update');
+    Route::delete('/customer/delete/{id}', [CustomerController::class, 'delete'])->name('customer.delete');
+    Route::get('/customer/getUserDataByName/{name}', [CustomerController::class, 'getUserDataByName']);
+    Route::post('/customer/delete-selected', [CustomerController::class, 'deleteSelected']);
+    
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
     Route::post('/supplier/store', [SupplierController::class, 'store'])->name('supplier.store');

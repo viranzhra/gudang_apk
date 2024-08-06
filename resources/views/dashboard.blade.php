@@ -3,14 +3,6 @@
 @section('content')
 
 <style>
-/* css untuk tabel */
-    /* body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 0;
-    } */
-
     .card {
             background-color: #ffffff;
             padding: 20px;
@@ -32,11 +24,6 @@
       margin-bottom: 20px;
       color: #333333;
     }
-
-    /* table {
-      border-top: 2px solid #ccc;
-      border-bottom: 2px solid #ccc;
-    } */
 
     th,
     td {
@@ -252,7 +239,7 @@
 
 <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
     <div class="card-body">
-      <h4 style="color: #5a5c69; font-size: 20px;">Hallo, Selamat Datang {{ Auth::user()->name }}!</h4>
+      <h4 style="color: #5a5c69; font-size: 20px;">Hello, Welcome {{ Auth::user()->name }}!</h4>
     </div>
   </div>
   <div class="row">
@@ -352,7 +339,7 @@
         <div class="card-body">
           <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
             <div class="mb-3 mb-sm-0">
-              <h5 class="card-title fw-semibold">Barang Masuk</h5>
+              <h5 class="card-title fw-semibold">Incoming Item</h5>
             </div>
             <div>
               <select class="form-select">
@@ -374,7 +361,7 @@
         <div class="card-body">
           <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
             <div class="mb-3 mb-sm-0">
-              <h5 class="card-title fw-semibold">Barang Keluar</h5>
+              <h5 class="card-title fw-semibold">Outbound Item</h5>
             </div>
             <div>
               <select class="form-select">
@@ -393,22 +380,22 @@
 
 <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem;">
   <div class="card-body">
-    <h4 class="mb-4" style="color: #8a8a8a;">Riwayat Barang</h4>
+    <h4 class="mb-4" style="color: #8a8a8a;">Item History</h4>
     <div class="search-container">
       <div class="navigation-buttons">
-        <a href="#riwayat-masuk" class="nav-btn" id="btn-masuk">Riwayat Barang Masuk</a>
-        <a href="#riwayat-keluar" class="nav-btn" id="btn-keluar">Riwayat Barang Keluar</a>
+        <a href="#riwayat-masuk" class="nav-btn" id="btn-masuk">Incoming Item</a>
+        <a href="#riwayat-keluar" class="nav-btn" id="btn-keluar">Outbound Item</a>
       </div>
       
       <div class="rows-dropdown">
-        <label for="rows-per-page">Tampilkan :</label>
+        <label for="rows-per-page">Show</label>
         <select id="rows-per-page" style="color: #8a8a8a;">
           <option value="5">5 rows</option>
           <option value="10">10 rows</option>
           <option value="20">20 rows</option>
           <option value="50">50 rows</option>
         </select>
-        <label for="rows-per-page">data</label>
+        <label for="rows-per-page"></label>
       </div>
       <div class="search-box">
         <input type="search" id="search-input" placeholder="Search...">

@@ -85,7 +85,7 @@
 
     .icon-edit, .icon-delete {
         color: #ffffff; 
-        font-size: 20px;
+        font-size: 18px;
         width: 30px; 
         height: 30px; 
         display: flex;
@@ -233,19 +233,19 @@
 </style>
 
 <div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
-    <h4 class="mb-4" style="color: #8a8a8a;">Supplier Management</h4>
-    <div class="search-container">
-        <form action="{{ route('supplier.index') }}" method="GET" class="search-box">
-            <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">
-            <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
-        </form>
-        <div class="controls-container">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
-                <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                Add
-            </button>                    
+    <h4 class="mb-4" style="color: #8a8a8a;">Customer Management</h4>
+        <div class="search-container">
+            <form action="{{ route('customer.index') }}" method="GET" class="search-box">
+                <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">
+                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
+            </form>
+            <div class="controls-container">
+                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
+                    <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                    Add
+                </a>                    
+            </div>
         </div>
-    </div>
 
     <!-- Notifikasi flash message -->
     @if (session('success'))
@@ -266,7 +266,7 @@
             <thead class="thead-lightblue">
                 <tr>
                     <th>No</th>
-                    <th>Supplier</th>
+                    <th>Name</th>
                     <th>Address</th>
                     <th>Phone</th>
                     <th>Description</th>
@@ -285,15 +285,13 @@
                         <button type="button" class="btn-edit btn-action" 
                             data-id="{{ $d->id }}" 
                             data-nama="{{ $d->nama }}"
-                            data-alamat="{{ $d->alamat }}"
+                            data-alamat="{{ $d->alamat }}" 
                             data-telepon="{{ $d->telepon }}" 
                             data-keterangan="{{ $d->keterangan }}" 
-                            data-bs-toggle="modal" data-bs-target="#editData"
                             aria-label="Edit">
                             <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
                         </button>
-                        <button type="button" data-id="{{ $d->id }}" class="btn-action" aria-label="Hapus"
-                            data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button data-id="{{ $d->id }}" class="btn-action" aria-label="Hapus">
                             <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
                         </button>
                     </td>
@@ -328,7 +326,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" style="color: black">
-                Apakah Anda yakin ingin menghapus <span id="itemName"></span> ini?
+                Apakah Anda yakin ingin menghapus <span id="customerName"></span> ini?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
@@ -347,25 +345,14 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahDataModalLabel">Tambah Data Supplier</h5>
+                <h5 class="modal-title" id="tambahDataModalLabel">Add Customer</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{ route('supplier.store') }}" enctype="multipart/form-data">
+                <form method="post" action="{{ route('customer.store') }}" enctype="multipart/form-data">
                     @csrf
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <strong>Ups!</strong> Terjadi kesalahan:
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-                
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Supplier</label>
+                        <label for="nama" class="form-label">Name</label>
                         <input type="text" id="nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
@@ -374,14 +361,14 @@
                     </div>
                     <div class="mb-3">
                         <label for="telepon" class="form-label">Phone</label>
-                        <input type="text" id="telepon" name="telepon" class="form-control">
+                        <input type="text" inputmode="numeric" id="telepon" name="telepon" class="form-control" required />
                     </div>
                     <div class="mb-3">
                         <label for="keterangan" class="form-label">Description</label>
                         <input type="text" id="keterangan" name="keterangan" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
-                </form>                
+                </form>
             </div>
         </div>
     </div>
@@ -392,13 +379,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editDataLabel">Edit Supplier</h5>
+                <h5 class="modal-title" id="editDataLabel">Edit Customer</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="editForm" method="post" action="" enctype="multipart/form-data">
                     @csrf
-                    @method('PUT')
+                    @method('put')
                     @if ($errors->any())
                     <div class="alert alert-danger">
                         <strong>Ups!</strong> Terjadi kesalahan:
@@ -409,61 +396,111 @@
                         </ul>
                     </div>
                     @endif
-                
+
                     <div class="mb-3">
-                        <label for="edit-nama" class="form-label">Supplier</label>
+                        <label for="nama" class="form-label">Name</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="edit-alamat" class="form-label">Address</label>
+                        <label for="alamat" class="form-label">Address</label>
                         <input type="text" id="edit-alamat" name="alamat" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="edit-telepon" class="form-label">Phone</label>
-                        <input type="text" id="edit-telepon" name="telepon" class="form-control">
+                        <label for="telepon" class="form-label">Phone</label>
+                        <input type="text" id="edit-telepon" name="telepon" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="edit-keterangan" class="form-label">Description</label>
+                        <label for="keterangan" class="form-label">Description</label>
                         <input type="text" id="edit-keterangan" name="keterangan" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>                
+                    <button type="submit" class="btn btn-primary">Edit</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
-    $(document).ready(function () {
-        // Edit button click event
-        $('.btn-edit').click(function () {
-            var id = $(this).data('id');
-            var nama = $(this).data('nama');
-            var alamat = $(this).data('alamat');
-            var telepon = $(this).data('telepon');
-            var keterangan = $(this).data('keterangan');
-            
-            var actionUrl = '{{ url('/supplier/update') }}/' + id;
-            
-            $('#editForm').attr('action', actionUrl);
-            $('#edit-nama').val(nama);
-            $('#edit-alamat').val(alamat);
-            $('#edit-telepon').val(telepon);
-            $('#edit-keterangan').val(keterangan);
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+        const editModal = new bootstrap.Modal(document.getElementById('editData'));
 
-        // Delete button click event
-        $('.btn-action[data-bs-target="#deleteModal"]').click(function () {
-            var id = $(this).data('id');
-            var actionUrl = '{{ url('/supplier/delete') }}/' + id;
-            
-            $('#deleteForm').attr('action', actionUrl);
-            $('#itemName').text($(this).closest('tr').find('td').eq(1).text());
+        document.querySelectorAll('.btn-edit').forEach(button => {
+            button.addEventListener('click', function() {
+                const customerId = this.getAttribute('data-id');
+                const customerNama = this.getAttribute('data-nama');
+                const customerAlamat = this.getAttribute('data-alamat');
+                const customerTelepon = this.getAttribute('data-telepon');
+                const customerKeterangan = this.getAttribute('data-keterangan');
+
+                // Update form action URL with the correct id
+                document.getElementById('editForm').action = `/customer/update/${customerId}`;
+
+                // Populate form fields
+                document.getElementById('edit-nama').value = customerNama;
+                document.getElementById('edit-alamat').value = customerAlamat;
+                document.getElementById('edit-telepon').value = customerTelepon;
+                document.getElementById('edit-keterangan').value = customerKeterangan;
+
+                // Show the modal
+                editModal.show();
+            });
         });
     });
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchIcon = document.getElementById('search-icon');
+    const searchForm = searchIcon.closest('form');
+
+    searchIcon.addEventListener('click', function() {
+        searchForm.submit(); // Submit the form
+    });
+});
+
+</script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to auto-hide alerts
+        function autoHideAlert(selector, timeout) {
+            const alerts = document.querySelectorAll(selector);
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    setTimeout(() => alert.remove(), 500); // Remove alert after fade transition
+                }, timeout);
+            });
+        }
+
+        // Hide success messages after 3 seconds
+        autoHideAlert('.alert-success', 3000);
+
+        // Hide error messages after 3 seconds
+        autoHideAlert('.alert-danger', 3000);
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+
+    document.querySelectorAll('[aria-label="Hapus"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const customerId = this.getAttribute('data-id');
+            const customerName = this.closest('tr').querySelector('td:nth-child(2)').innerText;
+            
+            document.getElementById('customerName').innerText = customerName;
+            document.getElementById('deleteForm').action = `/customer/delete/${customerId}`;
+            
+            deleteModal.show();
+        });
+    });
+});
+</script>
+
 
 @endsection

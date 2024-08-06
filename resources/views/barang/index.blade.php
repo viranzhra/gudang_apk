@@ -232,8 +232,8 @@
     }
 </style>
 
-<div class="container mt-3" style="padding: 30px;">
-    <h4 class="mb-4" style="color: #8a8a8a;">Data Barang</h4>
+<div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
+    <h4 class="mb-4" style="color: #8a8a8a;">Item Management</h4>
         <div class="search-container">
             <form action="{{ route('barang.index') }}" method="GET" class="search-box">
                 <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">
@@ -242,7 +242,7 @@
             <div class="controls-container">
                 <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                    Tambah Data
+                    Add
                 </a>                    
             </div>
         </div>
@@ -266,11 +266,11 @@
             <thead class="thead-lightblue">
                 <tr>
                     <th>No</th>
-                    <th>Nama Barang</th>
-                    <th>Jenis Barang</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                    <th>Aksi</th>
+                    <th>Item</th>
+                    <th>Type</th>
+                    <th>Quantity</th>
+                    <th>Description</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -328,11 +328,11 @@
                 Apakah Anda yakin ingin menghapus <span id="itemName"></span> ini?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                 <form id="deleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Hapus</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </form>                               
             </div>
         </div>
@@ -344,7 +344,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahDataModalLabel">Tambah Data Barang</h5>
+                <h5 class="modal-title" id="tambahDataModalLabel">Add Item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -362,23 +362,23 @@
                     @endif
 
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Barang</label>
+                        <label for="nama" class="form-label">Item</label>
                         <input type="text" id="nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="jenis_barang" class="form-label">Jenis Barang</label>
+                        <label for="jenis_barang" class="form-label">Type</label>
                         <select id="jenis_barang" name="jenis_barang" class="form-select" required>
-                            <option value="" disabled selected>Pilih jenis barang</option>
+                            <option value="" disabled selected>Select</option>
                             @foreach($jenis_barang as $jb)
                                 <option value="{{ $jb->id }}">{{ $jb->nama }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <label for="keterangan" class="form-label">Description</label>
                         <input type="text" id="keterangan" name="keterangan" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </form>
             </div>
         </div>
@@ -390,7 +390,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editDataLabel">Edit Data Barang</h5>
+                <h5 class="modal-title" id="editDataLabel">Edit Item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -409,20 +409,20 @@
                     @endif
 
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Nama Barang</label>
+                        <label for="nama" class="form-label">Item</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="jenis_barang" class="form-label">Jenis Barang</label>
+                        <label for="jenis_barang" class="form-label">Type</label>
                         <select id="edit-jenis_barang" name="jenis_barang" class="form-select" required>
-                            <option selected>Pilih jenis barang</option>
+                            <option selected>Select</option>
                             @foreach($jenis_barang as $d)
                                 <option value="{{ $d->id }}">{{ $d->nama }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="keterangan" class="form-label">Keterangan</label>
+                        <label for="keterangan" class="form-label">Description</label>
                         <input type="text" id="edit-keterangan" name="keterangan" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-primary">Edit</button>

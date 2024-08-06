@@ -8,14 +8,6 @@
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
   <style>
-    /* css untuk tabel */
-    /* body {
-      font-family: 'Roboto', sans-serif;
-      background-color: #f4f4f9;
-      margin: 0;
-      padding: 0;
-    } */
-
     .container {
       width: 80%;
       margin: 50px auto;
@@ -178,63 +170,67 @@
             </li>
             <li class="nav-small-cap">
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">Manajemen</span>
+              <span class="hide-menu">MANAGEMENT</span>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="./user.html" aria-expanded="false">
+              <a class="sidebar-link" href="/user" aria-expanded="false">
                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                <span class="hide-menu">Data User</span>
+                <span class="hide-menu">User</span>
               </a>
             </li>           
             <li class="sidebar-item">
               <a class="sidebar-link" href="/supplier" aria-expanded="false">
                 <iconify-icon icon="solar:bookmark-square-minimalistic-line-duotone"></iconify-icon>
-                <span class="hide-menu">Data Suplier</span>
+                <span class="hide-menu">Supplier</span>
               </a>
             </li>
             <li class="sidebar-item {{ request()->is('barang') ? 'active' : '' }}">
               <a class="sidebar-link" href="{{ url('/barang') }}">
-                <iconify-icon
-                    icon="solar:file-text-line-duotone"
-                  ></iconify-icon>
-                <span class="hide-menu">Data Barang</span>
+                <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
+                <span class="hide-menu">Item</span>
               </a>
-            </li>                                        
+            </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/customer" aria-expanded="false">
+                <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
+                <span class="hide-menu">Customer</span>
+              </a>
+            </li>                                         
             <li>
               <span class="sidebar-divider lg"></span>
             </li>
             <li class="nav-small-cap">
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
-              <span class="hide-menu">TRANSAKSI</span>
+              <span class="hide-menu">TRANSACTION</span>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link has-arrow" href="#" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#transaksiSubmenu">
-                <iconify-icon icon="solar:text-field-focus-line-duotone"></iconify-icon>
-                <span class="hide-menu">Transaksi barang</span>
+                <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
+                <span class="hide-menu">Item</span>
               </a>
               <ul id="transaksiSubmenu" class="collapse" aria-expanded="false">
                 <li class="sidebar-sub-item">
                   <a href="#" class="sidebar-link">
-                    <span class="hide-menu" style="color: gray;">Transaksi barang masuk</span>
+                    <span class="hide-menu" style="color: gray;">Incoming Item</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
                   <a href="#" class="sidebar-link">
-                    <span class="hide-menu" style="color: gray;">Transaksi barang keluar</span>
+                    <span class="hide-menu" style="color: gray;">Outbound Item</span>
                   </a>
                 </li>
               </ul>
             </li> 
             <li class="sidebar-item">
               <a class="sidebar-link" href="#" aria-expanded="false">
-                <iconify-icon icon="fa-solid:box-open" style="font-size: 15px;"></iconify-icon>
-                <span class="hide-menu">Permintaan Barang Keluar</span>
+                <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
+                <span class="hide-menu">Outbound Item Request</span>
               </a>
             </li>
             <li class="sidebar-item">
               <a class="sidebar-link" href="#" aria-expanded="false">
                 <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
-                <span class="hide-menu">Laporan</span>
+                <span class="hide-menu">Report</span>
               </a>
             </li>                       
             <li>
@@ -300,10 +296,6 @@
                 <!-- isi konten -->
                 @yield('content')
           </div>
-          </div>
-          <div class="py-6 px-6 text-center">
-            <p class="mb-0 fs-4">Design and Developed by <a href="https://adminmart.com/" target="_blank"
-                class="pe-1 text-primary text-decoration-underline">AdminMart.com</a></p>
           </div>
         </div>
       </div>
