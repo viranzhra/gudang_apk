@@ -83,15 +83,20 @@
         margin-right: 5px;
     }
 
-    .icon-edit, .icon-delete {
+    .icon-edit, .icon-delete, .icon-detail {
         color: #ffffff; 
-        font-size: 20px;
+        font-size: 18px;
         width: 30px; 
         height: 30px; 
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50px; 
+        border-radius: 50px;
+        margin-right: 0px;
+    }
+
+    .icon-detail {
+        background-color: #112337;
     }
 
     .icon-edit {
@@ -102,7 +107,7 @@
         background-color: #910a0a;
     }
 
-    .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
+    .btn-action:hover .icon-edit, .btn-action:hover .icon-delete, .btn-action:hover .icon-detail {
         opacity: 0.8; 
     }
 
@@ -230,6 +235,36 @@
         background-color: #e9ecef;
         border-color: #dee2e6;
     }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Modal Body */
+    .modal-body {
+        padding: 1.5rem;
+        color: black;
+    }
+
+    /* Detail Item */
+    .detail-item {
+        margin-bottom: 1rem; /* Jarak antara baris detail */
+        display: flex;
+        align-items: center; /* Vertically center the content */
+    }
+
+    /* Label */
+    .detail-item strong {
+        margin-right: 1rem; /* Jarak antara label dan isi */
+        flex: 0 0 100px; /* Width of label column */
+    }
+
+    /* Isi Detail */
+    .detail-item span {
+        color: #333; 
+        font-size: 1rem; 
+    }
+
 </style>
 
 <div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
@@ -243,7 +278,16 @@
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
                 <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                 Add
-            </button>                    
+            </button> 
+            <button id="delete-selected"
+                class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-2xl text-sm py-2 px-3 text-center hidden"
+                style="background-color: #910a0a;
+                        border-radius: 10px;
+                        height: 35px;
+                        border: none;">
+                <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 16px;"></i>
+                Hapus Terpilih
+            </button>
         </div>
     </div>
 
@@ -260,34 +304,51 @@
     </div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Ups!</strong> Terjadi kesalahan:
+            <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="table-responsive">
         @if (!$data->isEmpty())
         <table class="table">
             <thead class="thead-lightblue">
                 <tr>
+                    <th scope="col" class="px-6 py-3">
+                        <input type="checkbox" id="select-all">
+                    </th>
                     <th>No</th>
                     <th>Supplier</th>
                     <th>Address</th>
-                    <th>Phone</th>
-                    <th>Description</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $d)
                 <tr>
+                    <td class="w-4 px-6 py-4">
+                        <input type="checkbox" class="select-item flex justify-center items-center"
+                            value="{{ $d->id }}">
+                    </td>
                     <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->alamat }}</td>
-                    <td>{{ $d->telepon }}</td>
-                    <td>{{ $d->keterangan }}</td>
                     <td>
+                        <button type="button" aria-label="Detail" data-id="{{ $d->id }}" class="btn-detail btn-action" style="border: none;">
+                            <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                        </button>
                         <button type="button" class="btn-edit btn-action" 
                             data-id="{{ $d->id }}" 
                             data-nama="{{ $d->nama }}"
-                            data-alamat="{{ $d->alamat }}"
-                            data-telepon="{{ $d->telepon }}" 
-                            data-keterangan="{{ $d->keterangan }}" 
+                            data-alamat="{{ $d->alamat }}" 
+                            data-telepon="{{ $d->telepon }}"
+                            data-keterangan="{{ $d->keterangan }}"
                             data-bs-toggle="modal" data-bs-target="#editData"
                             aria-label="Edit">
                             <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
@@ -316,6 +377,32 @@
             </div>   
         </div>
         @endif
+    </div>
+</div>
+
+<!-- Modal Detail Data -->
+<div class="modal fade" id="detailData" tabindex="-1" aria-labelledby="detailDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailDataLabel">Detail Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-item">
+                    <strong>Supplier:</strong> <span id="detail-nama"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Address:</strong> <span id="detail-alamat"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Phone:</strong> <span id="detail-telepon"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Description:</strong> <span id="detail-keterangan"></span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -399,16 +486,6 @@
                 <form id="editForm" method="post" action="" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <strong>Ups!</strong> Terjadi kesalahan:
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
                 
                     <div class="mb-3">
                         <label for="edit-nama" class="form-label">Supplier</label>
@@ -437,33 +514,167 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    $(document).ready(function () {
-        // Edit button click event
-        $('.btn-edit').click(function () {
-            var id = $(this).data('id');
-            var nama = $(this).data('nama');
-            var alamat = $(this).data('alamat');
-            var telepon = $(this).data('telepon');
-            var keterangan = $(this).data('keterangan');
-            
-            var actionUrl = '{{ url('/supplier/update') }}/' + id;
-            
-            $('#editForm').attr('action', actionUrl);
-            $('#edit-nama').val(nama);
-            $('#edit-alamat').val(alamat);
-            $('#edit-telepon').val(telepon);
-            $('#edit-keterangan').val(keterangan);
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    const editModal = new bootstrap.Modal(document.getElementById('editData'));
 
-        // Delete button click event
-        $('.btn-action[data-bs-target="#deleteModal"]').click(function () {
-            var id = $(this).data('id');
-            var actionUrl = '{{ url('/supplier/delete') }}/' + id;
-            
-            $('#deleteForm').attr('action', actionUrl);
-            $('#itemName').text($(this).closest('tr').find('td').eq(1).text());
+    document.querySelectorAll('.btn-edit').forEach(button => {
+        button.addEventListener('click', function() {
+            const supplierId = this.getAttribute('data-id');
+            const supplierNama = this.getAttribute('data-nama');
+            const supplierAlamat = this.getAttribute('data-alamat');
+            const supplierTelp = this.getAttribute('data-telepon');
+            const supplierKet = this.getAttribute('data-keterangan');
+
+            // Update form action URL with the correct id
+            document.getElementById('editForm').action = `/supplier/update/${supplierId}`;
+
+            // Populate form fields
+            document.getElementById('edit-nama').value = supplierNama;
+            document.getElementById('edit-alamat').value = supplierAlamat;
+            document.getElementById('edit-telepon').value = supplierTelp;
+            document.getElementById('edit-keterangan').value = supplierKet;
+
+            // Show the modal
+            editModal.show();
         });
+    });
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to auto-hide alerts
+        function autoHideAlert(selector, timeout) {
+            const alerts = document.querySelectorAll(selector);
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    setTimeout(() => alert.remove(), 500); // Remove alert after fade transition
+                }, timeout);
+            });
+        }
+
+        // Hide success messages after 3 seconds
+        autoHideAlert('.alert-success', 3000);
+
+        // Hide error messages after 3 seconds
+        autoHideAlert('.alert-danger', 3000);
     });
 </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    
+        document.querySelectorAll('[aria-label="Hapus"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const itemId = this.getAttribute('data-id');
+                const itemName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
+                
+                document.getElementById('itemName').innerText = itemName;
+                document.getElementById('deleteForm').action = `/supplier/delete/${itemId}`;
+                
+                deleteModal.show();
+            });
+        });
+    });
+    </script>
+
+{{-- untuk hapus terpilih --}}
+<script>
+    document.getElementById('select-all').addEventListener('change', function(e) {
+        const checkboxes = document.querySelectorAll('.select-item');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = e.target.checked;
+        });
+        toggleDeleteButton();
+    });
+
+    document.querySelectorAll('.select-item').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            toggleDeleteButton();
+        });
+    });
+
+    function toggleDeleteButton() {
+        const selected = document.querySelectorAll('.select-item:checked').length;
+        const deleteButton = document.getElementById('delete-selected');
+        if (selected > 0) {
+            deleteButton.classList.remove('hidden');
+        } else {
+            deleteButton.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('delete-selected').addEventListener('click', function() {
+        const selected = [];
+        document.querySelectorAll('.select-item:checked').forEach(checkbox => {
+            selected.push(checkbox.value);
+        });
+
+        if (selected.length > 0) {
+            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
+                fetch('/supplier/delete-selected', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        ids: selected
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Gagal menghapus data.');
+                    }
+                });
+            }
+        } else {
+            alert('Tidak ada data yang dipilih.');
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const searchIcon = document.getElementById('search-icon');
+    const searchForm = searchIcon.closest('form');
+
+    searchIcon.addEventListener('click', function() {
+        searchForm.submit(); // Submit the form
+    });
+});
+</script>
+
+{{-- detail --}}
+<script>
+    $(document).ready(function() {
+        // When the button to open the modal is clicked
+        $('.btn-detail').on('click', function() {
+            var supplierId = $(this).data('id'); // Get ID from button
+    
+            $.ajax({
+                url: '/supplier/detail/' + supplierId,
+                method: 'GET',
+                success: function(data) {
+                    // Fill data into the modal
+                    $('#detail-nama').text(data.nama);
+                    $('#detail-alamat').text(data.alamat);
+                    $('#detail-telepon').text(data.telepon);
+                    $('#detail-keterangan').text(data.keterangan);
+    
+                    // Show the modal
+                    $('#detailData').modal('show');
+                },
+                error: function() {
+                    alert('Error fetching data.');
+                }
+            });
+        });
+    });
+</script>
+    
 @endsection

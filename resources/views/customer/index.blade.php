@@ -83,7 +83,7 @@
         margin-right: 5px;
     }
 
-    .icon-edit, .icon-delete {
+    .icon-edit, .icon-delete, .icon-detail {
         color: #ffffff; 
         font-size: 18px;
         width: 30px; 
@@ -91,7 +91,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50px; 
+        border-radius: 50px;
+        margin-right: 5px;
+    }
+
+    .icon-detail {
+        background-color: #112337;
     }
 
     .icon-edit {
@@ -230,6 +235,36 @@
         background-color: #e9ecef;
         border-color: #dee2e6;
     }
+
+    .hidden {
+        display: none;
+    }
+
+    /* Modal Body */
+    .modal-body {
+        padding: 1.5rem;
+        color: black;
+    }
+
+    /* Detail Item */
+    .detail-item {
+        margin-bottom: 1rem; /* Jarak antara baris detail */
+        display: flex;
+        align-items: center; /* Vertically center the content */
+    }
+
+    /* Label */
+    .detail-item strong {
+        margin-right: 1rem; /* Jarak antara label dan isi */
+        flex: 0 0 100px; /* Width of label column */
+    }
+
+    /* Isi Detail */
+    .detail-item span {
+        color: #333; 
+        font-size: 1rem; 
+    }
+
 </style>
 
 <div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
@@ -243,7 +278,16 @@
                 <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                     Add
-                </a>                    
+                </a> 
+                <button id="delete-selected"
+                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-2xl text-sm py-2 px-3 text-center hidden"
+                    style="background-color: #910a0a;
+                            border-radius: 10px;
+                            height: 35px;
+                            border: none;">
+                    <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 16px;"></i>
+                    Hapus Terpilih
+                </button>
             </div>
         </div>
 
@@ -260,28 +304,47 @@
     </div>
     @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>Ups!</strong> Terjadi kesalahan:
+            <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="table-responsive">
         @if (!$data->isEmpty())
         <table class="table">
             <thead class="thead-lightblue">
                 <tr>
+                    <th scope="col" class="px-6 py-3">
+                        <input type="checkbox" id="select-all">
+                    </th>
                     <th>No</th>
                     <th>Name</th>
                     <th>Address</th>
                     <th>Phone</th>
-                    <th>Description</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($data as $d)
                 <tr>
+                    <td class="w-4 px-6 py-4">
+                        <input type="checkbox" class="select-item flex justify-center items-center"
+                            value="{{ $d->id }}">
+                    </td>
                     <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->alamat }}</td>
                     <td>{{ $d->telepon }}</td>
-                    <td>{{ $d->keterangan }}</td>
                     <td>
+                        <button aria-label="Detail" data-id="1" class="btn-detail btn-action" style="border: none;">
+                            <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                        </button>
                         <button type="button" class="btn-edit btn-action" 
                             data-id="{{ $d->id }}" 
                             data-nama="{{ $d->nama }}"
@@ -385,18 +448,7 @@
             <div class="modal-body">
                 <form id="editForm" method="post" action="" enctype="multipart/form-data">
                     @csrf
-                    @method('put')
-                    @if ($errors->any())
-                    <div class="alert alert-danger">
-                        <strong>Ups!</strong> Terjadi kesalahan:
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @endif
-
+                
                     <div class="mb-3">
                         <label for="nama" class="form-label">Name</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
@@ -415,6 +467,32 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Edit</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Detail Data -->
+<div class="modal fade" id="detailData" tabindex="-1" aria-labelledby="detailDataLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailDataLabel">Detail Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="detail-item">
+                    <strong>Name:</strong> <span id="detail-nama"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Address:</strong> <span id="detail-alamat"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Phone:</strong> <span id="detail-telepon"></span>
+                </div>
+                <div class="detail-item">
+                    <strong>Description:</strong> <span id="detail-keterangan"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -457,7 +535,6 @@
         searchForm.submit(); // Submit the form
     });
 });
-
 </script>
 
 
@@ -491,7 +568,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('[aria-label="Hapus"]').forEach(button => {
         button.addEventListener('click', function() {
             const customerId = this.getAttribute('data-id');
-            const customerName = this.closest('tr').querySelector('td:nth-child(2)').innerText;
+            const customerName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
             
             document.getElementById('customerName').innerText = customerName;
             document.getElementById('deleteForm').action = `/customer/delete/${customerId}`;
@@ -502,5 +579,86 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+{{-- untuk hapus terpilih --}}
+<script>
+    document.getElementById('select-all').addEventListener('change', function(e) {
+        const checkboxes = document.querySelectorAll('.select-item');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = e.target.checked;
+        });
+        toggleDeleteButton();
+    });
+
+    document.querySelectorAll('.select-item').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            toggleDeleteButton();
+        });
+    });
+
+    function toggleDeleteButton() {
+        const selected = document.querySelectorAll('.select-item:checked').length;
+        const deleteButton = document.getElementById('delete-selected');
+        if (selected > 0) {
+            deleteButton.classList.remove('hidden');
+        } else {
+            deleteButton.classList.add('hidden');
+        }
+    }
+
+    document.getElementById('delete-selected').addEventListener('click', function() {
+        const selected = [];
+        document.querySelectorAll('.select-item:checked').forEach(checkbox => {
+            selected.push(checkbox.value);
+        });
+
+        if (selected.length > 0) {
+            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
+                fetch('/customer/delete-selected', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        ids: selected
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Gagal menghapus data.');
+                    }
+                });
+            }
+        } else {
+            alert('Tidak ada data yang dipilih.');
+        }
+    });
+</script>
+
+{{-- detail --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const detailModal = new bootstrap.Modal(document.getElementById('detailData'));
+
+    document.querySelectorAll('[aria-label="Detail"]').forEach(button => {
+        button.addEventListener('click', function() {
+            const customerRow = this.closest('tr');
+            const customerName = customerRow.querySelector('td:nth-child(3)').innerText.trim();
+            const customerAddress = customerRow.querySelector('td:nth-child(4)').innerText.trim();
+            const customerPhone = customerRow.querySelector('td:nth-child(5)').innerText.trim();
+            const customerDescription = customerRow.querySelector('td:nth-child(6)').innerText.trim();
+
+            // Populate the modal with customer details
+            document.getElementById('detail-nama').innerText = customerName;
+            document.getElementById('detail-alamat').innerText = customerAddress;
+            document.getElementById('detail-telepon').innerText = customerPhone;
+            document.getElementById('detail-keterangan').innerText = customerDescription;
+
+            detailModal.show();
+        });
+    });
+});
+</script>
 
 @endsection

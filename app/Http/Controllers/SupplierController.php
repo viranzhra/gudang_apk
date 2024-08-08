@@ -38,7 +38,7 @@ class SupplierController extends Controller
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|numeric|digits_between:10,15',
+			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
 			'keterangan' => 'nullable|string|max:255',
 		], [
 			'nama.required' => 'Nama harus diisi.',
@@ -48,8 +48,7 @@ class SupplierController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.numeric' => 'Nomor telepon harus berupa angka.',
-			'telepon.digits_between' => 'Nomor telepon harus memiliki panjang antara 10 sampai 15 digit.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi angka dan spasi.',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
@@ -73,11 +72,11 @@ class SupplierController extends Controller
 	}
 
 	public function update($id, Request $request): RedirectResponse
-	{
+	{ 
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|numeric|digits_between:10,15',
+			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
 			'keterangan' => 'nullable|string|max:255',
 		], [
 			'nama.required' => 'Nama harus diisi.',
@@ -87,8 +86,7 @@ class SupplierController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.numeric' => 'Nomor telepon harus berupa angka.',
-			'telepon.digits_between' => 'Nomor telepon harus memiliki panjang antara 10 sampai 15 digit.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi angka dan spasi.',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
@@ -102,6 +100,12 @@ class SupplierController extends Controller
 		$data->save();
 
 		return redirect('/supplier')->with('success', 'Anda berhasil memperbarui data!');
+	}
+
+	public function getDetail($id)
+	{
+		$supplier = Supplier::find($id);
+		return response()->json($supplier);
 	}
 
 	public function delete($id)

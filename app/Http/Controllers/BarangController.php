@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\JenisBarang;
+use App\Models\Supplier;
 
 class BarangController extends Controller
 {
@@ -19,22 +20,20 @@ class BarangController extends Controller
 		$search = $request->input('search');
 
 		$data = DB::table('barang')
+			->leftJoin('supplier', 'barang.supplier_id', '=', 'supplier.id')
 			->leftJoin('jenis_barang', 'barang.jenis_barang_id', '=', 'jenis_barang.id')
-			->select('barang.*', 'jenis_barang.nama as nama_jenis_barang')
+			->leftJoin('barang_masuk', 'barang.id', '=', 'barang_masuk.barang_id')
+			->select('barang.*', 'jenis_barang.nama as nama_jenis_barang', 'supplier.nama as nama_supplier', DB::raw('SUM(barang_masuk.jumlah) as jumlah'))
 			->when($search, function ($query) use ($search) {
 				return $query->where('barang.nama', 'like', '%' . $search . '%')
-				->orWhere('jenis_barang.nama', 'like', '%' . $search . '%');
+				->orWhere('jenis_barang.nama', 'like', '%' . $search . '%')
+				->orWhere('supplier.nama', 'like', '%' . $search . '%');
 			})
-			->orderBy('barang.jumlah', 'desc')
+			->groupBy('barang.id', 'barang.nama', 'barang.jenis_barang_id', 'barang.supplier_id', 'barang.keterangan', 'barang.created_at', 'barang.updated_at', 'jenis_barang.nama', 'supplier.nama')
+			->orderBy('jumlah', 'desc')
 			->paginate(7);
-		
-		// Fetch jenis_barang data
-		$jenis_barang = JenisBarang::all();
-
-		return view('barang.index', [
-			'data' => $data,
-			'jenis_barang' => $jenis_barang,
-		]);
+			
+		return view('barang.index', compact('data'));
 	}
 
 	public function create()
@@ -48,6 +47,7 @@ class BarangController extends Controller
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'jenis_barang' => 'required|numeric',
+			'supplier_id' => 'required|numeric',
 			//'status' => 'required|in:Baik,Rusak',
 			'keterangan' => 'nullable|string|max:255',
 		], [
@@ -56,16 +56,19 @@ class BarangController extends Controller
 			'nama.max' => 'Nama barang tidak boleh lebih dari 255 karakter.',
 			'jenis_barang.required' => 'Jenis barang harus dipilih.',
 			'jenis_barang.numeric' => 'Jenis barang harus berupa angka.',
+			'supplier_id.required' => 'Supplier harus dipilih.',
+			'supplier_id.numeric' => 'Supplier harus dipilih.',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
 		
 		//$userId = Auth::id();
 
-		Barang::create([
+		$data = Barang::create([
 			'nama' => $request->nama,
 			'jenis_barang_id' => $request->jenis_barang,
-			'jumlah' => 0,
+			'supplier_id' => $request->supplier_id,
+			//'jumlah' => 0,
 			//'status' => $request->status,
 			'keterangan' => $request->keterangan,
 		]);
@@ -85,6 +88,7 @@ class BarangController extends Controller
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'jenis_barang' => 'required|numeric',
+			'supplier_id' => 'required|numeric',
 			//'status' => 'required|in:Baik,Rusak',
 			'keterangan' => 'nullable|string|max:255',
 		], [
@@ -93,6 +97,8 @@ class BarangController extends Controller
 			'nama.max' => 'Nama barang tidak boleh lebih dari 255 karakter.',
 			'jenis_barang.required' => 'Jenis barang harus dipilih.',
 			'jenis_barang.numeric' => 'Jenis barang harus berupa angka.',
+			'supplier_id.required' => 'Supplier harus dipilih.',
+			'supplier_id.numeric' => 'Supplier harus dipilih.',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
@@ -101,6 +107,7 @@ class BarangController extends Controller
 
 		$data->nama = $request->nama;
 		$data->jenis_barang_id = $request->jenis_barang;
+		$data->supplier_id = $request->supplier_id;
 		//$data->status = $request->status;
 		$data->keterangan = $request->keterangan;
 
@@ -108,6 +115,26 @@ class BarangController extends Controller
 
 		return redirect('/barang')->with('success', 'Anda berhasil memperbarui data!');
 	}
+
+	public function detail($id)
+	{
+		$barang = DB::table('barang')
+			->leftJoin('jenis_barang', 'barang.jenis_barang_id', '=', 'jenis_barang.id')
+			->select('barang.*', 'jenis_barang.nama as jenis_nama')
+			->where('barang.id', $id)
+			->first();
+	
+		if (!$barang) {
+			return response()->json(['message' => 'Data tidak ditemukan!'], 404);
+		}
+	
+		return response()->json([
+			'nama' => $barang->nama,
+			'jenis' => $barang->jenis_nama,
+			'jumlah' => $barang->jumlah,
+			'keterangan' => $barang->keterangan,
+		]);
+	}	
 
 	public function delete($id)
 	{

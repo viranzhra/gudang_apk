@@ -38,7 +38,7 @@ class CustomerController extends Controller
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|numeric|digits_between:10,15',
+			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
 			'keterangan' => 'nullable|string|max:255',
 		], [
 			'nama.required' => 'Nama harus diisi.',
@@ -48,8 +48,7 @@ class CustomerController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.numeric' => 'Nomor telepon harus berupa angka.',
-			'telepon.digits_between' => 'Nomor telepon harus memiliki panjang antara 10 sampai 15 digit.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
@@ -77,7 +76,7 @@ class CustomerController extends Controller
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|numeric|digits_between:10,15',
+			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
 			'keterangan' => 'nullable|string|max:255',
 		], [
 			'nama.required' => 'Nama harus diisi.',
@@ -87,8 +86,7 @@ class CustomerController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.numeric' => 'Nomor telepon harus berupa angka.',
-			'telepon.digits_between' => 'Nomor telepon harus memiliki panjang antara 10 sampai 15 digit.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);

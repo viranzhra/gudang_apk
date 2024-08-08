@@ -41,9 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/supplier/store', [SupplierController::class, 'store'])->name('supplier.store');
     Route::get('/supplier/edit/{id}', [SupplierController::class, 'edit'])->name('supplier.edit');
     Route::put('/supplier/update/{id}', [SupplierController::class, 'update'])->name('supplier.update');
-    Route::get('/supplier/delete/{id}', [SupplierController::class, 'delete'])->name('supplier.delete');
+    Route::delete('/supplier/delete/{id}', [SupplierController::class, 'delete'])->name('supplier.delete');
     Route::get('/supplier/getUserDataByName/{name}', [SupplierController::class, 'getUserDataByName']);
     Route::post('/supplier/delete-selected', [SupplierController::class, 'deleteSelected']);
+    Route::get('/supplier/detail/{id}', [SupplierController::class, 'getDetail'])->name('supplier.detail');
 
     Route::get('/jenisbarang', [JenisBarangController::class, 'index'])->name('jenisbarang.index');
     Route::get('/jenisbarang/create', [JenisBarangController::class, 'create'])->name('jenisbarang.create');
@@ -68,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/barang/update/{id}', [BarangController::class, 'update'])->name('barang.update');
     Route::delete('/barang/delete/{id}', [BarangController::class, 'delete'])->name('barang.delete');    
     Route::post('/barang/delete-selected', [BarangController::class, 'deleteSelected']);
+    Route::get('/barang/detail/{id}', [BarangController::class, 'detail']);
 
     Route::get('/barangmasuk', [BarangMasukController::class, 'index'])->name('barangmasuk.index');
     Route::get('/barangmasuk/create', [BarangMasukController::class, 'create'])->name('barangmasuk.create');
