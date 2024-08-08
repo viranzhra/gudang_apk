@@ -6,6 +6,7 @@ use App\Http\Controllers\JenisBarangController;
 use App\Http\Controllers\StatusBarangController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\BarangMasukController;
+use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\PermintaanBarangKeluarController;
 use Illuminate\Support\Facades\Route;
@@ -80,6 +81,14 @@ Route::middleware('auth')->group(function () {
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
     Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
+
+    Route::get('/barangkeluar', [BarangKeluarController::class, 'index'])->name('barangkeluar.index');
+    Route::get('/barangkeluar/create/{id?}', [BarangKeluarController::class, 'create'])->name('barangkeluar.create');
+    Route::get('/barangkeluar/get-by-jenis/{id}', [BarangKeluarController::class, 'getBarangByJenis']);
+    Route::post('/barangkeluar/store', [BarangKeluarController::class, 'store'])->name('barangkeluar.store');
+    Route::put('/barangkeluar/update/{id}', [BarangKeluarController::class, 'update'])->name('barangkeluar.update');
+    Route::get('/barangkeluar/delete/{id}', [BarangKeluarController::class, 'delete'])->name('barangkeluar.delete');
+    Route::post('/barangkeluar/delete-selected', [BarangKeluarController::class, 'deleteSelected']);
 
     Route::get('/permintaanbarangkeluar', [PermintaanBarangKeluarController::class, 'index'])->name('permintaanbarangkeluar.index');
     Route::get('/permintaanbarangkeluar/create', [PermintaanBarangKeluarController::class, 'create'])->name('permintaanbarangkeluar.create');

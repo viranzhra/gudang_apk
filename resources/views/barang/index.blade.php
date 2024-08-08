@@ -133,8 +133,8 @@
     background-color: #635bff;
     color: #ffffff;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 7px 10px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 14px; /* Adjust font size for better responsiveness */
     white-space: nowrap; /* Prevent text from wrapping */

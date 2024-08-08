@@ -133,8 +133,8 @@
     background-color: #635bff;
     color: #ffffff;
     border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+    padding: 7px 10px;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 14px; /* Adjust font size for better responsiveness */
     white-space: nowrap; /* Prevent text from wrapping */
@@ -279,14 +279,14 @@
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                     Add
                 </a> 
-                <button id="delete-selected"
+                <button id="delete-selected" href="#"
                     class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-2xl text-sm py-2 px-3 text-center hidden"
                     style="background-color: #910a0a;
                             border-radius: 10px;
                             height: 35px;
                             border: none;">
-                    <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 16px;"></i>
-                    Hapus Terpilih
+                    <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 15px;"></i>
+                    <a style="margin-top: -3px;">Hapus Terpilih</a>
                 </button>
             </div>
         </div>

@@ -133,6 +133,11 @@
     .text-gray-300 {
         color: #d1d3e2 !important;
     }
+
+    .sidebar-sub-item a:hover span.hide-menu {
+    color: #635bff !important;
+  }
+
   </style>
 </head>
 
@@ -203,24 +208,24 @@
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
               <span class="hide-menu">TRANSACTION</span>
             </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link has-arrow" href="#" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#transaksiSubmenu">
+            <li class="sidebar-item {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}">
+              <a class="sidebar-link has-arrow {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}" href="#" aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#itemSubmenu">
                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Item</span>
               </a>
-              <ul id="transaksiSubmenu" class="collapse" aria-expanded="false">
+              <ul id="itemSubmenu" class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}" aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
                 <li class="sidebar-sub-item">
-                  <a href="#" class="sidebar-link">
-                    <span class="hide-menu" style="color: gray;">Incoming Item</span>
+                  <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}" href="/barangmasuk">
+                    <span class="hide-menu" style="color: {{ request()->is('barangmasuk') ? '#007bff' : 'gray' }};">Incoming Item</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
-                  <a href="#" class="sidebar-link">
-                    <span class="hide-menu" style="color: gray;">Outbound Item</span>
+                  <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}" href="/barangkeluar">
+                    <span class="hide-menu" style="color: {{ request()->is('barangkeluar') ? '#007bff' : 'gray' }};">Outbound Item</span>
                   </a>
                 </li>
               </ul>
-            </li> 
+            </li>            
             <li class="sidebar-item">
               <a class="sidebar-link" href="#" aria-expanded="false">
                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
@@ -228,11 +233,28 @@
               </a>
             </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="#" aria-expanded="false">
-                <iconify-icon icon="mdi:file-document-outline"></iconify-icon>
+              <a class="sidebar-link has-arrow" href="#" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#reportSubmenu">
+                <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Report</span>
               </a>
-            </li>                       
+              <ul id="reportSubmenu" class="collapse" aria-expanded="false">
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link" href="/barangmasuk">
+                    <span class="hide-menu" style="color: gray;">Stock</span>
+                  </a>
+                </li>
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link" href="/barangkeluar">
+                    <span class="hide-menu" style="color: gray;">Incoming Item</span>
+                  </a>
+                </li>
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link" href="/barangkeluar">
+                    <span class="hide-menu" style="color: gray;">Outbound Item</span>
+                  </a>
+                </li>
+              </ul>
+            </li>                     
             <li>
               <span class="sidebar-divider lg"></span>
             </li>
