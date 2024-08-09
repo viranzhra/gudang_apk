@@ -232,29 +232,29 @@
                 <span class="hide-menu">Outbound Item Request</span>
               </a>
             </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link has-arrow" href="#" aria-expanded="false" data-bs-toggle="collapse" data-bs-target="#reportSubmenu">
+            <li class="sidebar-item {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}">
+              <a class="sidebar-link has-arrow {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}" href="#" aria-expanded="{{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#reportSubmenu">
                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Report</span>
               </a>
-              <ul id="reportSubmenu" class="collapse" aria-expanded="false">
+              <ul id="reportSubmenu" class="collapse {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'show' : '' }}" aria-expanded="{{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'true' : 'false' }}">
                 <li class="sidebar-sub-item">
-                  <a class="sidebar-link" href="/barangmasuk">
-                    <span class="hide-menu" style="color: gray;">Stock</span>
+                  <a class="sidebar-link {{ request()->is('laporan/stok') ? 'active' : '' }}" href="/laporan/stok">
+                    <span class="hide-menu" style="color: {{ request()->is('laporan/stok') ? '#635bff' : 'gray' }};">Stock</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
-                  <a class="sidebar-link" href="/barangkeluar">
-                    <span class="hide-menu" style="color: gray;">Incoming Item</span>
+                  <a class="sidebar-link {{ request()->is('laporan/barangmasuk') ? 'active' : '' }}" href="/laporan/barangmasuk">
+                    <span class="hide-menu" style="color: {{ request()->is('laporan/barangmasuk') ? '#635bff' : 'gray' }};">Incoming Item</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
-                  <a class="sidebar-link" href="/barangkeluar">
-                    <span class="hide-menu" style="color: gray;">Outbound Item</span>
+                  <a class="sidebar-link {{ request()->is('laporan/barangkeluar') ? 'active' : '' }}" href="/laporan/barangkeluar">
+                    <span class="hide-menu" style="color: {{ request()->is('laporan/barangkeluar') ? '#635bff' : 'gray' }};">Outbound Item</span>
                   </a>
                 </li>
               </ul>
-            </li>                     
+            </li>                  
             <li>
               <span class="sidebar-divider lg"></span>
             </li>

@@ -1,178 +1,257 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Laporan Stok') }}
-        </h2>
+@extends('layouts.navigation')
 
-        <div class="flex items-center gap-x-5">
-            <form action="{{ route('laporan.stok.index') }}" method="GET" class="flex items-center max-w-sm mx-auto">
-                <label for="simple-search" class="sr-only">Search</label>
-                <div class="relative w-full">
-                    <input type="text" id="simple-search" name="search" value="{{ request('search') }}"
-                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-2xl focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                        placeholder="Cari..." required />
-                </div>
-                <button type="submit"
-                    class="p-2.5 ms-2 text-sm font-medium text-white bg-gray-800 rounded-2xl border border-gray-700 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300">
-                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 20 20">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                    </svg>
-                    <span class="sr-only">Search</span>
-                </button>
+@section('content')
+
+    <head>
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
+        <link rel="stylesheet" href="../assets/css/styles.min.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <!-- FontAwesome CDN -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    </head>
+
+    <style>
+        .card {
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            color: black;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            cursor: default;
+            font-weight: semibold;
+            color: rgba(0, 0, 0, 0.829);
+        }
+
+        /* search */
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .search-box input[type="search"] {
+            padding: 5px 30px 5px 10px;
+            width: 250px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            right: 5px;
+            padding: 5px;
+            font-size: 18px;
+            border-radius: 4px;
+            color: gray;
+            cursor: pointer;
+        }
+
+        .search-container label {
+            margin-right: 10px;
+        }
+
+        .search-container select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .btn-action {
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .icon-edit {
+            color: #ffffff;
+            background-color: #12b75c;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .icon-delete {
+            color: #ffffff;
+            background-color: #dc3545;
+            font-size: 20px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .btn-action:hover .icon-edit,
+        .btn-action:hover .icon-delete {
+            opacity: 0.8;
+        }
+
+        .controls-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .controls-container label {
+            margin-right: 5px;
+        }
+
+        .controls-container select {
+            margin-right: 5px;
+        }
+
+        .btn-primary {
+            display: flex;
+            align-items: center;
+            background-color: #635bff;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Color on hover */
+        }
+
+        /* Media query for small screens */
+        @media (max-width: 576px) {
+            .search-container {
+                flex-direction: column;
+                /* Stack items vertically */
+                align-items: flex-start;
+                /* Align items to the start of the container */
+            }
+
+            .search-box input[type="search"] {
+                width: 100%;
+                /* Make the search input full width */
+                margin-bottom: 10px;
+                /* Add space below the search input */
+            }
+
+            .btn-primary {
+                width: 100%;
+                /* Make the button full width */
+                text-align: center;
+                /* Center the text */
+                font-size: 16px;
+                /* Adjust font size for better readability */
+            }
+
+            .controls-container {
+                flex-direction: column;
+                /* Stack controls vertically on small screens */
+                align-items: stretch;
+                /* Stretch controls to full width */
+            }
+        }
+    </style>
+
+    <div class="container mt-3" style="padding: 30px;">
+        <h4 class="mb-4" style="color: #8a8a8a;">Stock Report</h4>
+        <div class="search-container">
+            <form action="" method="GET" class="search-box">
+                <input type="search" id="search-input" name="search" placeholder="Search..."
+                    value="{{ request('search') }}">
+                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
             </form>
-
-            <a href="{{ route('barang.create') }}"
-                class="text-white bg-blue-800 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-2xl text-sm w-full sm:w-auto py-2 px-3 text-center">Cetak</a>
-
         </div>
 
-    </x-slot>
-
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                @if (!$data->isEmpty())
-                    <!-- Cari berdasarkan Tanggal -->
-                    <form action="{{ route('laporan.stok.index') }}" method="GET"
-                        class="!hidden justify-end py-3 px-6 mb-4 border-1 border-b-2">
-                        <div class="flex items-center space-x-3">
-                            <div id="date-range-picker" date-rangepicker class="flex items-center">
-                                <style>input[type="date"]::-webkit-inner-spin-button,
-                                input[type="date"]::-webkit-calendar-picker-indicator {opacity:0;}</style>
-                                <span class="me-4 text-gray-500">dari</span>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+        <div class="table-responsive">
+            @if (!$data->isEmpty())
+            <table class="table">
+                <thead class="thead-lightblue">
+                    <tr>
+                        <th>No</th>
+                        <th>Item</th>
+                        <th>Type</th>
+                        <th>Stock</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($data as $d)
+                        <tr>
+                            <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
+                            <td>{{ $d->nama_barang }}</td>
+                            <td>{{ $d->nama_jenis_barang }}</td>
+                            <td>{{ $d->jumlah ?: 0 }}</td>
+                            <td>
+                                <button type="button" class="btn btn-action"
+                                    data-bs-toggle="modal" data-bs-target="#detailModal{{ $d->barang_id }}">
+                                    <!-- SVG -->
+                                    <svg class=line fill=none height=18 stroke=white stroke-width=2
+                                        viewBox="0 0 24 24"width=18 xmlns=http://www.w3.org/2000/svg>
+                                        <g transform="translate(3.649800, 2.749900)">
+                                            <line x1=10.6555 x2=5.2555 y1=12.6999 y2=12.6999></line>
+                                            <line x1=8.6106 x2=5.2546 y1=8.6886 y2=8.6886></line>
                                             <path
-                                                d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <input id="datepicker-range-start" name="start_date" type="date"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-2xl focus:ring-blue-500 focus:border-blue-500 block w-full pe-2.5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Select date start" value="{{ $startDate ?? '' }}">
-                                </div>
-                                <span class="mx-4 text-gray-500">hingga</span>
-                                <div class="relative">
-                                    <div class="absolute inset-y-0 end-0 flex items-center pe-3 pointer-events-none">
-                                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                d="M16.51,5.55 L10.84,0.15 C10.11,0.05 9.29,0 8.39,0 C2.1,0 -1.95399252e-14,2.32 -1.95399252e-14,9.25 C-1.95399252e-14,16.19 2.1,18.5 8.39,18.5 C14.69,18.5 16.79,16.19 16.79,9.25 C16.79,7.83 16.7,6.6 16.51,5.55 Z">
+                                            </path>
                                             <path
-                                                d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                                        </svg>
-                                    </div>
-                                    <input id="datepicker-range-end" name="end_date" type="date"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-2xl focus:ring-blue-500 focus:border-blue-500 block w-full pe-2.5 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Select date end" value="{{ $endDate ?? '' }}">
-                                </div>
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit"
-                                    class="bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 text-white font-medium py-2 px-3 rounded-2xl">
-                                    Cari
+                                                d="M10.2844,0.0827 L10.2844,2.7437 C10.2844,4.6017 11.7904,6.1067 13.6484,6.1067 L16.5994,6.1067">
+                                            </path>
+                                        </g>
+                                    </svg>
                                 </button>
-                            </div>
-                        </div>
-                    </form>
-                    <!-- Tabel -->
-                    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-white">
-                            <tr>
-                                <th scope="col" class="px-6 py-3">No</th>
-                                <th scope="col" class="px-6 py-3">Barang</th>
-                                <th scope="col" class="px-6 py-3">Jenis Barang</th>
-                                <th scope="col" class="px-6 py-3">Stok</th>
-                                <th scope="col" class="px-6 py-3">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($data as $d)
-                                <tr class="bg-white border-b hover:bg-gray-50 text-base text-black">
-                                    <td class="w-4 px-6 py-4">
-                                        <span class="flex justify-center items-center">{{ $loop->iteration }}</span>
-                                    </td>
-                                    <td class="px-6 py-4">{{ $d->nama_barang }}</td>
-                                    <td class="px-6 py-4">{{ $d->nama_jenis_barang }}</td>
-                                    <td class="px-6 py-4">{{ $d->jumlah ?: 0 }}{{-- $d->formatted_tanggal --}}</td>
-                                    <td class="px-6 py-4 flex gap-x-2">
-                                        <button type="button"
-                                            class="flex text-white bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 font-medium rounded-2xl text-sm px-3 py-1.5 text-center"
-                                            data-bs-toggle="modal"
-                                            data-bs-target="#detailModal{{ $d->barang_id }}">
-                                            <!-- SVG -->
-                                            <svg class=line fill=none height=18 stroke=white stroke-width=2 viewBox="0 0 24 24"width=18 xmlns=http://www.w3.org/2000/svg><g transform="translate(3.649800, 2.749900)"><line x1=10.6555 x2=5.2555 y1=12.6999 y2=12.6999></line><line x1=8.6106 x2=5.2546 y1=8.6886 y2=8.6886></line><path d="M16.51,5.55 L10.84,0.15 C10.11,0.05 9.29,0 8.39,0 C2.1,0 -1.95399252e-14,2.32 -1.95399252e-14,9.25 C-1.95399252e-14,16.19 2.1,18.5 8.39,18.5 C14.69,18.5 16.79,16.19 16.79,9.25 C16.79,7.83 16.7,6.6 16.51,5.55 Z"></path><path d="M10.2844,0.0827 L10.2844,2.7437 C10.2844,4.6017 11.7904,6.1067 13.6484,6.1067 L16.5994,6.1067"></path></g></svg>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Modal Detail Barang -->
-                                <div class="modal fade" id="detailModal{{ $d->barang_id }}" tabindex="-1"
-                                    aria-labelledby="detailModalLabel{{ $d->barang_id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="detailModalLabel{{ $d->barang_id }}">Detail Barang Masuk
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div class="grid grid-cols-10 gap-2">
-                                                    <div class="font-bold col-span-3">Nama Barang:</div>
-                                                    <div class="col-span-7">{{ $d->nama_barang }}</div>
-                                                    <div class="font-bold col-span-3">Jenis Barang:</div>
-                                                    <div class="col-span-7">{{ $d->nama_jenis_barang }}</div>
-                                                    <div class="font-bold col-span-3">Supplier:</div>
-                                                    <div class="col-span-7">{{ $d->nama_supplier }}</div>
-                                                    <div class="font-bold col-span-3">Tanggal Masuk:</div>
-                                                    <div class="col-span-7">{{ $d->formatted_tanggal }}</div>
-                                                    <div class="font-bold col-span-3">Jumlah:</div>
-                                                    <div class="col-span-7">{{ $d->jumlah }}</div>
-
-                                                    <!-- Detail barang -->
-                                                    @foreach ($d->detail as $index => $detail)
-                                                        <hr class="col-span-10 my-2">
-                                                        <div class="font-bold col-span-3">Barang {{ $index + 1 }}:
-                                                        </div>
-                                                        <div class="col-span-7">
-                                                            <div class="font-bold">SN / Kondisi</div>
-                                                            <div class="ml-5">{{ $detail->serial_number }} —
-                                                                {{ $detail->status_barang }}</div>
-                                                            @if ($detail->kelengkapan)
-                                                                <div class="font-bold">Kelengkapan</div>
-                                                                <div class="ml-5">{{ $detail->kelengkapan }}</div>
-                                                            @endif                                                            
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </tbody>
-                    </table>
-
-
-                    <div class="py-3 px-5">
-                        {{ $data->links() }}
-                    </div>
-                @else
-                    <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-                        <div class="mx-auto max-w-screen-sm text-center">
-                            <h1
-                                class="mb-4 text-7xl tracking-tight font-extrabold lg:text-9xl text-primary-600 dark:text-primary-500">
-                                404</h1>
-                            <p
-                                class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">
-                                Data tidak ditemukan.</p>
-                        </div>
-                    </div>
-                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="info-pagination-container">
+                <div class="info-text">
+                    Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }} dari {{ $data->total() }} data pada
+                    halaman {{ $data->currentPage() }}.
+                </div>
+                <div class="pagination-container">
+                    {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+                </div>
             </div>
+        @else
+            <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
+                <div class="mx-auto max-w-screen-sm text-center">
+                    <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Data tidak
+                        ditemukan.</p>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
-</x-app-layout>
+@endsection
