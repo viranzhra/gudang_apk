@@ -83,7 +83,7 @@
         margin-right: 5px;
     }
 
-    .icon-edit, .icon-delete, .icon-detail {
+    .icon-edit, .icon-delete, .icon-detail, .icon-tambah {
         color: #ffffff; 
         font-size: 18px;
         width: 30px; 
@@ -97,6 +97,10 @@
 
     .icon-detail {
         background-color: #112337;
+    }
+
+    .icon-tambah {
+        background-color: #01578d;
     }
 
     .icon-edit {
@@ -274,7 +278,7 @@
                 <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
             </form>
             <div class="controls-container">
-                <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
+                <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                     Add
                 </a> 
@@ -315,7 +319,7 @@
     @endif
 
     <div class="table-responsive">
-        {{-- @if (!$data->isEmpty())
+        @if (!$barangMasuk->isEmpty())
         <table class="table">
             <thead class="thead-lightblue">
                 <tr>
@@ -323,41 +327,33 @@
                         <input type="checkbox" id="select-all">
                     </th>
                     <th>No</th>
-                    <th>Item</th>
-                    <th>Type</th>
-                    <th>Supplier</th>
-                    <th>Quantity</th>
-                    <th>Description</th>
+                    <th>Barang</th>
+                    <th>Jumlah</th>
+                    <th>Keterangan</th>
+                    <th>Tanggal Masuk</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($data as $d)
+                @foreach ($barangMasuk as $d)
                 <tr>
                     <td class="w-4 px-6 py-4">
                         <input type="checkbox" class="select-item flex justify-center items-center"
-                            value="{{ $d->id }}">
+                            value="{{ $d->barang_masuk_id }}">
                     </td>
-                    <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
-                    <td>{{ $d->nama }}</td>
-                    <td>{{ $d->nama_jenis_barang }}</td>
-                    <td>{{ $d->nama_supplier }}</td>
-                    <td>{{ $d->jumlah }}</td>
+                    <td>{{ $loop->iteration + ($barangMasuk->currentPage() - 1) * $barangMasuk->perPage() }}</td>
+                    <td>{{ $d->nama_barang }}</td>
+                    <td>{{ $d->jumlah ?: 0 }}</td>
                     <td>{{ $d->keterangan }}</td>
+                    <td>{{ $d->tanggal }}</td>
                     <td>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#detailData" aria-label="Detail" data-id="{{ $d->id }}" class="btn-detail btn-action" style="border: none;">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#detailModal{{ $d->barang_masuk_id }}" aria-label="Detail" class="btn-detail btn-action" style="border: none;">
                             <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                         </button>                        
-                        <button type="button" class="btn-edit btn-action" 
-                            data-id="{{ $d->id }}" 
-                            data-nama="{{ $d->nama }}"
-                            data-jenis="{{ $d->nama_jenis_barang }}"
-                            data-supplier="{{ $d->nama_supplier }}"
-                            data-keterangan="{{ $d->keterangan }}" 
-                            aria-label="Edit">
-                            <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
-                        </button>
-                        <button data-id="{{ $d->id }}" class="btn-action" aria-label="Hapus">
+                        <a href="/barangmasuk/create/{{ $d->barang_masuk_id }}" class="btn-tambah btn-action">
+                            <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
+                        </a>                        
+                        <button data-id="{{ $d->barang_masuk_id }}" class="btn-action" aria-label="Hapus">
                             <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
                         </button>
                     </td>
@@ -367,10 +363,10 @@
         </table>
         <div class="info-pagination-container">
             <div class="info-text">
-                Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }} dari {{ $data->total() }} data pada halaman {{ $data->currentPage() }}.
+                Menampilkan {{ $barangMasuk->firstItem() }} - {{ $barangMasuk->lastItem() }} dari {{ $barangMasuk->total() }} data pada halaman {{ $barangMasuk->currentPage() }}.
             </div>
             <div class="pagination-container">
-                {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+                {{ $barangMasuk->appends(request()->query())->links('pagination::bootstrap-4') }}
             </div>
         </div>
         @else
@@ -384,25 +380,47 @@
 </div>
 
 <!-- Modal Detail Barang -->
-<div class="modal fade" id="detailBarangModal" tabindex="-1" aria-labelledby="detailBarangModalLabel" aria-hidden="true">
+<div class="modal fade" id="detailModal{{ $d->barang_masuk_id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $d->barang_masuk_id }}" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="detailBarangModalLabel">Detail Barang</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="detailModalLabel{{ $d->barang_masuk_id }}">Detail Barang Masuk</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <p><strong>Nama:</strong> <span id="detail-nama"></span></p>
-            <p><strong>Jenis:</strong> <span id="detail-jenis"></span></p>
-            <p><strong>Jumlah:</strong> <span id="detail-jumlah"></span></p>
-            <p><strong>Keterangan:</strong> <span id="detail-keterangan"></span></p>
+                <div class="grid grid-cols-10 gap-2">
+                    <div class="font-bold col-span-3">Nama Barang:</div>
+                    <div class="col-span-7">{{ $d->nama_barang }}</div>
+                    <div class="font-bold col-span-3">Jenis Barang:</div>
+                    <div class="col-span-7">{{ $d->nama_jenis_barang }}</div>
+                    <div class="font-bold col-span-3">Supplier:</div>
+                    <div class="col-span-7">{{ $d->nama_supplier }}</div>
+                    <div class="font-bold col-span-3">Tanggal Masuk:</div>
+                    <div class="col-span-7">{{ $d->tanggal }}</div>
+                    <div class="font-bold col-span-3">Keterangan:</div>
+                    <div class="col-span-7">{{ $d->keterangan }}</div>
+                    <div class="font-bold col-span-3">Jumlah:</div>
+                    <div class="col-span-7">{{ $d->jumlah }}</div>
+
+                    <!-- Detail barang -->
+                    @foreach ($d->detail as $index => $detail)
+                        <hr class="col-span-10 my-2">
+                        <div class="font-bold col-span-3">Barang {{ $index + 1 }}:</div>
+                        <div class="col-span-7">
+                            <div class="font-bold">SN / Kondisi</div>
+                            <div class="ml-5">{{ $detail->serial_number }} — {{ $detail->status_barang }}</div>
+                            <div class="font-bold">Kelengkapan</div>
+                            <div class="ml-5">{{ $detail->kelengkapan }}</div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
+            {{-- <div class="modal-footer gap-x-3">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div> --}}
         </div>
-        </div>
-    </div>  
+    </div>
+</div>
 
 <!-- Modal Konfirmasi Hapus -->
 <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -426,124 +444,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal Tambah Data -->
-<div class="modal fade" id="tambahDataModal" tabindex="-1" aria-labelledby="tambahDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="tambahDataModalLabel">Add Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form method="post" action="{{ route('barang.store') }}" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Item</label>
-                        <input type="text" id="nama" name="nama" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="jenis_barang" class="form-label">Type</label>
-                        <select id="jenis_barang" name="jenis_barang" class="form-select" required>
-                            <option value="" disabled selected>Select</option>
-                            @foreach($data as $jb)
-                                <option value="{{ $jb->id }}">{{ $jb->nama_jenis_barang }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="supplier" class="form-label">Supplier</label>
-                        <select id="supplier" name="supplier" class="form-select" required>
-                            <option value="" disabled selected>Select</option>
-                            @foreach($data as $d)
-                                <option value="{{ $d->id }}">{{ $d->nama_supplier }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="keterangan" class="form-label">Description</label>
-                        <input type="text" id="keterangan" name="keterangan" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Edit Data -->
-<div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editDataLabel">Edit Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="post" action="" enctype="multipart/form-data">
-                    @csrf
-                    @method('put')
-
-                    <div class="mb-3">
-                        <label for="nama" class="form-label">Item</label>
-                        <input type="text" id="edit-nama" name="nama" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="jenis_barang" class="form-label">Type</label>
-                        <select id="edit-jenis_barang" name="jenis_barang" class="form-select" required>
-                            <option selected>Select</option>
-                            @foreach($data as $d)
-                                <option value="{{ $d->id }}">{{ $d->nama_jenis_barang }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="supplie_id" class="form-label">Supplier</label>
-                        <select id="edit-supplier_id" name="supplier_id" class="form-select" required>
-                            <option selected>Select</option>
-                            @foreach($data as $d)
-                                <option value="{{ $d->id }}">{{ $d->nama_supplier }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="keterangan" class="form-label">Description</label>
-                        <input type="text" id="edit-keterangan" name="keterangan" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Edit</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const editModal = new bootstrap.Modal(document.getElementById('editData'));
-
-        document.querySelectorAll('.btn-edit').forEach(button => {
-            button.addEventListener('click', function() {
-                const barangId = this.getAttribute('data-id');
-                const barangNama = this.getAttribute('data-nama');
-                const barangJenis = this.getAttribute('data-jenis');
-                const barangSupplier = this.getAttribute('data-supplier');
-                const barangKeterangan = this.getAttribute('data-keterangan');
-
-                // Update form action URL with the correct id
-                document.getElementById('editForm').action = `/barang/update/${barangId}`;
-
-                // Populate form fields
-                document.getElementById('edit-nama').value = barangNama;
-                document.getElementById('edit-jenis_barang').value = barangJenis;
-                document.getElementById('edit-supplier_id').value = barangSupplier;
-                document.getElementById('edit-keterangan').value = barangKeterangan;
-
-                // Show the modal
-                editModal.show();
-            });
-        });
-    });
-</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -591,7 +491,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const itemName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
             
             document.getElementById('itemName').innerText = itemName;
-            document.getElementById('deleteForm').action = `/barang/delete/${itemId}`;
+            document.getElementById('deleteForm').action = `/barangmasuk/delete/${itemId}`;
             
             deleteModal.show();
         });
@@ -633,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (selected.length > 0) {
             if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                fetch('/barang/delete-selected', {
+                fetch('/barangmasuk/delete-selected', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

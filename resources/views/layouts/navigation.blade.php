@@ -216,12 +216,12 @@
               <ul id="itemSubmenu" class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}" aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}" href="/barangmasuk">
-                    <span class="hide-menu" style="color: {{ request()->is('barangmasuk') ? '#007bff' : 'gray' }};">Incoming Item</span>
+                    <span class="hide-menu" style="color: {{ request()->is('barangmasuk') ? '#635bff' : 'gray' }};">Incoming Item</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}" href="/barangkeluar">
-                    <span class="hide-menu" style="color: {{ request()->is('barangkeluar') ? '#007bff' : 'gray' }};">Outbound Item</span>
+                    <span class="hide-menu" style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">Outbound Item</span>
                   </a>
                 </li>
               </ul>

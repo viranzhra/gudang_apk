@@ -34,9 +34,9 @@ class BarangMasukController extends Controller
 			)
 			->selectRaw("DATE_FORMAT(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal")
 			->when($search, function ($query) use ($search) {
-				return $query->where('barang_masuk.keterangan', 'like', '%' . $search . '%')
+				return $query->where('barang_masuk.barang_id', 'like', '%' . $search . '%')
 					->orWhere('barang.nama', 'like', '%' . $search . '%')
-					->orWhere('barang_masuk.tanggal', 'like', '%' . $search . '%');
+					->orWhere('supplier.nama', 'like', '%' . $search . '%');
 			})
 			->orderBy('barang_masuk.created_at', 'desc')
 			->paginate(7);
@@ -46,7 +46,7 @@ class BarangMasukController extends Controller
 			$item->detail = DB::table('detail_barang_masuk')
 				->leftJoin('serial_number', 'detail_barang_masuk.serial_number_id', '=', 'serial_number.id')
 				->leftJoin('status_barang', 'detail_barang_masuk.status_barang_id', '=', 'status_barang.id')
-				->select('serial_number.serial_number', 'status_barang.nama as status_barang', 'status_barang.warna as warna_status_barang', 'detail_barang_masuk.kelengkapan')
+				->select('serial_number.serial_number', 'status_barang.nama as status_barang', 'detail_barang_masuk.kelengkapan')
 				->where('detail_barang_masuk.barangmasuk_id', $item->barang_masuk_id)
 				->orderBy('serial_number.serial_number', 'asc')
 				->get();
