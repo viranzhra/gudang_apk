@@ -75,12 +75,18 @@
         border-radius: 4px;
     }
 
+    .btn-actions-container {
+        display: flex; /* Align items in a row */
+        justify-content: flex-end; /* Align items to the right */
+        gap: 5px; /* Space between buttons */
+        align-items: center; /* Center items vertically */
+    }
+
     .btn-action {
-        background: none;
-        border: none; 
-        padding: 0; 
-        cursor: pointer; 
-        margin-right: 5px;
+        border: none; /* Remove border */
+        background: none; /* Remove background */
+        padding: 0; /* Remove padding */
+        cursor: pointer; /* Pointer cursor for interaction */
     }
 
     .icon-edit, .icon-delete, .icon-detail, .icon-tambah {
@@ -347,16 +353,22 @@
                     <td>{{ $d->keterangan }}</td>
                     <td>{{ $d->tanggal }}</td>
                     <td>
-                        <button type="button" data-bs-toggle="modal" data-bs-target="#detailModal{{ $d->barang_masuk_id }}" aria-label="Detail" class="btn-detail btn-action" style="border: none;">
-                            <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                        </button>                        
-                        <a href="/barangmasuk/create/{{ $d->barang_masuk_id }}" class="btn-tambah btn-action">
-                            <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
-                        </a>                        
-                        <button data-id="{{ $d->barang_masuk_id }}" class="btn-action" aria-label="Hapus">
-                            <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                        </button>
-                    </td>
+                        <div class="btn-actions-container">
+                            <button type="button" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#detailModal{{ $d->barang_masuk_id }}" 
+                                    aria-label="Detail" 
+                                    class="btn-action">
+                                <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                            </button>                      
+                            <a href="/barangmasuk/create/{{ $d->barang_masuk_id }}" class="btn-action">
+                                <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
+                            </a>                        
+                            <button data-id="{{ $d->barang_masuk_id }}" class="btn-action" aria-label="Hapus">
+                                <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                            </button>
+                        </div>
+                    </td>                                     
                 </tr>
                 @endforeach
             </tbody>
@@ -388,6 +400,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <!-- Detail content here -->
                 <div class="grid grid-cols-10 gap-2">
                     <div class="font-bold col-span-3">Nama Barang:</div>
                     <div class="col-span-7">{{ $d->nama_barang }}</div>
@@ -415,9 +428,6 @@
                     @endforeach
                 </div>
             </div>
-            {{-- <div class="modal-footer gap-x-3">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-            </div> --}}
         </div>
     </div>
 </div>
@@ -559,21 +569,34 @@ document.addEventListener('DOMContentLoaded', function() {
 {{-- detail --}}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Event listener for button click
-        document.querySelectorAll('.btn-detail').forEach(function(button) {
+        // Add event listener to all detail buttons
+        document.querySelectorAll('.btn-action[data-bs-toggle="modal"]').forEach(button => {
             button.addEventListener('click', function() {
-                // Get item ID from button
-                const itemId = this.getAttribute('data-id');
-
+                const itemId = this.getAttribute('data-bs-target').replace('#detailModal', '');
+                
                 // Fetch data from server
                 fetch(`/barang/detail/${itemId}`)
                     .then(response => response.json())
                     .then(data => {
-                        // Populate modal with data
-                        document.getElementById('detail-nama').textContent = data.nama;
-                        document.getElementById('detail-jenis').textContent = data.jenis;
-                        document.getElementById('detail-jumlah').textContent = data.jumlah;
-                        document.getElementById('detail-keterangan').textContent = data.keterangan;
+                        // Update modal content
+                        const modal = document.querySelector(`#detailModal${itemId}`);
+                        modal.querySelector('.modal-title').textContent = `Detail Barang Masuk ${data.nama_barang}`;
+                        modal.querySelector('.modal-body').innerHTML = `
+                            <div class="grid grid-cols-10 gap-2">
+                                <div class="font-bold col-span-3">Nama Barang:</div>
+                                <div class="col-span-7">${data.nama_barang}</div>
+                                <div class="font-bold col-span-3">Jenis Barang:</div>
+                                <div class="col-span-7">${data.nama_jenis_barang}</div>
+                                <div class="font-bold col-span-3">Supplier:</div>
+                                <div class="col-span-7">${data.nama_supplier}</div>
+                                <div class="font-bold col-span-3">Tanggal Masuk:</div>
+                                <div class="col-span-7">${data.tanggal}</div>
+                                <div class="font-bold col-span-3">Keterangan:</div>
+                                <div class="col-span-7">${data.keterangan}</div>
+                                <div class="font-bold col-span-3">Jumlah:</div>
+                                <div class="col-span-7">${data.jumlah}</div>
+                            </div>
+                        `;
                     })
                     .catch(error => console.error('Error fetching data:', error));
             });

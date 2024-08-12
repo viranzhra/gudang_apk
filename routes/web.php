@@ -70,11 +70,12 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/barangmasuk', [BarangMasukController::class, 'index'])->name('barangmasuk.index');
     Route::get('/barangmasuk/create/{id?}', [BarangMasukController::class, 'create'])->name('barangmasuk.create');
+    Route::get('/barangmasuk/create', [BarangMasukController::class, 'create'])->name('barangmasuk.create');
     Route::get('/barangmasuk/get-by-jenis/{id}', [BarangMasukController::class, 'getBarangByJenis']);
     Route::post('/barangmasuk/store', [BarangMasukController::class, 'store'])->name('barangmasuk.store');
     //Route::get('/barangmasuk/edit/{id}', [BarangMasukController::class, 'edit'])->name('barangmasuk.edit');
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
-    Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
+    Route::delete('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
 
     Route::get('/serialnumber', [SerialNumberController::class, 'index'])->name('serialnumber.index');
