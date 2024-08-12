@@ -237,90 +237,85 @@
         }
 </style>
 
-<div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
-    <div class="card-body">
-      <h4 style="color: #5a5c69; font-size: 20px;">Hello, Welcome {{ Auth::user()->name }}!</h4>
-    </div>
-  </div>
-  <div class="row">
-    <!-- Total Pemasukkan barang -->
-    <div class="col-xl-3 col-md-6 mb-3">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Barang Masuk
-                        </div>
-                        <br>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            1235
-                        </div>
-                        <div class="col-auto">
-                          <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                      </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total Keluar barang -->
-    <div class="col-xl-3 col-md-6 mb-3">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Barang Keluar
-                        </div>
-                        <br>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            54321
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-boxes fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Total barang keseluruhan -->
-    <div class="col-xl-3 col-md-6 mb-3">
-        <div class="card border-left-primary shadow h-100 py-2">
-            <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                    <div class="col mr-2">
-                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                            Total Keseluruhan Barang
-                        </div>
-                        <br>
-                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                            7654321
-                        </div>
-                    </div>
-                    <div class="col-auto">
-                        <i class="fas fa-warehouse fa-2x text-gray-300"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Suplier -->
-    <div class="col-xl-3 col-md-6 mb-3">
+<div class="row" style="margin-top: 20px;">
+  <!-- Total Supplier -->
+  <div class="col-xl-3 col-md-6 mb-3">
       <div class="card border-left-primary shadow h-100 py-2">
           <div class="card-body">
               <div class="row no-gutters align-items-center">
                   <div class="col mr-2">
                       <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                          Total Suplier
+                          Total Supplier
                       </div>
                       <br>
                       <div class="h5 mb-0 font-weight-bold text-gray-800">
-                          10
+                          {{ $total_supplier }}
+                      </div>
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Total Barang -->
+  <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                          Total Barang
+                      </div>
+                      <br>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          {{ $total_barang }}
+                      </div>
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-warehouse fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Total Barang Masuk -->
+  <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                          Total Barang Masuk
+                      </div>
+                      <br>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          {{ $total_barang_masuk }}
+                      </div>
+                  </div>
+                  <div class="col-auto">
+                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Total Barang Keluar -->
+  <div class="col-xl-3 col-md-6 mb-3">
+      <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+              <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                          Total Barang Keluar
+                      </div>
+                      <br>
+                      <div class="h5 mb-0 font-weight-bold text-gray-800">
+                          {{ $total_barang_keluar }}
                       </div>
                   </div>
                   <div class="col-auto">
@@ -333,6 +328,7 @@
 </div>
 
 <div class="row" style="margin-top: 20px;">
+
     <!-- Grafik Barang Masuk -->
     <div class="col-lg-6 d-flex align-items-strech">
       <div class="card w-100" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem;">
@@ -372,7 +368,7 @@
               </select>
             </div>
           </div>
-          <div id="revenue-forecast2"></div>
+          <div id="revenue-forecast"></div>
         </div>
       </div>
     </div>
@@ -475,6 +471,6 @@
   });
 });
 
-  </script>
+</script>
 
 @endsection

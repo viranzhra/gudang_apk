@@ -80,7 +80,6 @@
         border: none; 
         padding: 0; 
         cursor: pointer; 
-        margin-right: 5px;
     }
 
     .icon-edit, .icon-delete, .icon-detail {
