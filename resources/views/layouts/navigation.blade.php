@@ -189,12 +189,27 @@
                 <span class="hide-menu">Supplier</span>
               </a>
             </li>
-            <li class="sidebar-item {{ request()->is('barang') ? 'active' : '' }}">
-              <a class="sidebar-link" href="{{ url('/barang') }}">
+            <li class="sidebar-item {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
+              <a class="sidebar-link {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}" href="/barang" aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#Submenu">
                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Item</span>
               </a>
             </li>
+            <li class="sidebar-item {{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
+              <ul id="Submenu" class="collapse {{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'show' : '' }}" aria-expanded="{{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}">
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link {{ request()->is('jenisbarang') ? 'active' : '' }}" href="/jenisbarang">
+                    <span class="hide-menu" style="color: {{ request()->is('jenisbarang') ? '#635bff' : 'gray' }};">Item Type</span>
+                  </a>
+                </li>
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link {{ request()->is('statusbarang') ? 'active' : '' }}" href="/statusbarang">
+                    <span class="hide-menu" style="color: {{ request()->is('statusbarang') ? '#635bff' : 'gray' }};">Item Status</span>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            
             <li class="sidebar-item">
               <a class="sidebar-link" href="/customer" aria-expanded="false">
                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
