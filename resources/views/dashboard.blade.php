@@ -238,6 +238,11 @@
 </style>
 
 <div class="row" style="margin-top: 20px;">
+  <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
+    <div class="card-body">
+      <h4 style="color: #5a5c69; font-size: 20px;">Hallo, Selamat Datang {{ Auth::user()->name }}!</h4>
+    </div>
+  </div>
   <!-- Total Supplier -->
   <div class="col-xl-3 col-md-6 mb-3">
       <div class="card border-left-primary shadow h-100 py-2">

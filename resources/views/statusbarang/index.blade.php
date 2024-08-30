@@ -268,7 +268,7 @@
 </style>
 
 <div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
-    <h4 class="mb-4" style="color: #8a8a8a;">Item Type</h4>
+    <h4 class="mb-4" style="color: #8a8a8a;">Item Status</h4>
     <div class="search-container">
         <form action="{{ route('statusbarang.index') }}" method="GET" class="search-box">
             <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">

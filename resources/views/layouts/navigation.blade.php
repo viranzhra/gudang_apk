@@ -190,13 +190,16 @@
               </a>
             </li>
             <li class="sidebar-item {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
-              <a class="sidebar-link {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}" href="/barang" aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#Submenu">
+              <a class="sidebar-link {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}" aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#Submenu">
                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Item</span>
               </a>
-            </li>
-            <li class="sidebar-item {{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
-              <ul id="Submenu" class="collapse {{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'show' : '' }}" aria-expanded="{{ request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}">
+              <ul id="Submenu" class="collapse {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'show' : '' }}" aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}">
+                <li class="sidebar-sub-item">
+                  <a class="sidebar-link {{ request()->is('barang') ? 'active' : '' }}" href="/barang">
+                    <span class="hide-menu" style="color: {{ request()->is('barang') ? '#635bff' : 'gray' }};">Item Data</span>
+                  </a>
+                </li>
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('jenisbarang') ? 'active' : '' }}" href="/jenisbarang">
                     <span class="hide-menu" style="color: {{ request()->is('jenisbarang') ? '#635bff' : 'gray' }};">Item Type</span>
@@ -208,7 +211,7 @@
                   </a>
                 </li>
               </ul>
-            </li>
+            </li>            
             
             <li class="sidebar-item">
               <a class="sidebar-link" href="/customer" aria-expanded="false">
