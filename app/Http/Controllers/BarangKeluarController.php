@@ -27,7 +27,7 @@ class BarangKeluarController extends Controller
                 'permintaan_barang_keluar.id as permintaan_barang_keluar_id',
                 'permintaan_barang_keluar.jumlah'
             )
-            ->selectRaw("DATE_FORMAT(barang_keluar.tanggal, '%d %M %Y') as formatted_tanggal")
+            ->selectRaw("TO_CHAR(barang_keluar.tanggal, '%d %M %Y') as formatted_tanggal")
             ->when($search, function ($query) use ($search) {
                 return $query->where('customer.nama', 'like', '%' . $search . '%')
 					->orWhere('keperluan.nama', 'like', '%' . $search . '%')

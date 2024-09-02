@@ -176,49 +176,48 @@
             <li class="nav-small-cap">
               <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
               <span class="hide-menu">MANAGEMENT</span>
-            </li>
-            <li class="sidebar-item">
-              <a class="sidebar-link" href="/user" aria-expanded="false">
-                <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                <span class="hide-menu">User</span>
-              </a>
-            </li>           
+            </li>         
             <li class="sidebar-item">
               <a class="sidebar-link" href="/supplier" aria-expanded="false">
                 <iconify-icon icon="solar:bookmark-square-minimalistic-line-duotone"></iconify-icon>
                 <span class="hide-menu">Supplier</span>
               </a>
             </li>
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="/customer" aria-expanded="false">
+                <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
+                <span class="hide-menu">Customer</span>
+              </a>
+            </li>
             <li class="sidebar-item {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
-              <a class="sidebar-link {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}" aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#Submenu">
+              <a class="sidebar-link has-arrow {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}" href="#" aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}" data-bs-toggle="collapse" data-bs-target="#Submenu">
                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                 <span class="hide-menu">Item</span>
               </a>
               <ul id="Submenu" class="collapse {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'show' : '' }}" aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}">
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('barang') ? 'active' : '' }}" href="/barang">
-                    <span class="hide-menu" style="color: {{ request()->is('barang') ? '#635bff' : 'gray' }};">Item Data</span>
+                    <span class="hide-menu" style="color: {{ request()->is('barang') ? '#635bff' : 'gray' }};">Data</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('jenisbarang') ? 'active' : '' }}" href="/jenisbarang">
-                    <span class="hide-menu" style="color: {{ request()->is('jenisbarang') ? '#635bff' : 'gray' }};">Item Type</span>
+                    <span class="hide-menu" style="color: {{ request()->is('jenisbarang') ? '#635bff' : 'gray' }};">Type</span>
                   </a>
                 </li>
                 <li class="sidebar-sub-item">
                   <a class="sidebar-link {{ request()->is('statusbarang') ? 'active' : '' }}" href="/statusbarang">
-                    <span class="hide-menu" style="color: {{ request()->is('statusbarang') ? '#635bff' : 'gray' }};">Item Status</span>
+                    <span class="hide-menu" style="color: {{ request()->is('statusbarang') ? '#635bff' : 'gray' }};">Status</span>
                   </a>
                 </li>
               </ul>
-            </li>            
-            
+            </li>
             <li class="sidebar-item">
-              <a class="sidebar-link" href="/customer" aria-expanded="false">
+              <a class="sidebar-link" href="/" aria-expanded="false">
                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                <span class="hide-menu">Customer</span>
+                <span class="hide-menu">Type purpose</span>
               </a>
-            </li>                                         
+            </li>                                      
             <li>
               <span class="sidebar-divider lg"></span>
             </li>

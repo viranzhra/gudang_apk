@@ -23,7 +23,7 @@
     }                                  
 
     th, td {
-        padding: 8px;
+        padding: 14px 20px;
         text-align: left;
         color: black;
     }
@@ -247,20 +247,20 @@
     }
 
     /* Detail Item */
-    .detail-item {
+    .detail-supplier {
         margin-bottom: 1rem; /* Jarak antara baris detail */
         display: flex;
         align-items: center; /* Vertically center the content */
     }
 
     /* Label */
-    .detail-item strong {
+    .detail-supplier strong {
         margin-right: 1rem; /* Jarak antara label dan isi */
         flex: 0 0 100px; /* Width of label column */
     }
 
     /* Isi Detail */
-    .detail-item span {
+    .detail-supplier span {
         color: #333; 
         font-size: 1rem; 
     }
@@ -326,6 +326,7 @@
                     <th>No</th>
                     <th>Supplier</th>
                     <th>Address</th>
+                    <th>Phone</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -339,8 +340,9 @@
                     <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->alamat }}</td>
+                    <td>{{ $d->telepon }}</td>
                     <td>
-                        <button type="button" aria-label="Detail" data-id="{{ $d->id }}" class="btn-detail btn-action" style="border: none;">
+                        <button aria-label="Detail" data-id="1" class="btn-detail btn-action" style="border: none;">
                             <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                         </button>
                         <button type="button" class="btn-edit btn-action" 
@@ -385,20 +387,20 @@
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailDataLabel">Detail Item</h5>
+                <h5 class="modal-title" id="detailDataLabel">Detail Supplier</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="detail-item">
+                <div class="detail-supplier">
                     <strong>Supplier:</strong> <span id="detail-nama"></span>
                 </div>
-                <div class="detail-item">
+                <div class="detail-supplier">
                     <strong>Address:</strong> <span id="detail-alamat"></span>
                 </div>
-                <div class="detail-item">
+                <div class="detail-supplier">
                     <strong>Phone:</strong> <span id="detail-telepon"></span>
                 </div>
-                <div class="detail-item">
+                <div class="detail-supplier">
                     <strong>Description:</strong> <span id="detail-keterangan"></span>
                 </div>
             </div>

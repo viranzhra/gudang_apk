@@ -32,7 +32,7 @@ class BarangMasukController extends Controller
 				'supplier.nama as nama_supplier',
 				'barang_masuk.jumlah'
 			)
-			->selectRaw("DATE_FORMAT(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal")
+			->selectRaw("TO_CHAR(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal")
 			->when($search, function ($query) use ($search) {
 				return $query->where('barang_masuk.barang_id', 'like', '%' . $search . '%')
 					->orWhere('barang.nama', 'like', '%' . $search . '%')

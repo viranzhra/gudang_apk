@@ -323,7 +323,7 @@
                         <input type="checkbox" id="select-all">
                     </th>
                     <th>No</th>
-                    <th>Name</th>
+                    <th>Customer</th>
                     <th>Address</th>
                     <th>Phone</th>
                     <th>Action</th>
@@ -414,7 +414,7 @@
                 <form method="post" action="{{ route('customer.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Name</label>
+                        <label for="nama" class="form-label">Customer</label>
                         <input type="text" id="nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
@@ -449,7 +449,7 @@
                     @csrf
                 
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Name</label>
+                        <label for="nama" class="form-label">Customer</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
@@ -481,7 +481,7 @@
             </div>
             <div class="modal-body">
                 <div class="detail-item">
-                    <strong>Name:</strong> <span id="detail-nama"></span>
+                    <strong>Customer:</strong> <span id="detail-nama"></span>
                 </div>
                 <div class="detail-item">
                     <strong>Address:</strong> <span id="detail-alamat"></span>

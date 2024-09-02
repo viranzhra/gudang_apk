@@ -28,7 +28,7 @@ class LaporanController extends Controller
                 'jenis_barang.nama as nama_jenis_barang',
                 'supplier.nama as nama_supplier',
                 DB::raw('SUM(barang_masuk.jumlah) as jumlah'),
-                DB::raw("DATE_FORMAT(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal"),
+                DB::raw("TO_CHAR(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal"),
                 'barang_masuk.tanggal'
             )
             ->groupBy('barang.id', 'barang.nama', 'jenis_barang.nama', 'supplier.nama', 'barang_masuk.tanggal')
@@ -81,7 +81,7 @@ class LaporanController extends Controller
 				'supplier.nama as nama_supplier',
 				'barang_masuk.jumlah'
 			)
-			->selectRaw("DATE_FORMAT(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal")
+			->selectRaw("TO_CHAR(barang_masuk.tanggal, '%d %M %Y') as formatted_tanggal")
 			->when($search, function ($query) use ($search) {
 				return $query->where('barang.nama', 'like', '%' . $search . '%')
 					->orWhere('barang_masuk.keterangan', 'like', '%' . $search . '%')
@@ -130,7 +130,7 @@ class LaporanController extends Controller
                 'permintaan_barang_keluar.id as permintaan_barang_keluar_id',
                 'permintaan_barang_keluar.jumlah'
             )
-            ->selectRaw("DATE_FORMAT(barang_keluar.tanggal, '%d %M %Y') as formatted_tanggal")
+            ->selectRaw("TO_CHAR(barang_keluar.tanggal, '%d %M %Y') as formatted_tanggal")
                 ->when($search, function ($query) use ($search) {
                     return $query->where('customer.nama', 'like', '%' . $search . '%')
                     ->orWhere('keperluan.nama', 'like', '%' . $search . '%')
