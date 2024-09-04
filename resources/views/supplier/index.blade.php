@@ -23,7 +23,7 @@
     }                                  
 
     th, td {
-        padding: 14px 20px;
+        padding: 8px;
         text-align: left;
         color: black;
     }
@@ -247,20 +247,20 @@
     }
 
     /* Detail Item */
-    .detail-supplier {
+    .detail-item {
         margin-bottom: 1rem; /* Jarak antara baris detail */
         display: flex;
         align-items: center; /* Vertically center the content */
     }
 
     /* Label */
-    .detail-supplier strong {
+    .detail-item strong {
         margin-right: 1rem; /* Jarak antara label dan isi */
         flex: 0 0 100px; /* Width of label column */
     }
 
     /* Isi Detail */
-    .detail-supplier span {
+    .detail-item span {
         color: #333; 
         font-size: 1rem; 
     }
@@ -326,7 +326,6 @@
                     <th>No</th>
                     <th>Supplier</th>
                     <th>Address</th>
-                    <th>Phone</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -340,7 +339,6 @@
                     <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
                     <td>{{ $d->nama }}</td>
                     <td>{{ $d->alamat }}</td>
-                    <td>{{ $d->telepon }}</td>
                     <td>
                         <button aria-label="Detail" data-id="1" class="btn-detail btn-action" style="border: none;">
                             <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
@@ -368,7 +366,7 @@
             <div class="info-text">
                 Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }} dari {{ $data->total() }} data pada halaman {{ $data->currentPage() }}.
             </div>
-            <div class="pagination-container">
+            <div class=" ination-container">
                 {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
             </div>
         </div>
@@ -387,20 +385,20 @@
     <div class="modal-dialog modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="detailDataLabel">Detail Supplier</h5>
+                <h5 class="modal-title" id="detailDataLabel">Detail Item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="detail-supplier">
+                <div class="detail-item">
                     <strong>Supplier:</strong> <span id="detail-nama"></span>
                 </div>
-                <div class="detail-supplier">
+                <div class="detail-item">
                     <strong>Address:</strong> <span id="detail-alamat"></span>
                 </div>
-                <div class="detail-supplier">
+                <div class="detail-item">
                     <strong>Phone:</strong> <span id="detail-telepon"></span>
                 </div>
-                <div class="detail-supplier">
+                <div class="detail-item">
                     <strong>Description:</strong> <span id="detail-keterangan"></span>
                 </div>
             </div>
@@ -420,7 +418,6 @@
                 Apakah Anda yakin ingin menghapus <span id="itemName"></span> ini?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
                 <form id="deleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
@@ -653,30 +650,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 {{-- detail --}}
 <script>
-    $(document).ready(function() {
-        // When the button to open the modal is clicked
-        $('.btn-detail').on('click', function() {
-            var supplierId = $(this).data('id'); // Get ID from button
+    document.addEventListener('DOMContentLoaded', function() {
+        const detailModal = new bootstrap.Modal(document.getElementById('detailData'));
     
-            $.ajax({
-                url: '/supplier/detail/' + supplierId,
-                method: 'GET',
-                success: function(data) {
-                    // Fill data into the modal
-                    $('#detail-nama').text(data.nama);
-                    $('#detail-alamat').text(data.alamat);
-                    $('#detail-telepon').text(data.telepon);
-                    $('#detail-keterangan').text(data.keterangan);
+        document.querySelectorAll('[aria-label="Detail"]').forEach(button => {
+            button.addEventListener('click', function() {
+                const supplierRow = this.closest('tr');
+                const supplierName = supplierRow.querySelector('td:nth-child(3)').innerText.trim();
+                const supplierAddress = supplierRow.querySelector('td:nth-child(4)').innerText.trim();
+                const supplierPhone = supplierRow.querySelector('td:nth-child(5)').innerText.trim();
+                const supplierDescription = supplierRow.querySelector('td:nth-child(6)').innerText.trim();
     
-                    // Show the modal
-                    $('#detailData').modal('show');
-                },
-                error: function() {
-                    alert('Error fetching data.');
-                }
+                // Populate the modal with supplier details
+                document.getElementById('detail-nama').innerText = supplierName;
+                document.getElementById('detail-alamat').innerText = supplierAddress;
+                document.getElementById('detail-telepon').innerText = supplierPhone;
+                document.getElementById('detail-keterangan').innerText = supplierDescription;
+    
+                detailModal.show();
             });
         });
     });
-</script>
+    </script>
     
 @endsection

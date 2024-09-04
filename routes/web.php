@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/customer/delete-selected', [CustomerController::class, 'deleteSelected']);
 
     Route::get('/jenisbarang', [JenisBarangController::class, 'index'])->name('jenisbarang.index');
+    Route::get('/jenisbarang/data', [JenisBarangController::class, 'getData'])->name('jenisbarang.data');
     Route::get('/jenisbarang/create', [JenisBarangController::class, 'create'])->name('jenisbarang.create');
     Route::post('/jenisbarang/store', [JenisBarangController::class, 'store'])->name('jenisbarang.store');
     Route::get('/jenisbarang/edit/{id}', [JenisBarangController::class, 'edit'])->name('jenisbarang.edit');

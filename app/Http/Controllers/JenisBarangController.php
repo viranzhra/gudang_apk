@@ -8,19 +8,41 @@ use App\Models\JenisBarang;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class JenisBarangController extends Controller
 {
 
-	public function index(Request $request)
+	// public function index(Request $request)
+	// {
+	// 	$search = $request->input('search');
+
+    //     $data = JenisBarang::when($search, function ($query) use ($search) {
+    //         return $query->where('nama', 'like', '%' . $search . '%');
+    //     })->paginate(7);
+
+    //     return view('jenisbarang.index', compact('data'));
+	// }
+
+	public function index()
 	{
-		$search = $request->input('search');
-
-        $data = JenisBarang::when($search, function ($query) use ($search) {
-            return $query->where('nama', 'like', '%' . $search . '%');
-        })->paginate(7);
-
-        return view('jenisbarang.index', compact('data'));
+		return view('jenisbarang.index');
+	}
+	
+	public function getData(Request $request)
+	{
+		if ($request->ajax()) {
+			$data = JenisBarang::select(['id', 'nama'])
+				->get();
+	
+			return DataTables::of($data)
+				->addIndexColumn()
+				->addColumn('action', function($row){
+					return '<button class="btn btn-warning btn-sm edit-btn" data-id="'.$row->id.'">Edit</button>
+							<button class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Delete</button>';
+				})
+				->make(true);
+		}
 	}
 
 	public function create()
@@ -87,5 +109,5 @@ class JenisBarangController extends Controller
 			}
 		}
 		return redirect('/jenisbarang')->with('success', 'Anda berhasil menghapus data terpilih!');
-	}
+	}	
 }

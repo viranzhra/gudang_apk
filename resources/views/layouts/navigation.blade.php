@@ -215,7 +215,7 @@
             <li class="sidebar-item">
               <a class="sidebar-link" href="/" aria-expanded="false">
                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                <span class="hide-menu">Type purpose</span>
+                <span class="hide-menu">Type Requirement</span>
               </a>
             </li>                                      
             <li>
