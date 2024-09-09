@@ -24,27 +24,25 @@ class JenisBarangController extends Controller
     //     return view('jenisbarang.index', compact('data'));
 	// }
 
-	public function index()
-	{
-		return view('jenisbarang.index');
-	}
-	
-	public function getData(Request $request)
+	public function index(Request $request)
 	{
 		if ($request->ajax()) {
-			$data = JenisBarang::select(['id', 'nama'])
-				->get();
-	
+			$data = JenisBarang::select('id', 'nama')->latest()->get();
+			\Log::info('DataTables data:', $data->toArray()); // Tambahkan log
 			return DataTables::of($data)
 				->addIndexColumn()
-				->addColumn('action', function($row){
-					return '<button class="btn btn-warning btn-sm edit-btn" data-id="'.$row->id.'">Edit</button>
-							<button class="btn btn-danger btn-sm delete-btn" data-id="'.$row->id.'">Delete</button>';
+				->addColumn('action', function ($row) {
+					return '<button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '">Edit</button>'
+						. '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Delete</button>';
 				})
+				->rawColumns(['action'])
 				->make(true);
 		}
+	
+		return view('jenisbarang.index');
 	}
-
+		
+	
 	public function create()
 	{
 		return view('jenisbarang.create');

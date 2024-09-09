@@ -1,92 +1,52 @@
 @extends('layouts.navigation')
 
 @section('content')
-
-<div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Item Types</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
-            Add Item Type
-        </button>
-    </div>
-
-    @if (session('success'))
-    <div class="alert alert-success mt-2">
-        {{ session('success') }}
-    </div>
-    @elseif (session('error'))
-    <div class="alert alert-danger mt-2">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    <div class="table-responsive">
-        <table id="jenisbarang-table" class="table">
-            <thead>
-                <tr>
-                    <th><input type="checkbox" id="select-all"></th>
-                    <th>No.</th>
-                    <th>Item Type Name</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
-    </div>
-
-    <!-- Modal Tambah Data -->
-    <div class="modal fade" id="tambahDataModal" tabindex="-1" aria-labelledby="tambahDataModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tambahDataModalLabel">Add Item Type</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('jenisbarang.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label for="nama_jenis_barang" class="form-label">Item Type Name</label>
-                            <input type="text" name="nama_jenis_barang" class="form-control" id="nama_jenis_barang"
-                                required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container mt-3" style="padding: 30px; padding-bottom: 13px; width: 1160px;">
+    <h2 style="padding-bottom: 25px; color: #8a8a8a;">Data Jenis Barang</h2>
+    <table class="table table-bordered table-striped table-hover" id="jenisBarangTable" width="100%">
+        <thead class="thead-dark">
+            <tr>
+                <th style="width: 10px;">No</th>
+                <th>Nama Jenis Barang</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
 </div>
 
-<!-- DataTables Script -->
-@section('scripts')
-<script src="https://code.jquery.com/jquery.js"></script>
-<script src="https://cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
-<script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Bootstrap 4 integration -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Script untuk inisialisasi DataTables -->
 <script type="text/javascript">
-$(document).ready(function() {
-    $('#jenisbarang-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: "{{ route('jenisbarang.data') }}",
-        columns: [
-            { data: 'id', name: 'id', orderable: false, searchable: false, render: function(data, type, full, meta) {
-                return '<input type="checkbox" name="id[]" value="' + data + '">';
-            }},
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'nama', name: 'nama' },
-            { data: 'action', name: 'action', orderable: false, searchable: false },
-        ],
-        order: [[1, 'asc']]
+    $(document).ready(function () {
+        var table = $('#jenisBarangTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('jenisbarang.index') }}",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+                {data: 'nama', name: 'nama'}
+            ],
+            responsive: true,
+            language: {
+                paginate: {
+                    next: 'Next →', 
+                    previous: '← Previous' 
+                },
+                search: "Search:",
+                lengthMenu: "Display _MENU_ records per page",
+                zeroRecords: "No matching records found",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+                infoEmpty: "No entries available",
+            }
+        });
     });
-
-    $('#select-all').on('click', function(){
-        var rows = $('#jenisbarang-table').DataTable().rows({ 'search': 'applied' }).nodes();
-        $('input[type="checkbox"]', rows).prop('checked', this.checked);
-    });
-});
 </script>
-@endsection
-
 @endsection

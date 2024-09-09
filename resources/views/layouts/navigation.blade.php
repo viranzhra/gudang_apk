@@ -7,6 +7,9 @@
   <title>Matdash Free</title>
   <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
   <link rel="stylesheet" href="../assets/css/styles.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+
+
   <style>
     .container {
       width: 80%;
@@ -376,7 +379,7 @@ $.ajax({
   
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../assets/libs/jquery/dist/jquery.min.js"></script>
+  {{-- <script src="../assets/libs/jquery/dist/jquery.min.js"></script> --}}
   <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../assets/js/sidebarmenu.js"></script>
   <script src="../assets/js/app.min.js"></script>
