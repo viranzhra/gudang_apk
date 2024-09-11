@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/statusbarang/store', [StatusBarangController::class, 'store'])->name('statusbarang.store');
     Route::get('/statusbarang/edit/{id}', [StatusBarangController::class, 'edit'])->name('statusbarang.edit');
     Route::put('/statusbarang/update/{id}', [StatusBarangController::class, 'update'])->name('statusbarang.update');
-    Route::get('/statusbarang/delete/{id}', [StatusBarangController::class, 'delete'])->name('statusbarang.delete');
+    Route::delete('/statusbarang/delete/{id}', [StatusBarangController::class, 'delete'])->name('statusbarang.delete');
     Route::post('/statusbarang/delete-selected', [StatusBarangController::class, 'deleteSelected']);
 
     Route::get('/barang', [BarangController::class, 'index'])->name('barang.index');

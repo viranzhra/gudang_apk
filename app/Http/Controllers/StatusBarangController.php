@@ -10,20 +10,34 @@ use App\Models\Barang;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class StatusBarangController extends Controller
 {
 
+	// public function index(Request $request)
+	// {
+	// 	$search = $request->input('search');
+
+    //     $data = StatusBarang::when($search, function ($query) use ($search) {
+    //         return $query->where('nama', 'like', '%' . $search . '%');
+    //     })->paginate(7);
+
+    //     return view('statusbarang.index', compact('data'));
+	// }
+
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-        $data = StatusBarang::when($search, function ($query) use ($search) {
-            return $query->where('nama', 'like', '%' . $search . '%');
-        })->paginate(7);
-
-        return view('statusbarang.index', compact('data'));
+		if ($request->ajax()) {
+			$data = StatusBarang::select('id', 'nama')->latest();
+			return DataTables::of($data)
+				->addIndexColumn()
+				->make(true);
+		}
+	
+		return view('statusbarang.index');
 	}
+	
 
 	public function create()
 	{

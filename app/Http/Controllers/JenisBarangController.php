@@ -27,23 +27,18 @@ class JenisBarangController extends Controller
 	public function index(Request $request)
 	{
 		if ($request->ajax()) {
-			try {
-				$data = JenisBarang::select('id', 'nama')->latest()->get();
-				\Log::info('DataTables data:', ['data' => $data->toArray()]); // Log data yang dikembalikan
-				return DataTables::of($data)
-					->addIndexColumn()
-					->addColumn('action', function ($row) {
-						return '<button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '">Edit</button>'
-							. '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Delete</button>';
-					})
-					->rawColumns(['action'])
-					->make(true);
-			} catch (\Exception $e) {
-				\Log::error('Error fetching data: '.$e->getMessage());
-				return response()->json(['error' => 'Internal Server Error'], 500);
-			}
+			$data = JenisBarang::select('id', 'nama')->latest()->get();
+			\Log::info('DataTables data:', ['data' => $data->toArray()]); // Log data yang dikembalikan
+			return DataTables::of($data)
+				->addIndexColumn()
+				->addColumn('action', function ($row) {
+					return '<button type="button" class="btn btn-primary btn-sm edit-btn" data-id="' . $row->id . '">Edit</button>'
+						. '<button type="button" class="btn btn-danger btn-sm delete-btn" data-id="' . $row->id . '">Delete</button>';
+				})
+				->rawColumns(['action'])
+				->make(true);
 		}
-	
+
 		return view('jenisbarang.index');
 	}
 		

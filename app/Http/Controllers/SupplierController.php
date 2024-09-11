@@ -15,34 +15,59 @@ use Yajra\DataTables\Facades\DataTables;
 class SupplierController extends Controller
 {
 
+	// public function index(Request $request)
+	// {
+	// 	if ($request->ajax()) {
+	// 		try {
+	// 			$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
+	// 			return DataTables::of($data)
+	// 				->addIndexColumn() // This adds a row index
+	// 				->addColumn('checkbox', function($row){
+	// 					return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
+	// 				})
+	// 				->addColumn('action', function ($row) {
+	// 					return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
+	// 								<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+	// 							</a>'
+	// 						. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
+	// 								<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+	// 							</button>';
+	// 				})
+	// 				->rawColumns(['checkbox', 'action']) // Allow HTML for these columns
+	// 				->make(true);
+	// 		} catch (\Exception $e) {
+	// 			\Log::error('Error fetching data: '.$e->getMessage());
+	// 			return response()->json(['error' => 'Internal Server Error'], 500);
+	// 		}
+	// 	}
+	
+	// 	return view('supplier.index');
+	// }	
+
 	public function index(Request $request)
 	{
 		if ($request->ajax()) {
-			try {
-				$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
-				return DataTables::of($data)
-					->addIndexColumn() // This adds a row index
-					->addColumn('checkbox', function($row){
-						return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
-					})
-					->addColumn('action', function ($row) {
-						return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
-									<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
-								</a>'
-							. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
-									<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-								</button>';
-					})
-					->rawColumns(['checkbox', 'action']) // Allow HTML for these columns
-					->make(true);
-			} catch (\Exception $e) {
-				\Log::error('Error fetching data: '.$e->getMessage());
-				return response()->json(['error' => 'Internal Server Error'], 500);
-			}
+			$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
+			\Log::info('DataTables data:', ['data' => $data->toArray()]); // Log data yang dikembalikan
+			return DataTables::of($data)
+				->addIndexColumn()
+				->addColumn('checkbox', function($row){
+					return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
+				})
+				->addColumn('action', function ($row) {
+					return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
+								<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+							</a>'
+						. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
+								<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+							</button>';
+				})
+				->rawColumns(['checkbox', 'action'])
+				->make(true);
 		}
-	
+
 		return view('supplier.index');
-	}	
+	}
 
 	public function create()
 	{
