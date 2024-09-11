@@ -10,23 +10,40 @@ use App\Models\BarangMasuk;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-        $data = Customer::when($search, function ($query) use ($search) {
-            return $query->where('nama', 'like', '%' . $search . '%')
-			->orWhere('alamat', 'like', '%' . $search . '%')
-			->orWhere('telepon', 'like', '%' . $search . '%')
-			->orWhere('keterangan', 'like', '%' . $search . '%');
-        })->orderBy('nama', 'asc')->paginate(4);	
-					
-        return view('customer.index', compact('data'));
-	}
+		if ($request->ajax()) {
+			try {
+				$data = Customer::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
+				
+				return DataTables::of($data)
+					->addIndexColumn() // This adds a row index
+					->addColumn('checkbox', function($row){
+						return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
+					})
+					->addColumn('action', function ($row) {
+						return '<a href="/customer/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
+									<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+								</a>'
+							. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
+									<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+								</button>';
+					})
+					->rawColumns(['checkbox', 'action']) // Allow HTML for these columns
+					->make(true);
+			} catch (\Exception $e) {
+				\Log::error('Error fetching data: '.$e->getMessage());
+				return response()->json(['error' => 'Internal Server Error'], 500);
+			}
+		}
+	
+		return view('customer.index');
+	}	
 
 	public function create()
 	{
@@ -52,8 +69,6 @@ class CustomerController extends Controller
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
-
-		//$userId = Auth::id();
 
 		$data = Customer::create([
 			'nama' => $request->nama,
@@ -106,17 +121,6 @@ class CustomerController extends Controller
 	{
 		$customer = Customer::find($id);
 
-		/*$barangMasuk = BarangMasuk::where('customer_id', $id)->get();
-
-		foreach ($barangMasuk as $item) {
-			$barang = Barang::find($item->barang_id);
-			if ($barang) {
-				$barang->jumlah -= $item->jumlah;
-				$barang->save();
-			}
-			$item->delete();
-		}*/
-
 		$customer->delete();
 		return redirect('/customer')->with('success', 'Anda berhasil menghapus data!');
 	}
@@ -126,19 +130,7 @@ class CustomerController extends Controller
 		$ids = $request->input('ids');
 		foreach ($ids as $id) {
 			$customer = Customer::find($id);
-
 			if ($customer) {
-				/*$barangMasuk = BarangMasuk::where('customer_id', $id)->get();
-
-				foreach ($barangMasuk as $item) {
-					$barang = Barang::find($item->barang_id);
-					if ($barang) {
-						$barang->jumlah -= $item->jumlah;
-						$barang->save();
-					}
-					$item->delete();
-				}*/
-
 				$customer->delete();
 			}
 		}

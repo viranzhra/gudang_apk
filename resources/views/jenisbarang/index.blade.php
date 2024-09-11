@@ -57,8 +57,8 @@
     <table class="table table-bordered table-striped table-hover" id="jenisBarangTable" width="100%">
         <thead class="thead-dark">
             <tr>
-                <th><input type="checkbox" id="select-all"></th>
-                <th>No</th>
+                <th style="width: 20px"><input type="checkbox" id="select-all"></th>
+                <th style="width: 25px;">No</th>
                 <th>Type Item</th>
                 <th>Action</th>
             </tr>
@@ -160,7 +160,7 @@
 
             if (selected.length > 0) {
                 if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                    fetch('/jenisbarang/delete-selected', {
+                    fetch('/jenisbarang/deleteSelected', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

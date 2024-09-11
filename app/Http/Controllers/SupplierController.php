@@ -10,23 +10,39 @@ use App\Models\BarangMasuk;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class SupplierController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-        $data = Supplier::when($search, function ($query) use ($search) {
-            return $query->where('nama', 'like', '%' . $search . '%')
-			->orWhere('alamat', 'like', '%' . $search . '%')
-			->orWhere('telepon', 'like', '%' . $search . '%')
-			->orWhere('keterangan', 'like', '%' . $search . '%');
-        })->paginate(7);
-				
-        return view('supplier.index', compact('data'));
-	}
+		if ($request->ajax()) {
+			try {
+				$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
+				return DataTables::of($data)
+					->addIndexColumn() // This adds a row index
+					->addColumn('checkbox', function($row){
+						return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
+					})
+					->addColumn('action', function ($row) {
+						return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
+									<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+								</a>'
+							. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
+									<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+								</button>';
+					})
+					->rawColumns(['checkbox', 'action']) // Allow HTML for these columns
+					->make(true);
+			} catch (\Exception $e) {
+				\Log::error('Error fetching data: '.$e->getMessage());
+				return response()->json(['error' => 'Internal Server Error'], 500);
+			}
+		}
+	
+		return view('supplier.index');
+	}	
 
 	public function create()
 	{
@@ -48,12 +64,10 @@ class SupplierController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.regex' => 'Nomor telepon hanya boleh berisi angka dan spasi.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
-
-		//$userId = Auth::id();
 
 		$data = Supplier::create([
 			'nama' => $request->nama,
@@ -72,7 +86,7 @@ class SupplierController extends Controller
 	}
 
 	public function update($id, Request $request): RedirectResponse
-	{ 
+	{
 		$request->validate([
 			'nama' => 'required|string|max:255',
 			'alamat' => 'required|string|max:255',
@@ -86,7 +100,7 @@ class SupplierController extends Controller
 			'alamat.string' => 'Alamat harus berupa teks.',
 			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
 			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.regex' => 'Nomor telepon hanya boleh berisi angka dan spasi.',
+			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
 			'keterangan.string' => 'Keterangan harus berupa teks.',
 			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
 		]);
@@ -102,28 +116,11 @@ class SupplierController extends Controller
 		return redirect('/supplier')->with('success', 'Anda berhasil memperbarui data!');
 	}
 
-	public function getDetail($id)
-	{
-		$supplier = Supplier::find($id);
-		return response()->json($supplier);
-	}
-
 	public function delete($id)
 	{
-		$supplier = Supplier::find($id);
+		$customer = Supplier::find($id);
 
-		$barangMasuk = BarangMasuk::where('supplier_id', $id)->get();
-
-		foreach ($barangMasuk as $item) {
-			$barang = Barang::find($item->barang_id);
-			if ($barang) {
-				$barang->jumlah -= $item->jumlah;
-				$barang->save();
-			}
-			$item->delete();
-		}
-
-		$supplier->delete();
+		$customer->delete();
 		return redirect('/supplier')->with('success', 'Anda berhasil menghapus data!');
 	}
 
@@ -132,19 +129,7 @@ class SupplierController extends Controller
 		$ids = $request->input('ids');
 		foreach ($ids as $id) {
 			$supplier = Supplier::find($id);
-
 			if ($supplier) {
-				$barangMasuk = BarangMasuk::where('supplier_id', $id)->get();
-
-				foreach ($barangMasuk as $item) {
-					$barang = Barang::find($item->barang_id);
-					if ($barang) {
-						$barang->jumlah -= $item->jumlah;
-						$barang->save();
-					}
-					$item->delete();
-				}
-
 				$supplier->delete();
 			}
 		}
