@@ -153,6 +153,7 @@
             });
 
             $('#tambahForm').on('submit', function(e) {
+            $('#tambahDataModal').modal('hide');
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
@@ -162,7 +163,6 @@
                 url: url,
                 data: form.serialize(),
                 success: function(response) {
-                    $('#tambahDataModal').modal('hide');
                     showNotification('success', 'Berhasil menambahkan data!'); //response.message
                     $('#barang-table').DataTable().ajax.reload();
                 },
@@ -316,6 +316,7 @@
         });
 
         $('#editForm').on('submit', function(e) {
+            $('#editData').modal('hide');
             e.preventDefault();
             var form = $(this);
             var url = form.attr('action');
@@ -325,7 +326,6 @@
                 url: url,
                 data: form.serialize(),
                 success: function(response) {
-                    $('#editData').modal('hide');
                     showNotification('success', 'Berhasil memperbarui data!'); //response.message
                     $('#barang-table').DataTable().ajax.reload();
                 },
