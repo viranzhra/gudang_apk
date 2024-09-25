@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-12 fw-bold">Tanggal</div>
                             <div class="col-3 fw-bold ps-4">Permintaan:</div>
                             <div class="col-9">${tanggalAwal || '—'}</div>
-                            ${extend ? `
+                            ${extend == 1 ? `
                                 <div class="col-3 fw-bold ps-4">${namaTanggalAkhir || '—'}:</div>
                                 <div class="col-9">${TanggalAkhir}</div>
                             ` : ''}
