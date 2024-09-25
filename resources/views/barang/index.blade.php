@@ -294,6 +294,26 @@
                 }
             });
         });
+
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function(response) {
+                    $('#editData').modal('hide');
+                    showNotification('success', 'Berhasil memperbarui data!'); //response.message
+                    $('#barang-table').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating data:', error);
+                }
+            });
+        });
     </script>
 
     {{-- Data Tabel --}}
@@ -389,11 +409,9 @@
         });
     </script>
 
-    {{-- Select All Checkbox --}}
+    {{-- Notifikasi --}}
     <script>
-        $(document).ready(function() {
-            // Function untuk menampilkan notifikasi
-            function showNotification(type, message) {
+        function showNotification(type, message) {
                 let notificationTitle = '';
                 let notificationClass = '';
 
@@ -426,10 +444,14 @@
                 }, 3000);
             }
 
-            @if (session('success'))
-                showNotification('success', '{{ session('success') }}');
-            @endif
-            
+            // @if (session('success'))
+            //     showNotification('success', '{{ session('success') }}');
+            // @endif
+    </script>
+
+    {{-- Select All Checkbox --}}
+    <script>
+        $(document).ready(function() {            
             // Ketika checkbox select-all diubah
             $(document).on('change', '#select-all', function() {
                 const isChecked = $(this).is(':checked');
