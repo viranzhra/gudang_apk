@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Http;
 
 class StatusBarangController extends Controller
 {
@@ -46,63 +47,48 @@ class StatusBarangController extends Controller
 
 	public function store(Request $request): RedirectResponse
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-		], [
-			'nama.required' => 'Nama jenis barang harus diisi.',
-			'nama.string' => 'Nama jenis barang harus berupa teks.',
-			'nama.max' => 'Nama jenis barang tidak boleh lebih dari 255 karakter.',
-		]);
+		$response = Http::post('https://doaibutiri.my.id/gudang/api/statusbarang', $request->all());
 
-		$data = StatusBarang::create([
-			'nama' => $request->nama,
-		]);
+        if ($response->successful()) {
+            return redirect('/statusbarang')->with('success', 'Data berhasil ditambahkan!');
+        }
 
-		return redirect('/statusbarang')->with('success', 'Anda berhasil menambahkan data!');
+        return back()->withErrors('Gagal menambahkan data status barang.');
 	}
 
 	public function edit($id)
 	{
-		$data = StatusBarang::find($id);
-		return view('statusbarang.edit', ['data' => $data]);
+		$response = Http::get('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id);
+
+        if ($response->successful()) {
+            $data = $response->json();
+            $data = (object) $data;
+            return view('statusbarang.edit', compact('data'));
+        }
+        return redirect('/statusbarang')->withErrors('Gagal mengambil data status barang.');
 	}
 
 	public function update($id, Request $request): RedirectResponse
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-		], [
-			'nama.required' => 'Nama jenis barang harus diisi.',
-			'nama.string' => 'Nama jenis barang harus berupa teks.',
-			'nama.max' => 'Nama jenis barang tidak boleh lebih dari 255 karakter.',
-		]);
+		$response = Http::put('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id, $request->all());
 
-		$data = StatusBarang::find($id);
+        if ($response->successful()) {
+            return redirect('/statusbarang')->with('success', 'Data berhasil diperbarui!');
+        }
 
-		$data->nama = $request->nama;
-		$data->save();
-
-		return redirect('/statusbarang')->with('success', 'Anda berhasil memperbarui data!');
+        return back()->withErrors('Gagal memperbarui data status barang.');
 	}
 
 	public function delete($id)
 	{
-		$statusBarang = StatusBarang::find($id);
-		$barangMasuk = BarangMasuk::where('status_barang_id', $id)->get();
+		$response = Http::delete('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id);
 
-		foreach ($barangMasuk as $item) {
-			$barang = Barang::find($item->barang_id);
-			if ($barang) {
-				$barang->jumlah -= $item->jumlah;
-				$barang->save();
-			}
-			$item->delete();
-		}
+        if ($response->successful()) {
+            return redirect('/statusbarang')->with('success', 'Data berhasil dihapus!');
+        }
 
-		$statusBarang->delete();
-		return redirect('/statusbarang')->with('success', 'Anda berhasil menghapus data!');
+        return back()->withErrors('Gagal menghapus data status barang.');
 	}
-
 	public function deleteSelected(Request $request)
 	{
 		$ids = $request->input('ids');

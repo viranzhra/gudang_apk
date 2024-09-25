@@ -97,7 +97,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="tambahDataModalLabel">Add Type</h5>
+                <h5 class="modal-title" id="tambahDataModalLabel">Add Status</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -115,8 +115,12 @@
                     @endif
                 
                     <div class="mb-3">
-                        <label for="nama" class="form-label">Item Type</label>
+                        <label for="nama" class="form-label">Item Status</label>
                         <input type="text" id="nama" name="nama" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit-warna" class="form-label">Warna</label>
+                        <input type="color" id="edit-warna" name="warna" class="form-control" required />
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
@@ -131,7 +135,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
             </div>
             <div class="modal-body" style="color: black">
                 Apakah Anda yakin ingin menghapus status barang <span id="itemName"></span> ini?
@@ -161,9 +165,14 @@
                     @method('PUT')
                 
                     <div class="mb-3">
-                        <label for="edit-nama" class="form-label">Item Type</label>
+                        <label for="edit-nama" class="form-label">Item Status</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
                     </div>
+                    <div class="mb-3">
+                        <label for="edit-warna" class="form-label">Warna</label>
+                        <input type="color" id="edit-warna" name="warna" class="form-control" required />
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
             </div>
@@ -238,7 +247,7 @@ $('#deleteModal').on('show.bs.modal', function(event) {
             processing: true,
             serverSide: true,
             ajax: {
-                url: '{{ config('app.api_url') }}/statusbarang',
+                url: 'https://doaibutiri.my.id/gudang/api/statusbarang',
                 headers: {
                     'Authorization': 'Bearer ' + '{{ session('token') }}'
                 }
@@ -259,7 +268,10 @@ $('#deleteModal').on('show.bs.modal', function(event) {
                 }
             },
             {
-                data: 'nama'
+                data: 'nama',
+                render: function(data, type, row) {
+                        return `<div class="flex items-center"><span class="rounded-circle border d-inline-block me-2" style="width: 1rem; height: 1rem;background-color:${row.warna||'#000000'}"></span>${data}</div>`;
+                }
             },
             {
                 data: 'id',
