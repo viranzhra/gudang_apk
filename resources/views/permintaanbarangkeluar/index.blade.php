@@ -13,7 +13,7 @@
         </div>
 
         <div class="d-flex justify-content-between align-items-center my-3">
-            <h4 style="color: black;">Item</h4>
+            <h4 style="color: black;">Stock Out Request</h4>
             <div class="d-flex gap-2">
                 <!-- Add Button -->
                 <a type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <h5 class="modal-title" id="detailModalLabel">Detail Permintaan</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <div class="modal-body">
+                            <div class="modal-body py-2">
                                 <div class="row g-2 gx-3">
                                     <div class="col-3 fw-bold">Penerima:</div>
                                     <div class="col-9">${namaCustomer || '—'}</div>
@@ -187,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
         columns: [{
                 data: 'permintaan_barang_keluar_id',
                 searchable: false,
+                orderable: false,
                 className: 'text-center',
                 render: function(data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
