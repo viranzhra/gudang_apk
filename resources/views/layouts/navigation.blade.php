@@ -322,7 +322,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
