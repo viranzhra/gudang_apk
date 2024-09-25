@@ -6,165 +6,95 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use App\Models\Barang;
 use App\Models\BarangMasuk;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\JenisBarang;
-use App\Models\Supplier;
+use Illuminate\Support\Facades\Http;
 
 class BarangController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-		$data = DB::table('barang')
-			->leftJoin('supplier', 'barang.supplier_id', '=', 'supplier.id')
-			->leftJoin('jenis_barang', 'barang.jenis_barang_id', '=', 'jenis_barang.id')
-			->leftJoin('barang_masuk', 'barang.id', '=', 'barang_masuk.barang_id')
-			->select('barang.*', 'jenis_barang.nama as nama_jenis_barang', 'supplier.nama as nama_supplier', DB::raw('SUM(barang_masuk.jumlah) as jumlah'))
-			->when($search, function ($query) use ($search) {
-				return $query->where('barang.nama', 'like', '%' . $search . '%')
-				->orWhere('jenis_barang.nama', 'like', '%' . $search . '%')
-				->orWhere('supplier.nama', 'like', '%' . $search . '%');
-			})
-			->groupBy('barang.id', 'barang.nama', 'barang.jenis_barang_id', 'barang.supplier_id', 'barang.keterangan', 'barang.created_at', 'barang.updated_at', 'jenis_barang.nama', 'supplier.nama')
-			->orderBy('jumlah', 'desc')
-			->paginate(7);
-			
-		return view('barang.index', compact('data'));
+        return view('barang.index');
 	}
 
-	public function create()
-	{
-		// $jenis_barang = DB::table('jenis_barang')->select('id', 'nama')->get();
-		return view('barang.create', compact('jenis_barang'));
-	}
+    // public function create()
+	// {
+	// 	$response = Http::withToken(session('token'))->get(env('API_URL') . '/barang/create');
+
+	// 	if ($response->successful()) {
+	// 		$data = $response->json();
+	// 		$jenis_barang = collect($data['jenis_barang'])->map(function ($item) {
+	// 			return (object) $item;
+	// 		});
+	// 		$supplier = collect($data['supplier'])->map(function ($item) {
+	// 			return (object) $item;
+	// 		});
+	// 		return view('barang.create', compact('jenis_barang', 'supplier'));
+	// 	}
+	// 	return redirect('/barang')->withErrors('Gagal mengambil data untuk membuat barang baru.');
+	// }
 
 	public function store(Request $request): RedirectResponse
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-			'jenis_barang' => 'required|numeric',
-			'supplier_id' => 'required|numeric',
-			//'status' => 'required|in:Baik,Rusak',
-			'keterangan' => 'nullable|string|max:255',
-		], [
-			'nama.required' => 'Nama barang harus diisi.',
-			'nama.string' => 'Nama barang harus berupa teks.',
-			'nama.max' => 'Nama barang tidak boleh lebih dari 255 karakter.',
-			'jenis_barang.required' => 'Jenis barang harus dipilih.',
-			'jenis_barang.numeric' => 'Jenis barang harus berupa angka.',
-			'supplier_id.required' => 'Supplier harus dipilih.',
-			'supplier_id.numeric' => 'Supplier harus dipilih.',
-			'keterangan.string' => 'Keterangan harus berupa teks.',
-			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
-		]);
-		
-		//$userId = Auth::id();
+		$response = Http::withToken(session('token'))->post(env('API_URL') . '/barang', $request->all());
 
-		$data = Barang::create([
-			'nama' => $request->nama,
-			'jenis_barang_id' => $request->jenis_barang,
-			'supplier_id' => $request->supplier_id,
-			//'jumlah' => 0,
-			//'status' => $request->status,
-			'keterangan' => $request->keterangan,
-		]);
+        if ($response->successful()) {
+            return redirect('/barang')->with('success', 'Data berhasil ditambahkan!');
+        }
 
-		return redirect('/barang')->with('success', 'Anda berhasil menambahkan data!');
+        return back()->withErrors('Gagal menambahkan data barang.');
 	}
 
-	public function edit($id)
-	{
-		$jenis_barang = DB::table('jenis_barang')->select('id', 'nama')->get();
-		$data = Barang::find($id);
-		return view('barang.edit', compact('data','jenis_barang'));
-	}
+	// public function edit($id)
+	// {
+	// 	$response = Http::withToken(session('token'))->get(env('API_URL') . '/barang/' . $id);
+
+    //     if ($response->successful()) {
+    //         $data = $response->json();
+    //         $jenis_barang = collect($data['jenis_barang'])->map(function ($item) {
+    //             return (object) $item;
+    //         });
+    //         $supplier = collect($data['supplier'])->map(function ($item) {
+    //             return (object) $item;
+    //         });
+    //         $data = (object) $data['data'];
+    //         return view('barang.edit', compact('data', 'jenis_barang', 'supplier'));
+    //     }
+    //     return redirect('/barang')->withErrors('Gagal mengambil data barang.');
+	// }
 
 	public function update($id, Request $request): RedirectResponse
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-			'jenis_barang' => 'required|numeric',
-			'supplier_id' => 'required|numeric',
-			//'status' => 'required|in:Baik,Rusak',
-			'keterangan' => 'nullable|string|max:255',
-		], [
-			'nama.required' => 'Nama barang harus diisi.',
-			'nama.string' => 'Nama barang harus berupa teks.',
-			'nama.max' => 'Nama barang tidak boleh lebih dari 255 karakter.',
-			'jenis_barang.required' => 'Jenis barang harus dipilih.',
-			'jenis_barang.numeric' => 'Jenis barang harus berupa angka.',
-			'supplier_id.required' => 'Supplier harus dipilih.',
-			'supplier_id.numeric' => 'Supplier harus dipilih.',
-			'keterangan.string' => 'Keterangan harus berupa teks.',
-			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
-		]);
+		$response = Http::withToken(session('token'))->put(env('API_URL') . '/barang/' . $id, $request->all());
 
-		$data = Barang::find($id);
+        if ($response->successful()) {
+            return redirect('/barang')->with('success', 'Data berhasil diperbarui!');
+        }
 
-		$data->nama = $request->nama;
-		$data->jenis_barang_id = $request->jenis_barang;
-		$data->supplier_id = $request->supplier_id;
-		//$data->status = $request->status;
-		$data->keterangan = $request->keterangan;
-
-		$data->save();
-
-		return redirect('/barang')->with('success', 'Anda berhasil memperbarui data!');
+        return back()->withErrors('Gagal memperbarui data barang.');
 	}
-
-	public function detail($id)
-	{
-		$barang = DB::table('barang')
-			->leftJoin('jenis_barang', 'barang.jenis_barang_id', '=', 'jenis_barang.id')
-			->select('barang.*', 'jenis_barang.nama as jenis_nama')
-			->where('barang.id', $id)
-			->first();
-	
-		if (!$barang) {
-			return response()->json(['message' => 'Data tidak ditemukan!'], 404);
-		}
-	
-		return response()->json([
-			'nama' => $barang->nama,
-			'jenis' => $barang->jenis_nama,
-			'jumlah' => $barang->jumlah,
-			'keterangan' => $barang->keterangan,
-		]);
-	}	
 
 	public function delete($id)
 	{
-		$data = Barang::find($id);
+		$response = Http::withToken(session('token'))->delete(env('API_URL') . '/barang/' . $id);
 
-		if (!$data) {
-			return redirect('/barang')->with('error', 'Data tidak ditemukan!');
-		}
+        if ($response->successful()) {
+            return redirect('/barang')->with('success', 'Data berhasil dihapus!');
+        }
 
-		// Hapus semua entri terkait di tabel BarangMasuk
-		BarangMasuk::where('barang_id', $id)->delete();
-
-		// Hapus data barang
-		$data->delete();
-
-		// Redirect dengan pesan sukses
-		return redirect('/barang')->with('success', 'Anda berhasil menghapus data!');
+        return back()->withErrors('Gagal menghapus data barang.');
 	}
-
 
 	public function deleteSelected(Request $request)
 	{
-		$ids = $request->input('ids');
-		foreach ($ids as $id) {
-			$data = Barang::find($id);
-			if ($data) {
-				BarangMasuk::where('barang_id', $id)->delete();
-				$data->delete();
-			}
-		}
-		return response()->json(['success' => 'Data berhasil dihapus']);
+		$response = Http::withToken(session('token'))->post(env('API_URL') . '/barang/delete-selected', [
+            'ids' => $request->input('ids')
+        ]);
+
+        if ($response->successful()) {
+            return redirect('/barang')->with('success', 'Data terpilih berhasil dihapus!');
+        }
+
+        return back()->withErrors('Gagal menghapus data barang terpilih.');
 	}
 }
