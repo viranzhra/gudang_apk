@@ -63,116 +63,141 @@
 document.addEventListener('DOMContentLoaded', function() {
     window.showDetailModal = function(id, namaCustomer, namaKeperluan, tanggalAwal, extend,
         namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status) {
-        // Check if modal already exists
+        // Hapus modal sebelumnya jika ada
         const existingModal = document.getElementById('detailModal');
         if (existingModal) {
             existingModal.remove();
         }
 
-        fetch(`{{ config('app.api_url') }}/permintaanbarangkeluar/${id}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + '{{ session('token') }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Periksa apakah data adalah array
-                if (!Array.isArray(data)) {
-                    console.error('Data yang diterima tidak sesuai dengan format yang diharapkan:',
-                        data);
-                    alert('Terjadi kesalahan saat memuat detail barang.');
-                    return;
-                }
-
-                const detailData = data; // Data yang diterima sudah dalam format array
-                const detailContent = detailData.map((detail, index) => `
-                    <hr class="w-100 my-2">
-                    <div class="row align-items-center">
-                        <div class="col-1 text-center">
-                            <div class="font-weight-bold">${index + 1}</div>
+        const modalContent = `
+        <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailModalLabel">Detail Permintaan</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body py-2">
+                        <div id="loadingSpinner" class="text-center">
+                            <div class="spinner-border" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
                         </div>
-                        <div class="col-11">
-                            <div class="row">
-                                <div class="col-3 font-weight-bold">Item / Qty</div>
-                                <div class="col-9">${detail.nama_barang} — ${detail.total_barang}</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-3 font-weight-bold">Item Type</div>
-                                <div class="col-9">${detail.nama_jenis_barang}</div>
-                            </div>
-                            <div class="row">
-                                <div class="col-3 font-weight-bold">Supplier</div>
-                                <div class="col-9">${detail.nama_supplier}</div>
-                            </div>
+                        <div id="modalContent" class="d-none">
+                            <!-- Content will be loaded here -->
                         </div>
                     </div>
-            `).join('');
-
-                const modalContent = `
-                <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="detailModalLabel">Detail Permintaan</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body py-2">
-                                <div class="row g-2 gx-3">
-                                    <div class="col-3 fw-bold">Penerima:</div>
-                                    <div class="col-9">${namaCustomer || '—'}</div>
-                                    <div class="col-3 fw-bold">Keperluan:</div>
-                                    <div class="col-9">${namaKeperluan || '—'}</div>
-                                    <hr class="my-2">
-                                    <div class="col-12 fw-bold">Tanggal</div>
-                                    <div class="col-3 fw-bold ps-4">Permintaan:</div>
-                                    <div class="col-9">${tanggalAwal || '—'}</div>
-                                    ${extend ? `
-                                        <div class="col-3 fw-bold ps-4">${namaTanggalAkhir || '—'}:</div>
-                                        <div class="col-9">${TanggalAkhir}</div>
-                                    ` : ''}
-                                    <hr class="my-2">
-                                    <div class="col-3 fw-bold">Keterangan:</div>
-                                    <div class="col-9">${keterangan || '—'}</div>
-                                    <div class="col-3 fw-bold">Jumlah:</div>
-                                    <div class="col-9">${jumlah || '—'}</div>
-                                    <div class="col-3 fw-bold">Status:</div>
-                                    <div class="col-9">
-                                        ${status === 'Ditolak' ? `<span class="text-danger">${status}</span>` :
-                                          status === 'Belum Disetujui' ? `<span class="text-warning">${status}</span>` :
-                                          status === 'Disetujui' ? `<span class="text-success">${status}</span>` :
-                                          status}
-                                    </div>
-                                    ${detailContent}
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                ${status === 'Belum Disetujui' ? `
-                                    <button type="button" class="btn btn-success me-2"
-                                        onclick="updateStatus(${id}, 'Disetujui')"
-                                        data-bs-dismiss="modal">Setujui</button>
-                                    <button type="button" class="btn btn-danger"
-                                        onclick="updateStatus(${id}, 'Ditolak')"
-                                        data-bs-dismiss="modal">Tolak</button>
-                                ` : ''}
-                                <button type="button" class="d-none btn btn-secondary"
-                                    data-bs-dismiss="modal">Tutup</button>
-                            </div>
-                        </div>
+                    <div class="modal-footer">
+                        <div id="modalFooterContent"></div>
+                        <button type="button" class="d-none btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
-            `;
+            </div>
+        </div>
+        `;
 
-                // Append new modal to body
-                document.body.insertAdjacentHTML('beforeend', modalContent);
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        const modal = new bootstrap.Modal(document.getElementById('detailModal'));
+        modal.show();
 
-                // Show the modal
-                new bootstrap.Modal(document.getElementById('detailModal')).show();
-            })
-            .catch(error => {
-                console.error('Error fetching detail data:', error);
-                alert('Terjadi kesalahan saat memuat detail barang.');
-            });
+        // Add a delay before fetching data
+        setTimeout(() => {
+            // Fetch data after modal is shown
+            fetch(`{{ config('app.api_url') }}/permintaanbarangkeluar/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Periksa apakah data adalah array
+                    if (!Array.isArray(data)) {
+                        console.error('Data yang diterima tidak sesuai dengan format yang diharapkan:', data);
+                        alert('Terjadi kesalahan saat memuat detail barang.');
+                        return;
+                    }
+
+                    const detailData = data; // Data yang diterima sudah dalam format array
+                    const detailContent = detailData.map((detail, index) => `
+                        <hr class="w-100 my-2">
+                        <div class="row align-items-center">
+                            <div class="col-1 text-center">
+                                <div class="font-weight-bold">${index + 1}</div>
+                            </div>
+                            <div class="col-11">
+                                <div class="row">
+                                    <div class="col-3 font-weight-bold">Item / Qty</div>
+                                    <div class="col-9">${detail.nama_barang} — ${detail.total_barang}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3 font-weight-bold">Item Type</div>
+                                    <div class="col-9">${detail.nama_jenis_barang}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3 font-weight-bold">Supplier</div>
+                                    <div class="col-9">${detail.nama_supplier}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    const contentHtml = `
+                        <div class="row g-2 gx-3">
+                            <div class="col-3 fw-bold">Penerima:</div>
+                            <div class="col-9">${namaCustomer || '—'}</div>
+                            <div class="col-3 fw-bold">Keperluan:</div>
+                            <div class="col-9">${namaKeperluan || '—'}</div>
+                            <hr class="my-2">
+                            <div class="col-12 fw-bold">Tanggal</div>
+                            <div class="col-3 fw-bold ps-4">Permintaan:</div>
+                            <div class="col-9">${tanggalAwal || '—'}</div>
+                            ${extend ? `
+                                <div class="col-3 fw-bold ps-4">${namaTanggalAkhir || '—'}:</div>
+                                <div class="col-9">${TanggalAkhir}</div>
+                            ` : ''}
+                            <hr class="my-2">
+                            <div class="col-3 fw-bold">Keterangan:</div>
+                            <div class="col-9">${keterangan || '—'}</div>
+                            <div class="col-3 fw-bold">Jumlah:</div>
+                            <div class="col-9">${jumlah || '—'}</div>
+                            <div class="col-3 fw-bold">Status:</div>
+                            <div class="col-9">
+                                ${status === 'Ditolak' ? `<span class="text-danger">${status}</span>` :
+                                  status === 'Belum Disetujui' ? `<span class="text-warning">${status}</span>` :
+                                  status === 'Disetujui' ? `<span class="text-success">${status}</span>` :
+                                  status}
+                            </div>
+                            ${detailContent}
+                        </div>
+                    `;
+
+                    // Hide loading spinner and show content
+                    document.getElementById('loadingSpinner').classList.add('d-none');
+                    const modalContentElement = document.getElementById('modalContent');
+                    modalContentElement.innerHTML = contentHtml;
+                    modalContentElement.classList.remove('d-none');
+
+                    // Update footer content
+                    const footerContent = status === 'Belum Disetujui' ? `
+                        <button type="button" class="btn btn-success me-2"
+                            onclick="updateStatus(${id}, 'Disetujui')"
+                            data-bs-dismiss="modal">Setujui</button>
+                        <button type="button" class="btn btn-danger"
+                            onclick="updateStatus(${id}, 'Ditolak')"
+                            data-bs-dismiss="modal">Tolak</button>
+                    ` : '';
+                    document.getElementById('modalFooterContent').innerHTML = footerContent;
+                })
+                .catch(error => {
+                    console.error('Error fetching detail data:', error);
+                    document.getElementById('loadingSpinner').classList.add('d-none');
+                    const modalContentElement = document.getElementById('modalContent');
+                    modalContentElement.innerHTML = '<div class="text-center">Terjadi kesalahan saat memuat detail permintaan.</div>';
+                    modalContentElement.classList.remove('d-none');
+                    setTimeout(function(){modal.hide()},1500);
+                });
+        }, 300); // Delay data
     }
 
     const table = new DataTable('#permintaan-table', {
