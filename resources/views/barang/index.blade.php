@@ -93,7 +93,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{ route('barang.store') }}" enctype="multipart/form-data">
+                    <form method="post" id="tambahForm" action="{{ route('barang.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -151,6 +151,26 @@
                     console.error('Error fetching data:', error);
                 }
             });
+
+            $('#tambahForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function(response) {
+                    $('#tambahDataModal').modal('hide');
+                    showNotification('success', 'Berhasil menambahkan data!'); //response.message
+                    $('#barang-table').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating data:', error);
+                }
+            });
+        });
         });
     </script>
 
