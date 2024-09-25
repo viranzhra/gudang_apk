@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/customer/edit/{id}', [CustomerController::class, 'edit'])->name('customer.edit');
     Route::put('/customer/update/{id}', [CustomerController::class, 'update'])->name('customer.update');
     Route::get('/customer/delete/{id}', [CustomerController::class, 'delete'])->name('customer.delete');
-    Route::get('/customer/getUserDataByName/{name}', [CustomerController::class, 'getUserDataByName']);
+    Route::get('/customer/getUserDataByName/{id}', [CustomerController::class, 'getUserDataByName']);
     Route::post('/customer/delete-selected', [CustomerController::class, 'deleteSelected']);
 
     Route::get('/jenisbarang', [JenisBarangController::class, 'index'])->name('jenisbarang.index');

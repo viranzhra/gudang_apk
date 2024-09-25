@@ -15,6 +15,19 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+        /*
+    |--------------------------------------------------------------------------
+    | API URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used for API requests within the application. It should be
+    | set to the base URL of your API endpoint. You can override this value
+    | by setting the API_URL in your environment file.
+    |
+    */
+
+    'api_url' => env('API_URL', ''),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
