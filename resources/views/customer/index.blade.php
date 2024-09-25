@@ -84,11 +84,12 @@
             <strong id="notificationTitle">Notification</strong>
             <p id="notificationMessage"></p>
         </div>
-        <h4 class="mt-3" style="color: #8a8a8a;">Customer Management</h4>
+
         <div id="notification" class="alert alert-dismissible fade" role="alert" style="display: none;">
             <strong id="notificationTitle"></strong> <span id="notificationMessage"></span>
             <button type="button" class="btn-close" aria-label="Close"></button>
         </div>
+        
         <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
             <!-- Add Button -->
             <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center"
