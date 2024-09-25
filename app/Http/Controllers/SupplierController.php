@@ -11,153 +11,110 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+
 
 class SupplierController extends Controller
 {
 
-	// public function index(Request $request)
-	// {
-	// 	if ($request->ajax()) {
-	// 		try {
-	// 			$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
-	// 			return DataTables::of($data)
-	// 				->addIndexColumn() // This adds a row index
-	// 				->addColumn('checkbox', function($row){
-	// 					return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
-	// 				})
-	// 				->addColumn('action', function ($row) {
-	// 					return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
-	// 								<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
-	// 							</a>'
-	// 						. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
-	// 								<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-	// 							</button>';
-	// 				})
-	// 				->rawColumns(['checkbox', 'action']) // Allow HTML for these columns
-	// 				->make(true);
-	// 		} catch (\Exception $e) {
-	// 			\Log::error('Error fetching data: '.$e->getMessage());
-	// 			return response()->json(['error' => 'Internal Server Error'], 500);
-	// 		}
-	// 	}
-	
-	// 	return view('supplier.index');
-	// }	
+    // Menampilkan halaman index supplier
+    public function index(Request $request)
+    {
+        return view('supplier.index');
+    }
 
-	public function index(Request $request)
-	{
-		if ($request->ajax()) {
-			$data = Supplier::select('id', 'nama', 'alamat', 'telepon', 'keterangan')->latest()->get();
-			\Log::info('DataTables data:', ['data' => $data->toArray()]); // Log data yang dikembalikan
-			return DataTables::of($data)
-				->addIndexColumn()
-				->addColumn('checkbox', function($row){
-					return '<input type="checkbox" class="select-item" value="'.$row->id.'">';
-				})
-				->addColumn('action', function ($row) {
-					return '<a href="/supplier/edit/' . $row->id . '" class="btn-edit btn-action" aria-label="Edit">
-								<iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
-							</a>'
-						. '<button data-id="' . $row->id . '" class="btn-action btn-delete" aria-label="Delete">
-								<iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-							</button>';
-				})
-				->rawColumns(['checkbox', 'action'])
-				->make(true);
-		}
+    // Menampilkan form create supplier
+    // public function create()
+    // {
+    //     return view('supplier.create');
+    // }
 
-		return view('supplier.index');
-	}
+    public function store(Request $request)
+    {
+        // Logging request data yang akan dikirim ke API
+        Log::info('Sending supplier data to API:', $request->all());
 
-	public function create()
-	{
-		return view('supplier.create');
-	}
+        // Mengirim request POST ke API untuk menyimpan data supplier
+        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/suppliers', $request->all());
 
-	public function store(Request $request): RedirectResponse
-	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
-			'keterangan' => 'nullable|string|max:255',
-		], [
-			'nama.required' => 'Nama harus diisi.',
-			'nama.string' => 'Nama harus berupa teks.',
-			'nama.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-			'alamat.required' => 'Alamat harus diisi.',
-			'alamat.string' => 'Alamat harus berupa teks.',
-			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
-			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
-			'keterangan.string' => 'Keterangan harus berupa teks.',
-			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
-		]);
+        // Logging response dari API
+        Log::info('API Response:', [
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
 
-		$data = Supplier::create([
-			'nama' => $request->nama,
-			'alamat' => $request->alamat,
-			'telepon' => $request->telepon,
-			'keterangan' => $request->keterangan,
-		]);
+        // Mengecek apakah request berhasil
+        if ($response->successful()) {
+            return redirect('/supplier')->with('success', 'Data berhasil ditambahkan!');
+        }
 
-		return redirect('/supplier')->with('success', 'Anda berhasil menambahkan data!');
-	}
+        // Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+        return back()->withErrors('Gagal menambahkan data supplier.');
+    }
 
-	public function edit($id)
-	{
-		$data = Supplier::find($id);
-		return view('supplier.edit', ['data' => $data]);
-	}
 
-	public function update($id, Request $request): RedirectResponse
-	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-			'alamat' => 'required|string|max:255',
-			'telepon' => 'required|regex:/^[0-9\s]{10,15}$/',
-			'keterangan' => 'nullable|string|max:255',
-		], [
-			'nama.required' => 'Nama harus diisi.',
-			'nama.string' => 'Nama harus berupa teks.',
-			'nama.max' => 'Nama tidak boleh lebih dari 255 karakter.',
-			'alamat.required' => 'Alamat harus diisi.',
-			'alamat.string' => 'Alamat harus berupa teks.',
-			'alamat.max' => 'Alamat tidak boleh lebih dari 255 karakter.',
-			'telepon.required' => 'Nomor telepon harus diisi.',
-			'telepon.regex' => 'Nomor telepon hanya boleh berisi spasi dan angka dengan panjang 10 sampai 15',
-			'keterangan.string' => 'Keterangan harus berupa teks.',
-			'keterangan.max' => 'Keterangan tidak boleh lebih dari 255 karakter.',
-		]);
+    // Menampilkan form edit supplier dengan data dari API
+    public function edit($id)
+    {
+        // Mengirim request GET ke API untuk mendapatkan data supplier
+        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/suppliers/' . $id);
 
-		$data = Supplier::find($id);
+        // Mengecek apakah request berhasil
+        if ($response->successful()) {
+            // Mengambil data supplier dalam format JSON
+            $data = $response->json();
+            return view('supplier.index', compact('data'));
+        }
 
-		$data->nama = $request->nama;
-		$data->alamat = $request->alamat;
-		$data->telepon = $request->telepon;
-		$data->keterangan = $request->keterangan;
-		$data->save();
+        // Jika gagal, kembali ke halaman index dengan pesan error
+        return redirect('/supplier')->withErrors($response->json('message', 'Gagal mengambil data supplier.'));
+    }
 
-		return redirect('/supplier')->with('success', 'Anda berhasil memperbarui data!');
-	}
+    // Memperbarui data supplier melalui API
+    public function update($id, Request $request)
+    {
+        // Mengirim request PUT ke API untuk memperbarui data supplier
+        $response = Http::withToken(session('token'))->put(config('app.api_url') . '/suppliers/' . $id, $request->all());
 
-	public function delete($id)
-	{
-		$customer = Supplier::find($id);
+        // Mengecek apakah request berhasil
+        if ($response->successful()) {
+            return redirect('/supplier')->with('success', 'Data berhasil diperbarui!');
+        }
 
-		$customer->delete();
-		return redirect('/supplier')->with('success', 'Anda berhasil menghapus data!');
-	}
+        // Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+        return back()->withErrors('Gagal memperbarui data supplier.');
+    }
 
-	public function deleteSelected(Request $request)
-	{
-		$ids = $request->input('ids');
-		foreach ($ids as $id) {
-			$supplier = Supplier::find($id);
-			if ($supplier) {
-				$supplier->delete();
-			}
-		}
-		return redirect('/supplier')->with('success', 'Anda berhasil menghapus data terpilih!');
-	}
+    // Menghapus data supplier melalui API
+    public function delete($id)
+    {
+        // Mengirim request DELETE ke API untuk menghapus supplier
+        $response = Http::withToken(session('token'))->delete(config('app.api_url') . '/suppliers/' . $id);
+
+        // Mengecek apakah request berhasil
+        if ($response->successful()) {
+            return redirect('/supplier')->with('success', 'Data berhasil dihapus!');
+        }
+
+        // Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+        return back()->withErrors('Gagal menghapus data supplier.');
+    }
+
+    // Menghapus data supplier yang dipilih melalui API
+    public function deleteSelected(Request $request)
+    {
+        // Mengirim request POST ke API untuk menghapus supplier yang dipilih
+        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/suppliers/delete-selected', [
+            'ids' => $request->input('ids')
+        ]);
+
+        // Mengecek apakah request berhasil
+        if ($response->successful()) {
+            return redirect('/supplier')->with('success', 'Data terpilih berhasil dihapus!');
+        }
+
+        // Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+        return back()->withErrors('Gagal menghapus data supplier terpilih.');
+    }
 }
