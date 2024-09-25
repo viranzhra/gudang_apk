@@ -277,56 +277,24 @@
 </style>
 
 <div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
-    <h4 class="mb-4" style="color: #8a8a8a;">Incoming Item</h4>
-        <div class="search-container">
-            <form action="{{ route('barangmasuk.index') }}" method="GET" class="search-box">
-                <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">
-                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
-            </form>
-            <div class="controls-container">
-                <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
-                    <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                    Add
-                </a> 
-                <button id="delete-selected"
-                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-2xl text-sm py-2 px-3 text-center hidden"
-                    style="background-color: #910a0a;
-                            border-radius: 10px;
-                            height: 35px;
-                            border: none;">
-                    <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 16px;"></i>
-                    Hapus Terpilih
-                </button>
-            </div>
+    <h4 style="color: #8a8a8a;">Incoming Item</h4>
+        <div class="d-flex justify-content-end" style="padding-top: 0px; margin-right: -15px;">
+            <!-- Add Button -->
+            <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center me-2"
+                data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px; margin-bottom: 50px;">
+                <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                Add
+            </a>
+            <!-- Delete Selected Button -->
+            <button id="deleteSelected" class="btn btn-danger d-none"
+                style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
+                <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
+                Delete Selected
+            </button>
         </div>
-
-    <!-- Notifikasi flash message -->
-    @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Ups!</strong> Terjadi kesalahan:
-            <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-            </ul>
-        </div>
-    @endif
 
     <div class="table-responsive">
-        @if (!$barangMasuk->isEmpty())
-        <table class="table">
+        <table id="barangMasukTable" class="table">
             <thead class="thead-lightblue">
                 <tr>
                     <th scope="col" class="px-6 py-3">
@@ -341,265 +309,67 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($barangMasuk as $d)
-                <tr>
-                    <td class="w-4 px-6 py-4">
-                        <input type="checkbox" class="select-item flex justify-center items-center"
-                            value="{{ $d->barang_masuk_id }}">
-                    </td>
-                    <td>{{ $loop->iteration + ($barangMasuk->currentPage() - 1) * $barangMasuk->perPage() }}</td>
-                    <td>{{ $d->nama_barang }}</td>
-                    <td>{{ $d->jumlah ?: 0 }}</td>
-                    <td>{{ $d->keterangan }}</td>
-                    <td>{{ $d->tanggal }}</td>
-                    <td>
-                        <div class="btn-actions-container">
-                            <button type="button" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#detailModal{{ $d->barang_masuk_id }}" 
-                                    aria-label="Detail" 
-                                    class="btn-action">
-                                <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                            </button>                      
-                            <a href="/barangmasuk/create/{{ $d->barang_masuk_id }}" class="btn-action">
-                                <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
-                            </a>                        
-                            <button data-id="{{ $d->barang_masuk_id }}" class="btn-action" aria-label="Hapus">
-                                <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                            </button>
-                        </div>
-                    </td>                                     
-                </tr>
-                @endforeach
             </tbody>
         </table>
-        <div class="info-pagination-container">
-            <div class="info-text">
-                Menampilkan {{ $barangMasuk->firstItem() }} - {{ $barangMasuk->lastItem() }} dari {{ $barangMasuk->total() }} data pada halaman {{ $barangMasuk->currentPage() }}.
-            </div>
-            <div class="pagination-container">
-                {{ $barangMasuk->appends(request()->query())->links('pagination::bootstrap-4') }}
-            </div>
-        </div>
-        @else
-        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-            <div class="mx-auto max-w-screen-sm text-center">
-                <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Data tidak ditemukan.</p>
-            </div>   
-        </div>
-        @endif
     </div>
 </div>
 
-<!-- Modal Detail Barang -->
-<div class="modal fade" id="detailModal{{ $d->barang_masuk_id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $d->barang_masuk_id }}" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailModalLabel{{ $d->barang_masuk_id }}">Detail Barang Masuk</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Detail content here -->
-                <div class="grid grid-cols-10 gap-2">
-                    <div class="font-bold col-span-3">Nama Barang:</div>
-                    <div class="col-span-7">{{ $d->nama_barang }}</div>
-                    <div class="font-bold col-span-3">Jenis Barang:</div>
-                    <div class="col-span-7">{{ $d->nama_jenis_barang }}</div>
-                    <div class="font-bold col-span-3">Supplier:</div>
-                    <div class="col-span-7">{{ $d->nama_supplier }}</div>
-                    <div class="font-bold col-span-3">Tanggal Masuk:</div>
-                    <div class="col-span-7">{{ $d->tanggal }}</div>
-                    <div class="font-bold col-span-3">Keterangan:</div>
-                    <div class="col-span-7">{{ $d->keterangan }}</div>
-                    <div class="font-bold col-span-3">Jumlah:</div>
-                    <div class="col-span-7">{{ $d->jumlah }}</div>
-
-                    <!-- Detail barang -->
-                    @foreach ($d->detail as $index => $detail)
-                        <hr class="col-span-10 my-2">
-                        <div class="font-bold col-span-3">Barang {{ $index + 1 }}:</div>
-                        <div class="col-span-7">
-                            <div class="font-bold">SN / Kondisi</div>
-                            <div class="ml-5">{{ $detail->serial_number }} — {{ $detail->status_barang }}</div>
-                            <div class="font-bold">Kelengkapan</div>
-                            <div class="ml-5">{{ $detail->kelengkapan }}</div>
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Konfirmasi Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="color: black">
-                Apakah Anda yakin ingin menghapus <span id="itemName"></span> ini?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                <form id="deleteForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>                               
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Include the required JS files -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const searchIcon = document.getElementById('search-icon');
-    const searchForm = searchIcon.closest('form');
-
-    searchIcon.addEventListener('click', function() {
-        searchForm.submit(); // Submit the form
-    });
-});
-
-</script>
-
-
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to auto-hide alerts
-        function autoHideAlert(selector, timeout) {
-            const alerts = document.querySelectorAll(selector);
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.classList.remove('show');
-                    alert.classList.add('fade');
-                    setTimeout(() => alert.remove(), 500); // Remove alert after fade transition
-                }, timeout);
-            });
-        }
-
-        // Hide success messages after 3 seconds
-        autoHideAlert('.alert-success', 3000);
-
-        // Hide error messages after 3 seconds
-        autoHideAlert('.alert-danger', 3000);
-    });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-
-    document.querySelectorAll('[aria-label="Hapus"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const itemId = this.getAttribute('data-id');
-            const itemName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
-            
-            document.getElementById('itemName').innerText = itemName;
-            document.getElementById('deleteForm').action = `/barangmasuk/delete/${itemId}`;
-            
-            deleteModal.show();
+    $(document).ready(function() {
+        // Initialize DataTable
+        var table = $('#barangMasukTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: "{{ config('app.api_url') }}/barangmasuk", // Route to fetch data
+                type: 'GET',
+                data: function(d) {
+                    d.search = $('#search-input').val(); // Include search input in the AJAX request
+                }
+            },
+            columns: [
+                { data: 'select', orderable: false, searchable: false },
+                { data: 'DT_RowIndex', name: 'DT_RowIndex' },
+                { data: 'nama_barang', name: 'nama_barang' },
+                { data: 'jumlah', name: 'jumlah' },
+                { data: 'keterangan', name: 'keterangan' },
+                { data: 'tanggal', name: 'tanggal' },
+                { data: 'action', orderable: false, searchable: false }
+            ]
         });
-    });
-});
-</script>
 
-{{-- untuk hapus terpilih --}}
-<script>
-    document.getElementById('select-all').addEventListener('change', function(e) {
-        const checkboxes = document.querySelectorAll('.select-item');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = e.target.checked;
+        // Search functionality
+        $('#search-input').on('keyup change', function() {
+            table.draw();
         });
-        toggleDeleteButton();
-    });
 
-    document.querySelectorAll('.select-item').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
+        // Handle select all checkboxes
+        $('#select-all').on('click', function() {
+            var rows = table.rows({ 'search': 'applied' }).nodes();
+            $('input[type="checkbox"]', rows).prop('checked', this.checked);
             toggleDeleteButton();
         });
-    });
 
-    function toggleDeleteButton() {
-        const selected = document.querySelectorAll('.select-item:checked').length;
-        const deleteButton = document.getElementById('delete-selected');
-        if (selected > 0) {
-            deleteButton.classList.remove('hidden');
-        } else {
-            deleteButton.classList.add('hidden');
-        }
-    }
-
-    document.getElementById('delete-selected').addEventListener('click', function() {
-        const selected = [];
-        document.querySelectorAll('.select-item:checked').forEach(checkbox => {
-            selected.push(checkbox.value);
+        // Handle checkbox change event
+        $('#barangMasukTable tbody').on('change', 'input[type="checkbox"]', function() {
+            toggleDeleteButton();
         });
 
-        if (selected.length > 0) {
-            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                fetch('/barangmasuk/delete-selected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        ids: selected
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Gagal menghapus data.');
-                    }
-                });
-            }
-        } else {
-            alert('Tidak ada data yang dipilih.');
+        // Toggle delete button visibility
+        function toggleDeleteButton() {
+            var anyChecked = $('#barangMasukTable tbody input[type="checkbox"]:checked').length > 0;
+            $('#delete-selected').toggleClass('hidden', !anyChecked);
         }
-    });
-</script>
 
-{{-- detail --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener to all detail buttons
-        document.querySelectorAll('.btn-action[data-bs-toggle="modal"]').forEach(button => {
-            button.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-bs-target').replace('#detailModal', '');
-                
-                // Fetch data from server
-                fetch(`/barang/detail/${itemId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Update modal content
-                        const modal = document.querySelector(`#detailModal${itemId}`);
-                        modal.querySelector('.modal-title').textContent = `Detail Barang Masuk ${data.nama_barang}`;
-                        modal.querySelector('.modal-body').innerHTML = `
-                            <div class="grid grid-cols-10 gap-2">
-                                <div class="font-bold col-span-3">Nama Barang:</div>
-                                <div class="col-span-7">${data.nama_barang}</div>
-                                <div class="font-bold col-span-3">Jenis Barang:</div>
-                                <div class="col-span-7">${data.nama_jenis_barang}</div>
-                                <div class="font-bold col-span-3">Supplier:</div>
-                                <div class="col-span-7">${data.nama_supplier}</div>
-                                <div class="font-bold col-span-3">Tanggal Masuk:</div>
-                                <div class="col-span-7">${data.tanggal}</div>
-                                <div class="font-bold col-span-3">Keterangan:</div>
-                                <div class="col-span-7">${data.keterangan}</div>
-                                <div class="font-bold col-span-3">Jumlah:</div>
-                                <div class="col-span-7">${data.jumlah}</div>
-                            </div>
-                        `;
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            });
+        // Add event listener for delete selected
+        $('#delete-selected').on('click', function() {
+            // Your delete logic here
+            alert('Delete selected items');
         });
     });
 </script>
