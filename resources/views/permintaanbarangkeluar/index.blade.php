@@ -128,15 +128,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-11">
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Item / Qty</div>
-                                    <div class="col-9">${detail.nama_barang} — ${detail.total_barang}</div>
+                                    <div class="col-9">${detail.nama_barang || '—'} — ${detail.total_barang || '—'}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Item Type</div>
-                                    <div class="col-9">${detail.nama_jenis_barang}</div>
+                                    <div class="col-9">${detail.nama_jenis_barang || '—'}</div>
                                 </div>
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Supplier</div>
-                                    <div class="col-9">${detail.nama_supplier}</div>
+                                    <div class="col-9">${detail.nama_supplier || '—'}</div>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     const table = new DataTable('#permintaan-table', {
-        processing: true,
+        processing: false,
         serverSide: true,
         ajax: {
             url: '{{ env('API_URL') }}/permintaanbarangkeluar',
