@@ -80,7 +80,7 @@
                 <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" />
             </div>
 
-            <div class="mb-3">
+            <div class="mb-4">
                 <style>
                     .icon-shape{display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle}.icon-sm{width:2rem;height:2rem}                
                 </style>
@@ -105,7 +105,7 @@
             </div>
 
             <div id="permintaan-container">
-                <hr class="mb-3">
+                <hr class="mb-4">
                 <!-- Input Permintaan Template -->
                 <div class="permintaan-input-item" data-index="1">
                     <h6 class="mb-3">Permintaan 1</h6>
@@ -132,6 +132,7 @@
                             <button type="button" id="decrement-button-barang-1" class="button-minus border rounded-circle icon-shape icon-sm mx-1 lh-0">
                                 <iconify-icon icon="bi:dash" width="18" height="18"></iconify-icon>
                             </button>
+
                             <input type="text" id="jumlah_barang_1" name="jumlah_barangs[]" data-input-counter data-input-counter-min="1" data-input-counter-max="100" aria-describedby="helper-text-explanation" class="pe-1 quantity-field border-0 text-center w-25" placeholder="1" value="1" required />
                             <button type="button" id="increment-button-barang-1" class="button-plus border rounded-circle icon-shape icon-sm lh-0">
                                 <iconify-icon icon="bi:plus" width="18" height="18"></iconify-icon>
@@ -188,7 +189,7 @@
                 newItem.classList.add('permintaan-input-item');
                 newItem.setAttribute('data-index', index);
                 newItem.innerHTML = `
-                    <hr class="mb-3">
+                    <hr class="mb-4">
                     <h6 class="mb-3">Permintaan ${index}</h6>
                     <div class="mb-3">
                         <label for="jenis_barang_${index}"
@@ -284,7 +285,7 @@
 
                 $('.select2').on('select2:select', function(e) {
                     const selectElement = $(this);
-                    const index = selectElement.attr('id').split('_').pop(); // Get the index from id
+                    const index = selectElement.attr('id').split('_').pop();
 
                     const id = selectElement.attr('id');
                     if (id === 'keperluan') {
@@ -305,8 +306,11 @@
                         }
                     }
 
+                    // Jenis Barang
                     if (selectElement.attr('id').startsWith('jenis_barang')) {
                         const jenisBarangId = e.params.data.id;
+                        selectElement.prop('disabled', true);
+                        $(`#barang_${index}`).prop('disabled', true);
                         fetch(`/permintaanbarangkeluar/get-by-jenis/${jenisBarangId}`)
                             .then(response => response.json())
                             .then(data => {
@@ -325,24 +329,39 @@
                                 $(`#jumlah_barang_${index}`).val(1);
                                 $(`#head_jumlah_barang_${index}`).hide();
                             })
-                            .catch(error => console.error('Error fetching barang:', error));
+                            .catch(error => console.error('Error fetching barang:', error))
+                            .finally(() => {
+                                selectElement.prop('disabled', false);
+                                $(`#barang_${index}`).prop('disabled', false);
+                            });
                     }
 
+                    // Barang
                     if (selectElement.attr('id').startsWith('barang')) {
                         const barangId = e.params.data.id;
-                        fetch(`/permintaanbarangkeluar/get-stok/${barangId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                $(`#stok_${index}`).text(`Stok Tersedia: ${data.stok}`);
-                                if (data.stok > 0) {
-                                    $(`#jumlah_barang_${index}`).attr('data-input-counter-max', data.stok);
-                                    $(`#jumlah_barang_${index}`).val(1);
-                                    $(`#head_jumlah_barang_${index}`).show().removeClass('d-none');
-                                } else {
-                                    $(`#head_jumlah_barang_${index}`).toggleClass('d-none');
-                                }
-                            })
-                            .catch(error => console.log('Error fetching stok:', error));
+                        selectElement.prop('disabled', true);
+                        $(`#jenis_barang_${index}`).prop('disabled', true);
+                        $(`#stok_${index}`).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+                        $(`#head_jumlah_barang_${index}`).hide();
+                        setTimeout(() => {
+                            fetch(`/permintaanbarangkeluar/get-stok/${barangId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    $(`#stok_${index}`).text(`Stok Tersedia: ${data.stok}`).hide().fadeIn(500);
+                                    if (data.stok > 0) {
+                                        $(`#jumlah_barang_${index}`).attr('data-input-counter-max', data.stok);
+                                        $(`#jumlah_barang_${index}`).val(1);
+                                        $(`#head_jumlah_barang_${index}`).hide().fadeIn(500).removeClass('d-none');
+                                    } else {
+                                        $(`#head_jumlah_barang_${index}`).hide();
+                                    }
+                                })
+                                .catch(error => console.log('Error fetching stok:', error))
+                                .finally(() => {
+                                    selectElement.prop('disabled', false);
+                                    $(`#jenis_barang_${index}`).prop('disabled', false);
+                                });
+                        }, 500); // Delay untuk Hitung Stok
                     }
                 });
             }
