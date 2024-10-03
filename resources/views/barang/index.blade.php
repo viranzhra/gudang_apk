@@ -1,8 +1,17 @@
 @extends('layouts.navigation')
 
 @section('content')
-
+<style>
+#notification{position:fixed;top:10px;right:10px;width:300px;padding:15px;border-radius:5px;z-index:9999;display:none;text-align:center;justify-content:flex-start;align-items:center;text-align:left}
+/* .alert-success{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;height:80px}.alert-danger{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;height:80px}.alert-info{background-color:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;height:80px} */
+</style>
     <div class="container mt-3 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; width: 1160px;border-radius: 20px;">
+        <!-- Notification Element -->
+        <div id="notification" class="alert" style="display: none;">
+            <strong id="notificationTitle">Notification</strong>
+            <p id="notificationMessage"></p>
+        </div>
+
         <div class="d-flex justify-content-between align-items-center my-3">
             <h4 style="color: black;">Item</h4>
             <div class="d-flex gap-2">
@@ -23,12 +32,6 @@
         </div>
 
         <!-- Alert -->
-        @if (session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                {{ session('success') }}
-            </div>
-        @endif
-
         @if (session('error'))
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
@@ -90,7 +93,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{ route('barang.store') }}" enctype="multipart/form-data">
+                    <form method="post" id="tambahForm" action="{{ route('barang.store') }}" enctype="multipart/form-data">
                         @csrf
 
                         <div class="mb-3">
@@ -148,6 +151,26 @@
                     console.error('Error fetching data:', error);
                 }
             });
+
+            $('#tambahForm').on('submit', function(e) {
+            $('#tambahDataModal').modal('hide');
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function(response) {
+                    showNotification('success', 'Berhasil menambahkan data!'); //response.message
+                    $('#barang-table').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating data:', error);
+                }
+            });
+        });
         });
     </script>
 
@@ -291,6 +314,26 @@
                 }
             });
         });
+
+        $('#editForm').on('submit', function(e) {
+            $('#editData').modal('hide');
+            e.preventDefault();
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function(response) {
+                    showNotification('success', 'Berhasil memperbarui data!'); //response.message
+                    $('#barang-table').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating data:', error);
+                }
+            });
+        });
     </script>
 
     {{-- Data Tabel --}}
@@ -386,9 +429,49 @@
         });
     </script>
 
+    {{-- Notifikasi --}}
+    <script>
+        function showNotification(type, message) {
+                let notificationTitle = '';
+                let notificationClass = '';
+
+                //  Mengatur judul dan kelas berdasarkan tipe notifikasi
+                switch (type) {
+                    case 'success':
+                        notificationTitle = 'Success!';
+                        notificationClass = 'alert-success';
+                        break;
+                    case 'error':
+                        notificationTitle = 'Error!';
+                        notificationClass = 'alert-danger';
+                        break;
+                    default:
+                        notificationTitle = 'Notification';
+                        notificationClass = 'alert-info';
+                }
+
+                // mengatur konten notifikasi
+                $('#notificationTitle').text(notificationTitle);
+                $('#notificationMessage').text(message);
+                $('#notification').removeClass('alert-success alert-danger alert-info').addClass(notificationClass);
+
+                // menampilkan notifikasi
+                $('#notification').fadeIn();
+
+                // menyembunyikan notifikasi setelah 3 detik
+                setTimeout(function() {
+                    $('#notification').fadeOut();
+                }, 3000);
+            }
+
+            // @if (session('success'))
+            //     showNotification('success', '{{ session('success') }}');
+            // @endif
+    </script>
+
     {{-- Select All Checkbox --}}
     <script>
-        $(document).ready(function() {
+        $(document).ready(function() {            
             // Ketika checkbox select-all diubah
             $(document).on('change', '#select-all', function() {
                 const isChecked = $(this).is(':checked');

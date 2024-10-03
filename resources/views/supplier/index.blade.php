@@ -39,14 +39,51 @@
         .btn-action:hover .icon-delete {
             opacity: 0.8;
         }
+
+        #notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            justify-content: flex-start;
+            /* Tetap di sebelah kiri */
+            align-items: center;
+            text-align: left;
+            /* Teks tetap rata kiri */
+            /* Hidden by default */
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            height: 80px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            height: 80px;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+        <!-- Notification Element -->
+        <div id="notification" class="alert" style="display: none;">
+            <strong id="notificationTitle">Notification</strong>
+            <p id="notificationMessage"></p>
+        </div>
         <h4 class="mt-3" style="color: #8a8a8a;">Supplier Management</h4>
         <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
             <!-- tombol Add -->
-            <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center" data-bs-toggle="modal"
-                data-bs-target="#tambahData" style="width: 75px; height: 35px;">
+            <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center"
+                data-bs-toggle="modal" data-bs-target="#tambahData" style="width: 75px; height: 35px;">
                 <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                 Add
             </a>
@@ -57,7 +94,6 @@
                 <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
                 Delete Selected
             </button>
-
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="supplier-table" width="100%">
@@ -150,6 +186,50 @@
         </div>
     </div>
 
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="color: black">
+                    Are you sure you want to delete <span id="supplierName"></span>?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn"
+                            style="background-color: #910a0a; color: white;">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Penghapusan dipilih -->
+    <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteLabel">Confirm deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the selected data?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #910a0a; color: white;"
+                        id="confirmDeleteButton">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- DataTables JS -->
@@ -158,255 +238,289 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
+    {{-- konfirmasi hapus --}}
     <script>
         $(document).ready(function() {
-            $(document).ready(function() {
-                $('#tambah-telepon').on('focus', function() {
-                    var phoneValue = $(this).val().trim();
-                    // cek apakah nomer di awali dengan "+62" atau "(+62)"
-                    if (phoneValue.startsWith('(+62)')) {
-                        // hapus (+62) dan ganti dengan "62" tanpa spasi
-                        phoneValue = '62' + phoneValue.slice(5).replace(/\s+/g, '');
-                    } else if (phoneValue.startsWith('+62')) {
-                        phoneValue = '62' + phoneValue.slice(3).replace(/\s+/g, '');
-                    } else {
-                        // menjadikan nomer biasa dengan menghilangkan spasi
-                        phoneValue = phoneValue.replace(/\s+/g, '');
-                    }
-                    $(this).val(phoneValue);
-                });
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            let deleteUrl;
+            let supplierId;
 
-                // form modal tambah
-                $('form').submit(function(e) {
-                    var phoneField = $('#tambah-telepon');
-                    var phoneValue = phoneField.val().trim();
-                    var errorField = $('#error-tambahtelepon');
+            // Clean phone number function
+            function cleanPhoneNumber(phoneField) {
+                var phoneValue = phoneField.val().trim();
+                phoneValue = phoneValue.replace(/\D/g, '');
+                phoneField.val(phoneValue);
+            }
 
-                    // error message
+            // Validate phone number
+            function validatePhoneNumber(phoneField, errorField) {
+                var phoneValue = phoneField.val().trim();
+
+                // Check for non-numeric characters
+                if (/[^0-9]/.test(phoneValue)) {
+                    errorField.text('Phone number cannot contain spaces, parentheses, or plus signs.').show();
+                    return false;
+                } else {
                     errorField.text('').hide();
+                }
 
-                    // menampilkan pesan eror jika ada selain angka
-                    if (/[^0-9]/.test(phoneValue)) {
-                        errorField.text(
-                                'Phone number cannot contain spaces, parentheses, or plus signs.')
-                            .show();
-                        return false;
+                // Clean the phone number
+                phoneValue = phoneValue.replace(/\D/g, '');
+                phoneField.val(phoneValue);
+                return true;
+            }
+
+            // Delete button event listener for individual delete
+            $(document).on('click', '.btn-delete', function() {
+                supplierId = $(this).data('id');
+                const supplierName = $(this).closest('tr').find('td:nth-child(3)').text();
+                $('#supplierName').text(supplierName);
+                deleteUrl = `{{ config('app.api_url') }}/suppliers/${supplierId}`;
+                $('#deleteForm').attr('action', deleteUrl);
+                deleteModal.show();
+            });
+
+            // Confirm delete form submission for individual delete
+            $('#deleteForm').on('submit', function(event) {
+                event.preventDefault();
+
+                $.ajax({
+                    url: $(this).attr('action'),
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': 'Bearer ' + '{{ session('token') }}',
+                        'Content-Type': 'application/json'
+                    },
+                    success: function(data) {
+                        if (data.success) {
+                            showNotification('success', 'Supplier berhasil dihapus!');
+                            deleteModal.hide();
+                            $('#supplier-table').DataTable().ajax.reload();
+                        } else {
+                            showNotification('error', 'Gagal menghapus supplier.');
+                        }
+                    },
+                    error: function(xhr) {
+                        let message = xhr.responseJSON?.message ||
+                            'Terjadi kesalahan saat menghapus supplier.';
+                        showNotification('error', message);
                     }
-
-                    // proses menghapus spasi sebelum kirim data
-                    if (phoneValue.startsWith('62')) {
-                        phoneValue = '62' + phoneValue.slice(2).replace(/\s+/g, '');
-                    } else {
-                        phoneValue = phoneValue.replace(/\s+/g, '');
-                    }
-
-                    phoneField.val(phoneValue);
                 });
             });
-            // proses klik tombol edit
+
+            // Delete selected suppliers
+            $('#deleteSelected').on('click', function() {
+                let selectedIds = [];
+                $('.select-item:checked').each(function() {
+                    selectedIds.push($(this).val());
+                });
+
+                if (selectedIds.length === 0) {
+                    showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
+                    return;
+                }
+
+                // Show confirmation modal
+                $('#deleteSelectedModal').modal('show');
+
+                // Confirm delete selected suppliers
+                $('#confirmDeleteSelected').off('click').on('click', function() {
+                    $.ajax({
+                        url: `{{ config('app.api_url') }}/suppliers/delete`, // Adjust the endpoint as necessary
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + '{{ session('token') }}',
+                            'Content-Type': 'application/json'
+                        },
+                        data: JSON.stringify({
+                            ids: selectedIds
+                        }),
+                        success: function(data) {
+                            if (data.success) {
+                                showNotification('success',
+                                    'Supplier terpilih berhasil dihapus!');
+                                $('#deleteSelectedModal').modal('hide');
+                                $('#supplier-table').DataTable().ajax.reload();
+                            } else {
+                                showNotification('error',
+                                    'Gagal menghapus supplier terpilih.');
+                            }
+                        },
+                        error: function(xhr) {
+                            let message = xhr.responseJSON?.message ||
+                                'Terjadi kesalahan saat menghapus supplier terpilih.';
+                            showNotification('error', message);
+                        }
+                    });
+                });
+            });
+
+            // Edit button event listener
             $(document).on('click', '.btn-edit', function() {
                 var id = $(this).data('id');
-                var url = '{{ config('app.api_url') }}/suppliers/' +
-                    id; // sesuaikan URL agar sesuai dengan API
+                var url = `{{ config('app.api_url') }}/suppliers/${id}`;
 
-                // Get supplier data dari server
                 $.ajax({
                     url: url,
                     type: 'GET',
                     success: function(data) {
-                        // mengisi kolom formulir
                         $('#editForm').attr('action', url);
                         $('#edit-nama').val(data.nama);
                         $('#edit-alamat').val(data.alamat);
                         $('#edit-telepon').val(data.telepon);
                         $('#edit-keterangan').val(data.keterangan);
-
-                        // show modal
                         $('#editData').modal('show');
                     },
                     error: function() {
-                        alert('Error fetching supplier data.');
+                        showNotification('error', 'Error fetching supplier data.');
                     }
                 });
             });
 
-            // proses form
-            $('#edit-telepon').on('focus', function() {
-                var phoneValue = $(this).val().trim();
-
-                // cek apakah nilai dimulai dari "+62" atau "(+62)"
-                if (phoneValue.startsWith('(+62)')) {
-                    // hapus (+62) dan ganti dengan "62" tanpa spasi
-                    phoneValue = '62' + phoneValue.slice(5).replace(/\s+/g, '');
-                } else if (phoneValue.startsWith('+62')) {
-                    phoneValue = '62' + phoneValue.slice(3).replace(/\s+/g, '');
-                } else {
-                    // menangani nomor biasa dengan menghilangkan spasi
-                    phoneValue = phoneValue.replace(/\s+/g, '');
-                }
-
-                // mengatur nilai yang sudah dibersihkan
-                $(this).val(phoneValue);
-            });
-
-            $('#editForm').submit(function(e) {
+            // Edit form submission
+            $('#editForm').on('submit', function(e) {
                 e.preventDefault();
-
                 var form = $(this);
-                var url = form.attr('action');
                 var phoneField = $('#edit-telepon');
-                var phoneValue = phoneField.val().trim();
                 var errorField = $('#error-edittelepon');
 
-                // reset pesan error
-                errorField.text('').hide();
-
-                // menampilkan pesan kesalahan
-                if (/[^0-9]/.test(phoneValue)) {
-                    errorField.text(
-                            'Phone number cannot contain spaces, parentheses, or plus signs.')
-                        .show();
+                if (!validatePhoneNumber(phoneField, errorField)) {
                     return false;
                 }
 
-                // menghapus spasi sebelum submit
-                if (phoneValue.startsWith('62')) {
-                    phoneValue = '62' + phoneValue.slice(2).replace(/\s+/g, '');
-                } else {
-                    phoneValue = phoneValue.replace(/\s+/g, '');
-                }
-
-                phoneField.val(phoneValue); // mengatur nilai yang sudah dihapus agar kembali ke awal
-
                 $.ajax({
-                    url: url,
+                    url: form.attr('action'),
                     type: 'PUT',
                     data: form.serialize(),
                     success: function(response) {
-                        // Close modal
-                        $('#editData').modal('hide');
-
-                        // Refresh DataTable
-                        $('#supplier-table').DataTable().ajax.reload();
-
-                        // menampilkan pesan sukses
-                        alert('Supplier updated successfully.');
-                    },
-                    error: function() {
-                        errorField.text('Error updating supplier.').show();
-                    }
-                });
-            });
-        });
-    </script>
-
-    <script>
-        // proses tombol Hapus
-        $(document).on('click', '.btn-action[aria-label="Delete"]', function() {
-            var id = $(this).data('id');
-            var url = '{{ config('app.api_url') }}/suppliers/' + id;
-
-            if (confirm('Are you sure you want to delete this data?')) {
-                $.ajax({
-                    url: url,
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
                         if (response.success) {
-                            alert('Data successfully deleted.');
+                            showNotification('success', 'Supplier berhasil diperbarui!');
+                            $('#editData').modal('hide');
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            alert('Failed to delete data.');
+                            showNotification('error', 'Gagal memperbarui supplier.');
                         }
                     },
                     error: function() {
-                        alert('Something went wrong.');
+                        showNotification('error',
+                            'Terjadi kesalahan saat memperbarui supplier.');
                     }
-                });
-            }
-        });
-    </script>
-
-    <!-- Script untuk inisialisasi DataTable -->
-    <script>
-        $(document).ready(function() {
-            $(document).ready(function() {
-                var table = $('#supplier-table').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: '{{ config('app.api_url') }}/suppliers',
-                        data: function(d) {
-                            // d.search = $('input[name=search]').val();
-                        },
-                        headers: {
-                            'Authorization': 'Bearer ' + '{{ session('token') }}'
-                        }
-                    },
-                    columns: [{
-                            data: 'id',
-                            orderable: false, // mematikan fungsi pengurutan di kolom checkbox
-                            render: function(data, type, row) {
-                                return `<input type="checkbox" class="select-item flex justify-center items-center" value="${data}">`;
-                            }
-                        },
-                        {
-                            data: null,
-                            sortable: false,
-                            render: function(data, type, row, meta) {
-                                return meta.row + meta.settings._iDisplayStart + 1;
-                            }
-                        },
-                        {
-                            data: 'nama'
-                        },
-                        {
-                            data: 'alamat'
-                        },
-                        {
-                            data: 'telepon'
-                        },
-                        {
-                            data: 'keterangan'
-                        },
-                        {
-                            data: 'id',
-                            orderable: false,
-                            render: function(data, type, row) {
-                                return `
-                                <div class="d-flex">
-                                    <button data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
-                                        <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
-                                    </button>
-                                    <button data-id="${data}" class="btn-action" aria-label="Delete">
-                                        <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                                    </button>
-                                </div>
-                                `;
-                            }
-                        }
-                    ],
-                    order: [
-                        [2, 'asc']
-                    ]
                 });
             });
 
-            // menangani semua kotak centang
+            // Add supplier form submission
+            $('form[action="{{ route('supplier.store') }}"]').on('submit', function(e) {
+                e.preventDefault();
+                var phoneField = $('#tambah-telepon');
+                var errorField = $('#error-tambahtelepon');
+
+                // Validate the phone number
+                if (!validatePhoneNumber(phoneField, errorField)) {
+                    return false; // Stop submission if validation fails
+                }
+
+                let formData = $(this).serialize();
+                let $submitButton = $(this).find('button[type="submit"]');
+
+                // Disable the submit button to prevent multiple clicks
+                $submitButton.prop('disabled', true).html(
+                    '<i class="spinner-border spinner-border-sm"></i>');
+
+                // Sending the data via AJAX
+                $.post($(this).attr('action'), formData)
+                    .done(function(response) {
+                        console.log(response); // Debugging line
+                        // Check for success in the response
+                        if (response && response.success) {
+                            showNotification('success', response.message);
+                            $('#tambahData').modal('hide');
+                            $('#supplier-table').DataTable().ajax.reload(); // Reload the DataTable
+                        } else {
+                            // Handle unexpected response structure
+                            showNotification('error', response?.message ||
+                                'Gagal menambahkan supplier.');
+                        }
+                    })
+                    .fail(function(xhr) {
+                        // Handle AJAX errors
+                        let message = xhr.responseJSON?.message ||
+                            'Terjadi kesalahan saat menambahkan supplier.';
+                        showNotification('error', message);
+                    })
+                    .always(function() {
+                        // Re-enable the submit button
+                        $submitButton.prop('disabled', false).html('Save');
+                    });
+            });
+
+            // Reset add form on modal close
+            $('#tambahData').on('hidden.bs.modal', function() {
+                $('form[action="{{ route('supplier.store') }}"]')[0].reset();
+                $('#error-tambahtelepon').hide();
+            });
+
+            // DataTable initialization
+            var table = $('#supplier-table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ config('app.api_url') }}/suppliers',
+                    headers: {
+                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                    }
+                },
+                columns: [{
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<input type="checkbox" class="select-item" value="${data}">`;
+                        }
+                    },
+                    {
+                        data: null,
+                        sortable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: 'nama'
+                    },
+                    {
+                        data: 'alamat'
+                    },
+                    {
+                        data: 'telepon'
+                    },
+                    {
+                        data: 'keterangan'
+                    },
+                    {
+                        data: 'id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<div class="d-flex"><button data-id="${data}" class="btn-edit btn-action" aria-label="Edit"><iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon></button><button data-id="${data}" class="btn-delete btn-action" aria-label="Delete"><iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon></button></div>`;
+                        }
+                    }
+                ],
+                order: [
+                    [2, 'asc']
+                ]
+            });
+
+            // select-all checkbox
             $(document).on('change', '#select-all', function() {
                 const isChecked = $(this).is(':checked');
                 $('.select-item').prop('checked', isChecked);
                 toggleDeleteButton();
             });
 
-            // menangani masing-masing kotak centang
+            // individual checkboxes
             $(document).on('change', '.select-item', function() {
                 toggleDeleteButton();
             });
 
-            // fungsi untuk mengalihkan tombol hapus berdasarkan pilihan
+            // Fungsi untuk mengaktifkan atau menonaktifkan tombol hapus berdasarkan item yang dipilih
             function toggleDeleteButton() {
                 const selected = $('.select-item:checked').length;
                 const deleteButton = $('#deleteSelected');
@@ -417,52 +531,34 @@
                 }
             }
 
-            // klik tombol hapus di tabel
-            $(document).on('click', '#deleteSelected', function() {
-                const selected = [];
-                $('.select-item:checked').each(function() {
-                    selected.push($(this).val());
-                });
+            // Notification function
+            function showNotification(type, message) {
+                let notificationTitle = '';
+                let notificationClass = '';
 
-                if (selected.length > 0) {
-                    if (confirm('Are you sure you want to delete the selected data?')) {
-                        $.ajax({
-                            url: '{{ config('app.api_url') }}/suppliers/delete-selected', // route untuk menghapus
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // CSRF Token
-                            },
-                            data: {
-                                ids: selected
-                            },
-                            success: function(response) {
-                                if (response.success) {
-                                    // refresh DataTable
-                                    $('#supplier-table').DataTable().ajax.reload();
-
-                                    // Uncheck all checkboxes
-                                    $('#select-all').prop('checked', false);
-                                    $('.select-item').prop('checked', false);
-
-                                    // Hide delete button
-                                    $('#deleteSelected').addClass('d-none');
-
-                                    // Optional: Show success alert
-                                    alert('Selected data successfully deleted.');
-                                } else {
-                                    alert('Failed to delete data.');
-                                }
-                            },
-                            error: function() {
-                                alert('Something went wrong.');
-                            }
-                        });
-                    }
-                } else {
-                    alert('No data selected.');
+                switch (type) {
+                    case 'success':
+                        notificationTitle = 'Sukses!';
+                        notificationClass = 'alert-success';
+                        break;
+                    case 'error':
+                        notificationTitle = 'Error!';
+                        notificationClass = 'alert-danger';
+                        break;
+                    default:
+                        notificationTitle = 'Notification';
+                        notificationClass = 'alert-info';
                 }
-            });
 
+                $('#notificationTitle').text(notificationTitle);
+                $('#notificationMessage').text(message);
+                $('#notification').removeClass('alert-success alert-danger alert-info').addClass(notificationClass)
+                    .fadeIn();
+
+                setTimeout(function() {
+                    $('#notification').fadeOut();
+                }, 3000);
+            }
         });
     </script>
 @endsection

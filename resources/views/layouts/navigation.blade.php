@@ -282,7 +282,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
                                 <span class="hide-menu">Type Requirement</span>
                             </a>
@@ -325,7 +325,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>

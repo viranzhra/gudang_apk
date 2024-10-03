@@ -10,19 +10,15 @@ use App\Models\Barang;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class KeperluanController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-        $data = Keperluan::when($search, function ($query) use ($search) {
-            return $query->where('nama', 'like', '%' . $search . '%');
-        })->paginate(7);
-
-        return view('keperluan.index', compact('data'));
+		return view('keperluan.index');
 	}
 
 	public function create()
@@ -30,83 +26,74 @@ class KeperluanController extends Controller
 		return view('keperluan.create');
 	}
 
-	public function store(Request $request): RedirectResponse
+	public function store(Request $request)
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-		], [
-			'nama.required' => 'Nama jenis barang harus diisi.',
-			'nama.string' => 'Nama jenis barang harus berupa teks.',
-			'nama.max' => 'Nama jenis barang tidak boleh lebih dari 255 karakter.',
+		// Logging request data yang akan dikirim ke API
+		Log::info('Sending type data to API:', $request->all());
+
+		// Mengirim request POST ke API untuk menyimpan data supplier
+		$response = Http::withToken(session('token'))->post(config('app.api_url') . '/keperluan', $request->all());
+
+		// Logging response dari API
+		Log::info('API Response:', [
+			'status' => $response->status(),
+			'body' => $response->body(),
 		]);
 
-		$data = Keperluan::create([
-			'nama' => $request->nama,
-		]);
+		// Mengecek apakah request berhasil
+		if ($response->successful()) {
+			return redirect('/keperluan')->with('success', 'Data berhasil ditambahkan!');
+		}
 
-		return redirect('/keperluan')->with('success', 'Anda berhasil menambahkan data!');
+		// Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+		return back()->withErrors('Gagal menambahkan jenis keperluan.');
 	}
 
 	public function edit($id)
 	{
-		$data = Keperluan::find($id);
-		return view('keperluan.edit', ['data' => $data]);
+		$response = Http::withToken(session('token'))->get(config('app.api_url') . '/keperluan/' . $id);
+
+		if ($response->successful()) {
+			$data = $response->json();
+			$data = (object) $data;
+			return view('keperluan.edit', compact('data'));
+		}
+
+		return redirect('/keperluan')->withErrors('Gagal mengambil data keperluan.');
 	}
 
-	public function update($id, Request $request): RedirectResponse
+	public function update($id, Request $request)
 	{
-		$request->validate([
-			'nama' => 'required|string|max:255',
-		], [
-			'nama.required' => 'Nama jenis barang harus diisi.',
-			'nama.string' => 'Nama jenis barang harus berupa teks.',
-			'nama.max' => 'Nama jenis barang tidak boleh lebih dari 255 karakter.',
-		]);
+		$response = Http::withToken(session('token'))->put(config('app.api_url') . '/keperluan/' . $id, $request->all());
 
-		$data = Keperluan::find($id);
+		if ($response->successful()) {
+			return redirect('/keperluan')->with('success', 'Data berhasil diperbarui!');
+		}
 
-		$data->nama = $request->nama;
-		$data->save();
-
-		return redirect('/keperluan')->with('success', 'Anda berhasil memperbarui data!');
+		return back()->withErrors('Gagal memperbarui data keperluan.');
 	}
 
 	public function delete($id)
 	{
-		$keperluan = Keperluan::find($id);
-		/*$barangMasuk = BarangMasuk::where('status_barang_id', $id)->get();
+		$response = Http::withToken(session('token'))->delete(config('app.api_url') . '/keperluan/' . $id);
 
-		foreach ($barangMasuk as $item) {
-			$barang = Barang::find($item->barang_id);
-			if ($barang) {
-				$barang->jumlah -= $item->jumlah;
-				$barang->save();
-			}
-			$item->delete();
-		}*/
+		if ($response->successful()) {
+			return redirect('/keperluan')->with('success', 'Data berhasil dihapus!');
+		}
 
-		$keperluan->delete();
-		return redirect('/keperluan')->with('success', 'Anda berhasil menghapus data!');
+		return back()->withErrors('Gagal menghapus data keperluan.');
 	}
 
 	public function deleteSelected(Request $request)
 	{
-		$ids = $request->input('ids');
-		foreach ($ids as $id) {
-			$keperluan = Keperluan::find($id);
-			/*$barangMasuk = BarangMasuk::where('status_barang_id', $id)->get();
+		$response = Http::withToken(session('token'))->post(config('app.api_url') . '/keperluan/delete-selected', [
+			'ids' => $request->input('ids')
+		]);
 
-			foreach ($barangMasuk as $item) {
-				$barang = Barang::find($item->barang_id);
-				if ($barang) {
-					$barang->jumlah -= $item->jumlah;
-					$barang->save();
-				}
-				$item->delete();
-			}*/
-
-			$keperluan->delete();
+		if ($response->successful()) {
+			return redirect('/keperluan')->with('success', 'Data terpilih berhasil dihapus!');
 		}
-		return response()->json(['success' => 'Data berhasil dihapus']);
+
+		return back()->withErrors('Gagal menghapus data keperluan terpilih.');
 	}
 }
