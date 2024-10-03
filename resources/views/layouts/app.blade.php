@@ -15,7 +15,8 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
         <!-- Add On -->
         <!-- jQuery -->
         {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
@@ -42,6 +43,15 @@
         .select2-container--default .select2-selection--single .select2-selection__arrow{
           top:unset;
           right: 10px;
+        }
+
+        /* Sweetalert2 */
+        .btn,
+        .swal2-modal,
+        .swal2-confirm.swal2-styled,
+        .swal2-deny.swal2-styled,
+        .swal2-cancel.swal2-styled {
+            border-radius: 20px;
         }
     </style>
     <body class="font-inter antialiased">
