@@ -124,9 +124,18 @@
                                 placeholder="Untuk Dipinjam" required />
                         </div>
                         <div class="mb-3">
-                            <input id="extend" type="checkbox" name="extend" class="form-check-input">
-                            <label for="extend" class="form-check-label">Extend</label>
+                            <input id="setDates" type="checkbox" name="setDates" class="form-check-input">
+                            <label for="setDates" class="form-check-label">Extend</label>
                         </div>
+                        <div class="mb-3">
+                            <label for="extension_name" class="form-label">Extension Name</label>
+                            <input type="text" id="extension_name" class="form-control" placeholder="Tanggal Peminjaman">
+                        </div>
+                        {{-- <div class="form-group" id="extensionNameField" style="display: none;">
+                            <label for="extension_name">Extension Name</label>
+                            <input type="text" id="extension_name" class="form-control"
+                                placeholder="Enter extension name">
+                        </div> --}}
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>
@@ -152,8 +161,12 @@
                             <input type="text" id="edit-nama" name="nama" class="form-control" required />
                         </div>
                         <div class="mb-3">
-                            <input id="extend" type="checkbox" name="extend" class="form-check-input">
-                            <label for="extend" class="form-check-label">Extend</label>
+                            <input id="edit-extend" type="checkbox" name="edit-extend" class="form-check-input">
+                            <label for="edit-extend" class="form-check-label">Extend</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_extension_name" class="form-label">Extension Name</label>
+                            <input type="text" id="editExtensionNameField" name="edit-extend" class="form-control" placeholder="Tanggal Peminjaman">
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
@@ -276,14 +289,13 @@
             });
         });
 
-        // Menangani perubahan checkbox untuk tanggal
+        // Menangani perubahan checkbox extend pada form tambah data
         $('#setDates').change(function() {
             if ($(this).is(':checked')) {
-                $('#dateFields').show(); // Menampilkan field tanggal saat checkbox dicentang
+                $('#extensionNameField').show(); // Tampilkan kolom extension name
             } else {
-                $('#dateFields').hide(); // Menyembunyikan field tanggal saat checkbox tidak dicentang
-                $('#start_date').val(''); // Kosongkan nilai field tanggal saat disembunyikan
-                $('#end_date').val(''); // Kosongkan nilai field tanggal akhir
+                $('#extensionNameField').hide(); // Sembunyikan kolom extension name
+                $('#extension_name').val(''); // Kosongkan input extension name
             }
         });
 
@@ -476,27 +488,42 @@
                 });
             });
 
-            // Mengambil data untuk ditampilkan di modal edit
+            // Menangani perubahan checkbox extend pada form edit data
+            $('#edit-extend').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
+                } else {
+                    $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
+                    $('#edit_extension_name').val(''); // Kosongkan input extension name
+                }
+            });
+
+            // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
             $(document).on('click', '.btn-edit', function() {
-                var id = $(this).data('id'); // Mengambil ID dari data-id
-                var url = `{{ config('app.api_url') }}/keperluan/${id}`; // Membentuk URL API berdasarkan ID
+                var id = $(this).data('id');
+                var url = `{{ config('app.api_url') }}/keperluan/${id}`;
 
                 $.ajax({
                     url: url,
                     type: 'GET',
                     success: function(data) {
-                        $('#editForm').attr('action', url); // Atur action form ke URL
-                        $('#edit-nama').val(data.nama); // Isi input dengan data yang diambil
-                        $('#edit-nama-tanggal-akhir').val(data
-                            .nama_tanggal_akhir); // Isi input nama_tanggal_akhir
-                        $('#edit-extend').prop('checked', data.extend); // Atur checkbox extend
-                        $('#edit-id').val(id); // Isi input hidden dengan ID
-                        $('#editData').modal('show'); // Tampilkan modal
+                        $('#edit-nama').val(data.nama);
+                        $('#edit-extend').prop('checked', data.extend);
+                        $('#edit-id').val(id);
+
+                        if (data.extend) {
+                            $('#editExtensionNameField').show();
+                            $('#edit_extension_name').val(data
+                            .extension_name); // Isi extension name jika ada
+                        } else {
+                            $('#editExtensionNameField').hide();
+                            $('#edit_extension_name').val(''); // Kosongkan extension name
+                        }
+
+                        $('#editData').modal('show');
                     },
                     error: function(xhr) {
-                        showNotification('error',
-                            'Error fetching type requirement data.'
-                        ); // Tampilkan notifikasi error
+                        showNotification('error', 'Error fetching type requirement data.');
                     }
                 });
             });
