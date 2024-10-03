@@ -76,8 +76,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/barangmasuk/store', [BarangMasukController::class, 'store'])->name('barangmasuk.store');
     //Route::get('/barangmasuk/edit/{id}', [BarangMasukController::class, 'edit'])->name('barangmasuk.edit');
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
-    Route::delete('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
+    Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
+
+    Route::get('/template/download', [BarangMasukController::class, 'downloadTemplate'])->name('template.download');
+    Route::post('/upload/excel', [BarangMasukController::class, 'uploadExcel'])->name('upload.excel');
+
 
     Route::get('/serialnumber', [SerialNumberController::class, 'index'])->name('serialnumber.index');
     Route::get('/serialnumber/create', [SerialNumberController::class, 'create'])->name('serialnumber.create');

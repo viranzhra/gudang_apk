@@ -11,29 +11,42 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class KeperluanController extends Controller
 {
 
 	public function index(Request $request)
 	{
-        return view('keperluan.index');
+		return view('keperluan.index');
 	}
 
-	public function create()
-	{
-		return view('keperluan.create');
-	}
+	// public function create()
+	// {
+	// 	return view('keperluan.create');
+	// }
 
 	public function store(Request $request)
 	{
+		// Logging request data yang akan dikirim ke API
+		Log::info('Sending type data to API:', $request->all());
+
+		// Mengirim request POST ke API untuk menyimpan data type
 		$response = Http::withToken(session('token'))->post(config('app.api_url') . '/keperluan', $request->all());
 
+		// Logging response dari API
+		Log::info('API Response:', [
+			'status' => $response->status(),
+			'body' => $response->body(),
+		]);
+
+		// Mengecek apakah request berhasil
 		if ($response->successful()) {
 			return redirect('/keperluan')->with('success', 'Data berhasil ditambahkan!');
 		}
 
-		return back()->withErrors('Gagal menambahkan data keperluan.');
+		// Jika gagal, kembali ke halaman sebelumnya dengan pesan error
+		return back()->withErrors('Gagal menambahkan data.');
 	}
 
 	public function edit($id)
@@ -42,7 +55,7 @@ class KeperluanController extends Controller
 
 		if ($response->successful()) {
 			$data = $response->json();
-			$data = (object) $data;
+			// $data = (object) $data;
 			return view('keperluan.edit', compact('data'));
 		}
 
@@ -74,8 +87,8 @@ class KeperluanController extends Controller
 	public function deleteSelected(Request $request)
 	{
 		$response = Http::withToken(session('token'))->post(config('app.api_url') . '/keperluan/delete-selected', [
-            'ids' => $request->input('ids')
-        ]);
+			'ids' => $request->input('ids')
+		]);
 
 		if ($response->successful()) {
 			return redirect('/keperluan')->with('success', 'Data terpilih berhasil dihapus!');

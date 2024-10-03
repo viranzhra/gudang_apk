@@ -205,8 +205,11 @@
             <!-- Sidebar scroll-->
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="./index.html" class="text-nowrap logo-img">
-                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    <a href="#" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo_ptjaringsolusi.png" style="width: 100px;
+                            border-radius: 7px;
+                            margin-left: 50px;
+                            margin-top: 15px;" alt="" />
                     </a>
                     <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                         <i class="ti ti-x fs-8"></i>
@@ -282,7 +285,7 @@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Type Requirement</span>
+                                <span class="hide-menu">Requirement Type</span>
                             </a>
                         </li>
                         <li>
