@@ -116,20 +116,9 @@
                         <span id="notificationMessage"></span>
                     </div>
                     <h5 class="heading-with-icon">
-                        <a href="/barangmasuk"><img src="{{ asset('assets/images/icon/back-arrow2.png') }}" class="back-icon" onclick="history.back()" alt="Back"></a>
-                        <span style="margin-left: 30%;">Tambah Barang</span>
+                        <img src="{{ asset('assets/images/icon/back-arrow2.png') }}" class="back-icon" onclick="history.back()" alt="Back">
+                        Tambah Barang
                     </h5>
-                    <!-- Notifikasi flash message -->
-                    @if ($errors->any())
-                        <div id="error-notification" class="alert alert-danger">
-                            <strong>Ups!</strong> Terjadi kesalahan:
-                            <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                            </ul>
-                        </div>
-                    @endif
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="jenis_barang" class="form-label">Jenis Barang</label>
@@ -221,19 +210,6 @@
             </div>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            const errorNotification = $('#error-notification');
-            
-            if (errorNotification.length) {
-                setTimeout(function() {
-                    errorNotification.fadeOut(); // Menggunakan fadeOut untuk efek yang lebih halus
-                }, 4000);
-            }
-        });
-    </script>       
 
     <script>
         document.getElementById('jenis_barang').addEventListener('change', function () {
