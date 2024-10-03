@@ -281,7 +281,7 @@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Type Requirement</span>
+                                <span class="hide-menu">Requirement Type</span>
                             </a>
                         </li>
                         <li>

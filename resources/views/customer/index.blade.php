@@ -582,7 +582,7 @@
                     })
                 }).then(response => {
                     if (response.ok) {
-                        showNotification('success', 'The selected data was successfully delected!');
+                        showNotification('success', 'Selected data was successfully delected!');
                         $('#customer-table').DataTable().ajax.reload(); // Reload DataTable
                     } else {
                         showNotification('error', 'Gagal menghapus data.');
