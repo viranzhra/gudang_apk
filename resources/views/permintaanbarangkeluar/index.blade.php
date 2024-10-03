@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add a delay before fetching data
         setTimeout(() => {
             // Fetch data after modal is shown
-            fetch(`{{ config('app.api_url') }}/permintaanbarangkeluar/${id}`, {
+            fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/${id}`, {
                     method: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + '{{ session('token') }}'
@@ -128,13 +128,24 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-11">
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Item / Qty</div>
-                                    <div class="col-9">${detail.nama_barang || '—'} — ${detail.total_barang || '—'}</div>
+                                    <div class="col-9">
+                                        ${detail.nama_barang || '—'} — 
+                                        ${'<b>' + detail.total_barang + '</b>' || '—'}
+                                        <div class="dropdown d-inline-block ms-2">
+                                            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownSerialNumber${detail.barang_id}" data-bs-toggle="dropdown" aria-expanded="false" onclick="window.loadSerialNumbers(${id}, ${detail.barang_id}, this)">
+                                                Serial Numbers
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownSerialNumber${detail.barang_id}" id="serialNumbers-${detail.barang_id}">
+                                                <li><span class="dropdown-item">Loading...</span></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Item Type</div>
                                     <div class="col-9">${detail.nama_jenis_barang || '—'}</div>
                                 </div>
-                                <div class="row">
+                                <div class="row mt-2">
                                     <div class="col-3 font-weight-bold">Supplier</div>
                                     <div class="col-9">${detail.nama_supplier || '—'}</div>
                                 </div>
@@ -198,11 +209,48 @@ document.addEventListener('DOMContentLoaded', function() {
                     setTimeout(function(){modal.hide()},1500);
                 });
         }, 300); // Delay data
+
+        window.loadSerialNumbers = function(id, barangId, button) {
+            const serialNumbersElement = document.getElementById(`serialNumbers-${barangId}`);
+            
+            // Cek apakah data sudah dimuat sebelumnya
+            if (button.dataset.loaded === 'true') {
+                return;
+            }
+
+            serialNumbersElement.innerHTML = '<li><span class="dropdown-item">Loading...</span></li>';
+
+            setTimeout(() => {
+                fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/get-sn/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const filteredData = data.filter(item => item.barang_id == barangId);
+                    const serialNumbersHtml = filteredData.map(item => `
+                        <li><span class="dropdown-item">${item.serial_number || 'N/A'}</span></li>
+                    `).join('');
+
+                    serialNumbersElement.innerHTML = serialNumbersHtml || '<li><span class="dropdown-item">No serial numbers available</span></li>';
+                    
+                    // Tandai SN sudah dimuat
+                    button.dataset.loaded = 'true';
+                })
+                .catch(error => {
+                    console.error('Error fetching serial numbers:', error);
+                    serialNumbersElement.innerHTML = '<li><span class="dropdown-item">Error loading serial numbers</span></li>';
+                });
+            }, 300); // Delay pemuatan SN
+        }
     }
 
     const table = new DataTable('#permintaan-table', {
         processing: false,
         serverSide: true,
+        debug: false,
         ajax: {
             url: '{{ env('API_URL') }}/permintaanbarangkeluar',
             headers: {
