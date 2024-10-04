@@ -280,8 +280,10 @@
                 }
             });
 
-            function initializeSelect2() {
-                $('.select2').select2();
+            //$('.select2').select2();
+            function initializeSelect2(index) {
+                $(`#jenis_barang_${index}`).select2();
+                $(`#barang_${index}`).select2();
 
                 $('.select2').on('select2:select', function(e) {
                     const selectElement = $(this);
@@ -309,59 +311,68 @@
                     // Jenis Barang
                     if (selectElement.attr('id').startsWith('jenis_barang')) {
                         const jenisBarangId = e.params.data.id;
+                        const barangSelect = $(`#barang_${index}`);
+                        const stokElement = $(`#stok_${index}`);
+                        const jumlahBarangElement = $(`#jumlah_barang_${index}`);
+                        const headJumlahBarangElement = $(`#head_jumlah_barang_${index}`);
+
                         selectElement.prop('disabled', true);
-                        $(`#barang_${index}`).prop('disabled', true);
+                        barangSelect.prop('disabled', true);
+
                         fetch(`/permintaanbarangkeluar/get-by-jenis/${jenisBarangId}`)
                             .then(response => response.json())
                             .then(data => {
-                                const barangSelect = $(`#barang_${index}`);
-                                barangSelect.empty();
-                                barangSelect.append('<option selected>Pilih barang</option>');
+                                barangSelect.empty().append('<option selected>Pilih barang</option>');
                                 data.forEach(barang => {
-                                    const option = new Option(barang.nama, barang.id, false,
-                                        false);
-                                    barangSelect.append(option);
+                                    barangSelect.append(new Option(barang.nama, barang.id, false, false));
+                                    /* */
+                                    barangSelect.trigger('change');
+                                    stokElement.text('Stok Tersedia: 0');
+                                    jumlahBarangElement.attr('data-input-counter-max', 1).val(1);
+                                    headJumlahBarangElement.hide();
                                 });
-                                barangSelect.trigger('change');
+                                // barangSelect.trigger('change');
 
-                                $(`#stok_${index}`).text(`Stok Tersedia: 0`);
-                                $(`#jumlah_barang_${index}`).attr('data-input-counter-max', 1);
-                                $(`#jumlah_barang_${index}`).val(1);
-                                $(`#head_jumlah_barang_${index}`).hide();
+                                // stokElement.text('Stok Tersedia: 0');
+                                // jumlahBarangElement.attr('data-input-counter-max', 1).val(1);
+                                // headJumlahBarangElement.hide();
                             })
                             .catch(error => console.error('Error fetching barang:', error))
                             .finally(() => {
                                 selectElement.prop('disabled', false);
-                                $(`#barang_${index}`).prop('disabled', false);
+                                barangSelect.prop('disabled', false);
                             });
                     }
 
                     // Barang
                     if (selectElement.attr('id').startsWith('barang')) {
                         const barangId = e.params.data.id;
+                        const jenisBarangElement = $(`#jenis_barang_${index}`);
+                        const stokElement = $(`#stok_${index}`);
+                        const jumlahBarangElement = $(`#jumlah_barang_${index}`);
+                        const headJumlahBarangElement = $(`#head_jumlah_barang_${index}`);
+
                         selectElement.prop('disabled', true);
-                        $(`#jenis_barang_${index}`).prop('disabled', true);
-                        $(`#stok_${index}`).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
-                        $(`#head_jumlah_barang_${index}`).hide();
-                        setTimeout(() => {
-                            fetch(`/permintaanbarangkeluar/get-stok/${barangId}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    $(`#stok_${index}`).text(`Stok Tersedia: ${data.stok}`).hide().fadeIn(500);
-                                    if (data.stok > 0) {
-                                        $(`#jumlah_barang_${index}`).attr('data-input-counter-max', data.stok);
-                                        $(`#jumlah_barang_${index}`).val(1);
-                                        $(`#head_jumlah_barang_${index}`).hide().fadeIn(500).removeClass('d-none');
-                                    } else {
-                                        $(`#head_jumlah_barang_${index}`).hide();
-                                    }
-                                })
-                                .catch(error => console.log('Error fetching stok:', error))
-                                .finally(() => {
-                                    selectElement.prop('disabled', false);
-                                    $(`#jenis_barang_${index}`).prop('disabled', false);
-                                });
-                        }, 500); // Delay untuk Hitung Stok
+                        jenisBarangElement.prop('disabled', true);
+                        stokElement.html('<i class="fas fa-spinner fa-spin"></i> Loading...');
+                        headJumlahBarangElement.hide();
+
+                        fetch(`/permintaanbarangkeluar/get-stok/${barangId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                stokElement.text(`Stok Tersedia: ${data.stok}`).hide().fadeIn(300);
+                                if (data.stok > 0) {
+                                    jumlahBarangElement.attr('data-input-counter-max', data.stok).val(1);
+                                    headJumlahBarangElement.hide().fadeIn(300).removeClass('d-none');
+                                } else {
+                                    headJumlahBarangElement.hide();
+                                }
+                            })
+                            .catch(error => console.error('Error fetching stok:', error))
+                            .finally(() => {
+                                selectElement.prop('disabled', false);
+                                jenisBarangElement.prop('disabled', false);
+                            });
                     }
                 });
             }
@@ -376,7 +387,9 @@
                     for (let i = itemCount + 1; i <= quantity; i++) {
                         container.appendChild(createPermintaanInput(i));
                     }
-                    initializeSelect2(); // Re-initialize Select2 for new elements
+                    setTimeout(() => {
+                        initializeSelect2(quantity);
+                    }, 100);
                 }
 
                 // Remove extra inputs if needed
@@ -422,7 +435,8 @@
 
             // Initialize items based on the default quantity
             updatePermintaanInputs();
-            initializeSelect2();
+            $('.select2').select2();
+            initializeSelect2(1);
         });
     </script>
 
