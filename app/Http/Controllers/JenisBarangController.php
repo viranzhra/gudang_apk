@@ -63,6 +63,7 @@ class JenisBarangController extends Controller
     // Prepare the data to be sent to the external API
     $data = [
         'nama' => $request->input('nama'),
+		'deskripsi' => $request->input('deskripsi'),
     ];
 
     // Send a POST request to the external API

@@ -113,7 +113,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/keperluan/delete/{id}', [KeperluanController::class, 'delete'])->name('keperluan.delete');
     Route::post('/keperluan/delete-selected', [KeperluanController::class, 'deleteSelected']);
 
-    Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
+    Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
+    // Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
     Route::get('/laporan/barangmasuk', [LaporanController::class, 'barangmasuk'])->name('laporan.barangmasuk.index');
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index');
 });

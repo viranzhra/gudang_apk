@@ -8,6 +8,8 @@ use App\Models\Barang;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Yajra\DataTables\Facades\DataTables;
 
 class LaporanController extends Controller
 {
@@ -61,6 +63,46 @@ class LaporanController extends Controller
 
         return view('laporan.stok.index', compact('data', 'startDate', 'endDate'));
     }
+
+//     public function stok(Request $request)
+// {
+//     $search = $request->input('search');
+//     $startDate = $request->input('start_date');
+//     $endDate = $request->input('end_date');
+
+//     // Query data from the database
+//     $query = DB::table('barang_masuk')
+//         ->leftJoin('barang', 'barang_masuk.barang_id', '=', 'barang.id')
+//         ->leftJoin('jenis_barang', 'barang.jenis_barang_id', '=', 'jenis_barang.id')
+//         ->select(
+//             'barang.id as barang_id',
+//             'barang.nama as nama_barang',
+//             'jenis_barang.nama as nama_jenis_barang',
+//             DB::raw('SUM(barang_masuk.jumlah) as jumlah')
+//         )
+//         ->groupBy('barang.id', 'barang.nama', 'jenis_barang.nama');
+
+//     // Add search filter
+//     if ($search) {
+//         $query->where(function ($q) use ($search) {
+//             $q->where('barang.nama', 'like', "%$search%")
+//               ->orWhere('jenis_barang.nama', 'like', "%$search%");
+//         });
+//     }
+
+//     // Add date range filter if provided
+//     if ($startDate && $endDate) {
+//         $query->whereBetween('barang_masuk.tanggal', [$startDate, $endDate]);
+//     }
+
+//     // Fetch data using Yajra DataTables
+//     return DataTables::of($query)
+//         ->editColumn('jumlah', function($row) {
+//             return number_format($row->jumlah);
+//         })
+//         ->make(true);
+// }
+
 
     public function barangmasuk(Request $request)
     {

@@ -2,6 +2,10 @@
 
 @section('content')
 <style>
+    /* Existing styles */
+    .select-item:checked {
+        accent-color: blue;
+    }
     .btn-action {
         background: none;
         border: none; 
@@ -9,7 +13,7 @@
         cursor: pointer; 
     }
     
-    .icon-edit, .icon-delete, .icon-detail {
+    .icon-edit, .icon-delete {
         color: #ffffff; 
         font-size: 18px;
         width: 30px; 
@@ -21,10 +25,6 @@
         margin-right: 5px;
     }
 
-    .icon-detail {
-        background-color: #112337;
-    }
-
     .icon-edit {
         background-color: #01578d;
     }
@@ -33,12 +33,41 @@
         background-color: #910a0a;
     }
 
-    .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
-        opacity: 0.8; 
+    #notification {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 300px;
+        padding: 15px;
+        border-radius: 5px;
+        z-index: 9999;
+        display: none;
+        text-align: left;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .alert-info {
+        background-color: #d1ecf1;
+        color: #0c5460;
     }
 </style>
 
-<div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+<div class="container mt-3" style="padding: 40px; width: 1160px;">
+    <!-- Notification Element -->
+    <div id="notification" class="alert" style="display: none;">
+        <strong id="notificationTitle">Notification</strong>
+        <p id="notificationMessage"></p>
+    </div>
+
     <h4 class="mt-3" style="color: #8a8a8a;">Data Jenis Barang</h4>
     <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
         <!-- Add Button -->
@@ -46,20 +75,20 @@
             <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
             Add
         </a>              
-    
         <!-- Delete Selected Button -->
         <button id="deleteSelected" class="btn btn-danger d-none" style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
             <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
             Delete Selected
         </button>          
     </div>    
-    
+
     <table class="table table-bordered table-striped table-hover" id="jenisBarangTable" width="100%">
         <thead class="thead-dark">
             <tr>
                 <th style="width: 20px"><input type="checkbox" id="select-all"></th>
                 <th style="width: 25px;">No</th>
                 <th>Type Item</th>
+                <th>Description</th>
                 <th>Action</th>
             </tr>
         </thead>
@@ -77,7 +106,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{ route('jenisbarang.store') }}" enctype="multipart/form-data">
+                <form id="addForm" method="post" action="{{ route('jenisbarang.store') }}" enctype="multipart/form-data">
                     @csrf
                     @if ($errors->any())
                     <div class="alert alert-danger">
@@ -93,6 +122,10 @@
                     <div class="mb-3">
                         <label for="nama" class="form-label">Item Type</label>
                         <input type="text" id="nama" name="nama" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="deskripsi" class="form-label">Description</label>
+                        <input type="text" id="deskripsi" name="deskripsi" class="form-control" required />
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
@@ -118,6 +151,10 @@
                         <label for="edit-nama" class="form-label">Item Type</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
                     </div>
+                    <div class="mb-3">
+                        <label for="edit-deskripsi" class="form-label">Description</label>
+                        <input type="text" id="edit-deskripsi" name="deskripsi" class="form-control" required />
+                    </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
             </div>
@@ -126,8 +163,8 @@
 </div>
 
 <!-- Modal Konfirmasi Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
@@ -139,7 +176,7 @@
             <div class="modal-footer">
                 <form id="deleteForm" method="POST" action="">
                     @csrf
-                    @method('GET')
+                    @method('DELETE')
                     <button type="submit" class="btn btn-danger" style="background-color: #910a0a">Delete</button>
                 </form>                               
             </div>
@@ -157,129 +194,178 @@
 
 <!-- Script untuk inisialisasi DataTables -->
 <script>
-$(document).ready(function() {
-    // Inisialisasi DataTables
-    $('#jenisBarangTable').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: 'https://doaibutiri.my.id/gudang/api/jenisbarang',
-            headers: {
-                'Authorization': 'Bearer ' + '{{ session('token') }}'
-            }
-        },
-        columns: [
-            {
-                data: 'id',
-                orderable: false,
-                render: function(data) {
-                    return `<input type="checkbox" class="select-item" value="${data}">`;
+    $(document).ready(function() {
+        // Inisialisasi DataTables
+        const table = $('#jenisBarangTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: 'https://doaibutiri.my.id/gudang/api/jenisbarang',
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('token') }}'
                 }
             },
-            {
-                data: null,
-                sortable: false,
-                render: function(data, type, row, meta) {
-                    return meta.row + meta.settings._iDisplayStart + 1;
-                }
-            },
-            {
-                data: 'nama'
-            },
-            {
-                data: 'id',
-                orderable: false,
-                render: function(data, type, row) {
-                    return `
-                        <div class="d-flex">
-                            <button class="btn-edit btn-action" data-id="${data}" data-nama="${row.nama}" data-bs-toggle="modal" data-bs-target="#editData" aria-label="Edit">
-                                <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+            columns: [
+                {
+                    data: 'id',
+                    orderable: false,
+                    render: function(data) {
+                        return `<input type="checkbox" class="select-item" value="${data}">`;
+                    }
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                { data: 'nama' },
+                { data: 'deskripsi' },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data) {
+                        return `
+                            <button class="btn-action edit-btn" data-id="${data.id}" data-nama="${data.nama}" data-deskripsi="${data.deskripsi}">
+                                <div class="icon-edit"><iconify-icon icon="mdi:pencil"></iconify-icon></div>
                             </button>
-                            <button class="btn-action delete-btn" data-id="${data}" data-nama="${row.nama}" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                            <button class="btn-action delete-btn" data-id="${data.id}" data-nama="${data.nama}">
+                                <div class="icon-delete"><iconify-icon icon="mdi:delete"></iconify-icon></div>
                             </button>
-                        </div>
-                    `;
+                        `;
+                    }
                 }
-            }
-        ],
-        order: [
-            [2, 'asc']
-        ]
-    });
-
-    // Handle select-all checkbox
-    $(document).on('change', '#select-all', function() {
-        const isChecked = $(this).is(':checked');
-        $('.select-item').prop('checked', isChecked);
-        toggleDeleteButton();
-    });
-
-    // Handle individual checkboxes
-    $(document).on('change', '.select-item', function() {
-        toggleDeleteButton();
-    });
-
-    // Function to toggle the delete button based on selection
-    function toggleDeleteButton() {
-        const selected = $('.select-item:checked').length;
-        const deleteButton = $('#deleteSelected');
-        if (selected > 0) {
-            deleteButton.removeClass('d-none');
-        } else {
-            deleteButton.addClass('d-none');
+            ],
+            // language: {
+            //     emptyTable: "Tidak ada data yang tersedia",
+            //     search: "Cari:",
+            //     lengthMenu: "Tampilkan _MENU_ entri",
+            //     paginate: {
+            //         first: "Pertama",
+            //         last: "Terakhir",
+            //         next: "Selanjutnya",
+            //         previous: "Sebelumnya"
+            //     }
+            // }
+        });
+        
+        // Function to show notifications
+        function showNotification(title, message, type) {
+            const notification = $('#notification');
+            $('#notificationTitle').text(title);
+            $('#notificationMessage').text(message);
+            notification.removeClass('alert-success alert-danger alert-info').addClass(`alert-${type}`);
+            notification.fadeIn();
+    
+            // Hide notification after 5 seconds
+            setTimeout(() => {
+                notification.fadeOut();
+            }, 5000);
         }
-    }
 
-    // Handle delete selected button click
-    $(document).on('click', '#deleteSelected', function() {
-        const selected = [];
-        $('.select-item:checked').each(function() {
-            selected.push($(this).val());
+        // Handling the edit button click event
+        $(document).on('click', '.edit-btn', function() {
+            const id = $(this).data('id');
+            const nama = $(this).data('nama');
+            const deskripsi = $(this).data('deskripsi');
+            $('#editForm').attr('action', `https://doaibutiri.my.id/gudang/api/jenisbarang/${id}`);
+            $('#edit-nama').val(nama);
+            $('#edit-deskripsi').val(deskripsi);
+            $('#editData').modal('show');
         });
 
-        if (selected.length > 0) {
-            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                fetch('/jenisbarang/deleteSelected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        ids: selected
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Gagal menghapus data.');
-                    }
-                });
-            }
-        } else {
-            alert('Tidak ada data yang dipilih.');
-        }
+        // Handling the delete button click event
+        $(document).on('click', '.delete-btn', function() {
+            const id = $(this).data('id');
+            const nama = $(this).data('nama');
+            $('#itemName').text(nama);
+            $('#deleteForm').attr('action', `https://doaibutiri.my.id/gudang/api/jenisbarang/${id}`);
+            $('#deleteModal').modal('show');
+        });
+
+                // Handle add form submission
+                $('#tambahDataModal form').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+    
+            $.ajax({
+                url: $(this).attr('action'),
+                method: 'POST',
+                data: formData,
+                success: function(response) {
+                    showNotification('Success', 'Data berhasil ditambahkan.', 'success');
+                    $('#tambahDataModal').modal('hide');
+                    $('#jenisBarangTable').DataTable().ajax.reload(); // Reload table data
+                },
+                error: function() {
+                    showNotification('Error', 'Gagal menambahkan data.', 'danger');
+                }
+            });
+        });
+
+        // Handling form submission for editing
+        $('#editForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            const formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function(response) {
+                    $('#editData').modal('hide');
+                    $('#notification').removeClass('alert-danger').addClass('alert-success').fadeIn();
+                    $('#notificationTitle').text('Success');
+                    $('#notificationMessage').text(response.message);
+                    $('#notification').fadeOut(3000);
+                    table.ajax.reload(); // Reload the DataTable
+                },
+                error: function(xhr) {
+                    $('#notification').removeClass('alert-success').addClass('alert-danger').fadeIn();
+                    $('#notificationTitle').text('Error');
+                    $('#notificationMessage').text(xhr.responseJSON.message || 'Something went wrong!');
+                    $('#notification').fadeOut(3000);
+                }
+            });
+        });
+
+        // Handle delete form submission
+        $('#deleteForm').on('submit', function(e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('#deleteModal').modal('hide');
+                    $('#notification').removeClass('alert-danger').addClass('alert-success').fadeIn();
+                    $('#notificationTitle').text('Success');
+                    $('#notificationMessage').text(response.message);
+                    $('#notification').fadeOut(3000);
+                    table.ajax.reload(); // Reload the DataTable
+                },
+                error: function(xhr) {
+                    $('#notification').removeClass('alert-success').addClass('alert-danger').fadeIn();
+                    $('#notificationTitle').text('Error');
+                    $('#notificationMessage').text(xhr.responseJSON.message || 'Something went wrong!');
+                    $('#notification').fadeOut(3000);
+                }
+            });
+        });
+
+        // Handle select all checkbox
+        $('#select-all').on('click', function() {
+            $('.select-item').prop('checked', this.checked);
+            $('#deleteSelected').toggleClass('d-none', !this.checked);
+        });
+
+        // Handle delete selected button
+        $('#deleteSelected').on('click', function() {
+            // Implement delete selected items functionality here
+        });
     });
-
-    // Handle edit button click
-    $(document).on('click', '.btn-edit', function() {
-        const id = $(this).data('id');
-        const nama = $(this).data('nama');
-
-        $('#edit-nama').val(nama);
-        $('#editForm').attr('action', `/jenisbarang/update/${id}`);
-    });
-
-    // Handle delete button click
-    $(document).on('click', '.delete-btn', function() {
-        const id = $(this).data('id');
-        const nama = $(this).data('nama');
-
-        $('#itemName').text(nama);
-        $('#deleteForm').attr('action', `/jenisbarang/delete/${id}`);
-    });
-});
-
 </script>
 @endsection
+

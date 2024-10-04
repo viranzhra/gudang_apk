@@ -1,262 +1,170 @@
 @extends('layouts.navigation')
 
 @section('content')
+<style>
+    /* Button and icon styles */
+    .btn-action {
+        background: none;
+        border: none; 
+        padding: 0; 
+        cursor: pointer; 
+    }
+    
+    .icon-edit, .icon-delete, .icon-detail {
+        color: #ffffff; 
+        font-size: 18px;
+        width: 30px; 
+        height: 30px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
 
-    <head>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-        <link rel="stylesheet" href="../assets/css/styles.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <!-- FontAwesome CDN -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-    </head>
+    .icon-detail {
+        background-color: #112337;
+    }
 
-    <style>
-        .card {
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+    .icon-edit {
+        background-color: #000000;
+    }
 
-        .table-responsive {
-            margin-top: 20px;
-        }
+    .icon-delete {
+        background-color: #910a0a;
+    }
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-            color: black;
-        }
+    .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
+        opacity: 0.8; 
+    }
+</style>
 
-        th {
-            background-color: #f2f2f2;
-            cursor: default;
-            font-weight: semibold;
-            color: rgba(0, 0, 0, 0.829);
-        }
+<div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+    <h4 class="mt-3" style="color: #8a8a8a;">Outbound Item</h4>
+    <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
+        {{-- Uncomment to add buttons if needed
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">Add</a>
+        <button id="deleteSelected" class="btn btn-danger d-none">Delete Selected</button>
+        --}}
+    </div>    
+    
+    <table class="table table-bordered table-striped table-hover" id="barangkeluar" width="100%">
+        <thead class="thead-dark">
+            <tr>
+                <th style="width: 25px;">No</th>
+                <th>Customer Name</th>
+                <th>Purpose</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
 
-        /* search */
-        .search-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Bootstrap 4 integration -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
-        .search-box {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
+<!-- Script for initializing DataTables and handling actions -->
+<script>
+    $(document).ready(function() {
+        // Initialize DataTables
+        const table = $('#barangkeluar').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: 'https://doaibutiri.my.id/gudang/api/laporan/barangkeluar', // Your API URL
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('token') }}', // Pass the token correctly
+                },
+                data: function(d) {
+                    d.search = $('input[type="search"]').val(); // Search input from DataTables
+                    d.start_date = $('#startDate').val(); // Get the start date value
+                    d.end_date = $('#endDate').val(); // Get the end date value
+                },
+                dataSrc: function(json) {
+                    return json.data.data; // Access the correct data array for DataTables
+                },
+                error: function(xhr, error, code) {
+                    console.error("Error fetching data:", xhr.responseText);
+                    alert("Failed to load data. Please check the API or your token.");
+                }
+            },
+            columns: [
+                { data: null, orderable: false, render: function(data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1; // Row numbering
+                }},
+                { data: 'nama_customer' },
+                { data: 'nama_keperluan' },
+                { data: 'tanggal', render: function(data) {
+                    return new Date(data).toLocaleDateString(); // Format the date
+                }},
+                { data: 'jumlah' },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data) {
+                        return `
+                            <button class="btn-action view-btn" data-id="${data.permintaan_barang_keluar_id}" data-nama="${data.nama_customer}" data-keperluan="${data.nama_keperluan}" data-jumlah="${data.jumlah}">
+                                <div class="icon-detail"><iconify-icon icon="mdi:file-document-outline"></iconify-icon></div>
+                            </button>
+                        `;
+                    }
+                }
+            ],
+        });
 
-        .search-box input[type="search"] {
-            padding: 5px 30px 5px 10px;
-            width: 250px;
-            height: 40px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+        // Filter button click event to reload the DataTable based on date range
+        $('#filterBtn').on('click', function() {
+            table.ajax.reload(); // Reload table data with new date range
+        });
 
-        .search-box .search-icon {
-            position: absolute;
-            right: 5px;
-            padding: 5px;
-            font-size: 18px;
-            border-radius: 4px;
-            color: gray;
-            cursor: pointer;
-        }
+        // Handling the view button click event
+        $(document).on('click', '.view-btn', function() {
+            const id = $(this).data('id');
+            const nama = $(this).data('nama');
+            const keperluan = $(this).data('keperluan');
+            const jumlah = $(this).data('jumlah');
+            
+            // Set the data into modal for viewing
+            $('#viewBarangId').text(id);
+            $('#viewNamaBarang').text(nama);
+            $('#viewJenisBarang').text(keperluan);
+            $('#viewJumlahBarang').text(jumlah);
+            
+            // Show the modal
+            $('#viewModal').modal('show');
+        });
+    });
+</script>
 
-        .search-container label {
-            margin-right: 10px;
-        }
-
-        .search-container select {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        .btn-action {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .icon-edit {
-            color: #ffffff;
-            background-color: #12b75c;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .icon-delete {
-            color: #ffffff;
-            background-color: #dc3545;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .btn-action:hover .icon-edit,
-        .btn-action:hover .icon-delete {
-            opacity: 0.8;
-        }
-
-        .controls-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .controls-container label {
-            margin-right: 5px;
-        }
-
-        .controls-container select {
-            margin-right: 5px;
-        }
-
-        .btn-primary {
-            display: flex;
-            align-items: center;
-            background-color: #635bff;
-            color: #ffffff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            /* Color on hover */
-        }
-
-        /* Media query for small screens */
-        @media (max-width: 576px) {
-            .search-container {
-                flex-direction: column;
-                /* Stack items vertically */
-                align-items: flex-start;
-                /* Align items to the start of the container */
-            }
-
-            .search-box input[type="search"] {
-                width: 100%;
-                /* Make the search input full width */
-                margin-bottom: 10px;
-                /* Add space below the search input */
-            }
-
-            .btn-primary {
-                width: 100%;
-                /* Make the button full width */
-                text-align: center;
-                /* Center the text */
-                font-size: 16px;
-                /* Adjust font size for better readability */
-            }
-
-            .controls-container {
-                flex-direction: column;
-                /* Stack controls vertically on small screens */
-                align-items: stretch;
-                /* Stretch controls to full width */
-            }
-        }
-    </style>
-
-    <div class="container mt-3" style="padding: 30px;">
-        <h4 class="mb-4" style="color: #8a8a8a;">Outbound Item Report</h4>
-        <div class="search-container">
-            <form action="" method="GET" class="search-box">
-                <input type="search" id="search-input" name="search" placeholder="Search..."
-                    value="{{ request('search') }}">
-                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
-            </form>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <div class="input-group">
-                        <input type="date" class="form-control" id="datepicker" placeholder="From" />
-                        <span class="input-group-text bg-white">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="datepicker2" placeholder="To" />
-                        <span class="input-group-text bg-white">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
+<!-- Modal for viewing item details -->
+<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">Detail Outbound Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-
-        <div class="table-responsive">
-            @if (!$data->isEmpty())
-            <table class="table">
-                <thead class="thead-lightblue">
-                    <tr>
-                        <th>No</th>
-                        <th>Recipients</th>
-                        <th>Purposes</th>
-                        <th>Quantity</th>
-                        <th>Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data as $d)
-                        <tr>
-                            <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
-                            <td>{{ $d->nama_customer }}</td>
-                            <td>{{ $d->nama_keperluan }}</td>
-                            <td>{{ $d->jumlah }}</td>
-                            <td>{{ $d->tanggal }}</td>
-                            <td>
-                                
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="info-pagination-container">
-                <div class="info-text">
-                    Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }} dari {{ $data->total() }} data pada
-                    halaman {{ $data->currentPage() }}.
-                </div>
-                <div class="pagination-container">
-                    {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
-                </div>
+            <div class="modal-body">
+                <p><strong>ID Item:</strong> <span id="viewBarangId"></span></p>
+                <p><strong>Customer Name:</strong> <span id="viewNamaBarang"></span></p>
+                <p><strong>Purpose:</strong> <span id="viewJenisBarang"></span></p>
+                <p><strong>Amount:</strong> <span id="viewJumlahBarang"></span></p>
+                <span class="sidebar-divider lg"></span>
+                <p><strong>SN / Kondisi</strong></p>
+                <p id="viewSNKondisi"></p> <!-- Add a section for serial number or condition if needed -->
             </div>
-        @else
-            <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-                <div class="mx-auto max-w-screen-sm text-center">
-                    <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Data tidak
-                        ditemukan.</p>
-                </div>
-            </div>
-            @endif
         </div>
     </div>
+</div>
 
 @endsection
