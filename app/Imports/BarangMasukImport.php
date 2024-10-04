@@ -7,19 +7,17 @@ use Maatwebsite\Excel\Concerns\ToModel;
 
 class BarangMasukImport implements ToModel
 {
-    /**
-     * @param array $row
-     *
-     * @return \Illuminate\Database\Eloquent\Model|null
-     */
     public function model(array $row)
     {
-        // Assuming the Excel file has these columns in the right order
         return new BarangMasuk([
-            'barang' => $row[0],
-            'jumlah' => $row[1],
-            'keterangan' => $row[2],
-            'tanggal_masuk' => $row[3],
+            'nama_barang' => $row[0],
+            'jenis_barang' => $row[1],
+            'supplier' => $row[2],
+            'tanggal_masuk' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[3]),
+            'keterangan' => $row[4],
+            'jumlah' => $row[5],
+            // Sesuaikan dengan struktur file Excel yang diupload
         ]);
     }
 }
+

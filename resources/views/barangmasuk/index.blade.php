@@ -558,11 +558,15 @@
                         }
 
                         const detailContent = data.map((detail, index) => `
-                    <hr class="col-span-10 my-2">
-                    <div><strong>Barang ${index + 1}</strong></div>
-                    <div class="col-span-7">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
-                    <div class="font-bold col-span-3">Kelengkapan</div>
-                    <div class="col-span-7">${detail.kelengkapan_barang || '—'}</div>
+                    <hr class="col-span-10 my-3">
+                    <div class="row">
+                        <div class="col-3"><strong>Barang ${index + 1}</strong></div>
+                        :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Kelengkapan</strong></div>
+                        :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+                    </div>
                 `).join('');
 
                         const modalContent = `
@@ -570,33 +574,34 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="detailModalLabel">Detail Barang Masuk</h5>
+                                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
+                                <hr class="col-span-6 my-1" style="margin-top: 0; margin-bottom: 0;">
                                 <div class="modal-body">
                                     <div class="grid grid-cols-10 gap-2">
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Nama Barang:</strong></div>
+                                            <div class="col-3"><strong>Nama Barang</strong></div>:
                                             <div class="col-8">${namaBarang || '—'}</div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Jenis Barang:</strong></div>
+                                            <div class="col-3"><strong>Jenis Barang</strong></div>:
                                             <div class="col-8">${namaJenisBarang || '—'}</div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Supplier:</strong></div>
+                                            <div class="col-3"><strong>Supplier</strong></div>:
                                             <div class="col-8">${namaSupplier || '—'}</div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Tanggal Masuk:</strong></div>
+                                            <div class="col-3"><strong>Tanggal Masuk</strong></div>:
                                             <div class="col-8">${tanggalBarang || '—'}</div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Keterangan:</strong></div>
+                                            <div class="col-3"><strong>Keterangan</strong></div>:
                                             <div class="col-8">${keteranganBarang ? keteranganBarang : '—'}</div>
                                         </div>
                                         <div class="row mb-3">
-                                            <div class="col-3"><strong>Jumlah:</strong></div>
+                                            <div class="col-3"><strong>Jumlah</strong></div>:
                                             <div class="col-8">${jumlah || 0}</div>
                                         </div>
                                         ${detailContent}
@@ -669,7 +674,7 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex">
-                                <button aria-label="Detail" onclick="showDetailModal(${data}, '${row.nama_barang}', '${row.nama_jenis_barang}', '${row.nama_supplier}', '${row.tanggal_barang}', '${row.keterangan_barang}', ${row.jumlah})" class="btn-detail btn-action" style="border: none;">
+                                <button aria-label="Detail" onclick="showDetailModal(${data}, '${row.nama_barang}', '${row.nama_jenis_barang}', '${row.nama_supplier}', '${row.tanggal_barang}', '${row.keterangan_barangmasuk}', ${row.jumlah})" class="btn-detail btn-action" style="border: none;">
                                     <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                                 </button>
                                 <a href="/barangmasuk/create/${data}" class="btn-action">
