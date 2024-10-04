@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="col-9">
                                         ${detail.nama_barang || '—'} — 
                                         ${'<b>' + detail.total_barang + '</b>' || '—'}
+                                        ${status === 'Disetujui' ? `
                                         <div class="dropdown d-inline-block ms-2">
                                             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownSerialNumber${detail.barang_id}" data-bs-toggle="dropdown" aria-expanded="false" onclick="window.loadSerialNumbers(${id}, ${detail.barang_id}, this)">
                                                 Serial Numbers
@@ -139,13 +140,14 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 <li><span class="dropdown-item">Loading...</span></li>
                                             </ul>
                                         </div>
+                                        ` : ''}
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-3 font-weight-bold">Item Type</div>
                                     <div class="col-9">${detail.nama_jenis_barang || '—'}</div>
                                 </div>
-                                <div class="row mt-2">
+                                <div class="row ${status === 'Disetujui' ? 'mt-2' : ''}">
                                     <div class="col-3 font-weight-bold">Supplier</div>
                                     <div class="col-9">${detail.nama_supplier || '—'}</div>
                                 </div>
@@ -338,27 +340,39 @@ function updateStatus(id, status) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                Swal.fire({
-                    title: 'Berhasil!',
-                    text: data.message,
-                    icon: 'success'
-                }).then(() => {
+                // Swal.fire({
+                //     title: 'Berhasil!',
+                //     text: data.message,
+                //     icon: 'success'
+                // }).then(() => {
+                //     location.reload();
+                // });
+                showNotification('success', data.message);
+                setTimeout(function() {
                     location.reload();
-                });
+                }, 3000);
             } else {
-                Swal.fire({
-                    title: 'Gagal!',
-                    text: data.message,
-                    icon: 'error'
-                });
+                // Swal.fire({
+                //     title: 'Gagal!',
+                //     text: data.message,
+                //     icon: 'error'
+                // });
+                showNotification('error', data.message);
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
             }
         })
         .catch(error => {
-            Swal.fire({
-                title: 'Error',
-                text: 'Terjadi kesalahan: ' + error.message,
-                icon: 'error'
-            });
+            // Swal.fire({
+            //     title: 'Error',
+            //     text: 'Terjadi kesalahan: ' + error.message,
+            //     icon: 'error'
+            // });
+            showNotification('error', error.message);
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
         });
 }
 </script>
