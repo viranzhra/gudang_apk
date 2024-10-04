@@ -21,17 +21,17 @@ class KeperluanController extends Controller
 		return view('keperluan.index');
 	}
 
-	public function create()
-	{
-		return view('keperluan.create');
-	}
+	// public function create()
+	// {
+	// 	return view('keperluan.create');
+	// }
 
 	public function store(Request $request)
 	{
 		// Logging request data yang akan dikirim ke API
 		Log::info('Sending type data to API:', $request->all());
 
-		// Mengirim request POST ke API untuk menyimpan data supplier
+		// Mengirim request POST ke API untuk menyimpan data type
 		$response = Http::withToken(session('token'))->post(config('app.api_url') . '/keperluan', $request->all());
 
 		// Logging response dari API
@@ -46,7 +46,7 @@ class KeperluanController extends Controller
 		}
 
 		// Jika gagal, kembali ke halaman sebelumnya dengan pesan error
-		return back()->withErrors('Gagal menambahkan jenis keperluan.');
+		return back()->withErrors('Gagal menambahkan data.');
 	}
 
 	public function edit($id)
@@ -55,7 +55,7 @@ class KeperluanController extends Controller
 
 		if ($response->successful()) {
 			$data = $response->json();
-			$data = (object) $data;
+			// $data = (object) $data;
 			return view('keperluan.edit', compact('data'));
 		}
 

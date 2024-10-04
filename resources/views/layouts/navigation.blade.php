@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         .container {
             width: 80%;
@@ -284,7 +285,7 @@
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Type Requirement</span>
+                                <span class="hide-menu">Requirement Type</span>
                             </a>
                         </li>
                         <li>

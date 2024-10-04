@@ -23,10 +23,6 @@
             margin-right: 5px;
         }
 
-        .icon-detail {
-            background-color: #112337;
-        }
-
         .icon-edit {
             background-color: #01578d;
         }
@@ -122,7 +118,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{ route('supplier.store') }}" enctype="multipart/form-data">
+                    <form id="addSupplierForm" method="post" action="{{ route('supplier.store') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="tambah-nama" class="form-label">Supplier</label>
@@ -248,7 +244,7 @@
             // Clean phone number function
             function cleanPhoneNumber(phoneField) {
                 var phoneValue = phoneField.val().trim();
-                phoneValue = phoneValue.replace(/\D/g, '');
+                phoneValue = phoneValue.replace(/\D/g, ''); // Remove non-numeric characters
                 phoneField.val(phoneValue);
             }
 
@@ -269,6 +265,11 @@
                 phoneField.val(phoneValue);
                 return true;
             }
+
+            // Automatically clean phone number on click (for both add and edit form)
+            $('#tambah-telepon, #edit-telepon').on('focus', function() {
+                cleanPhoneNumber($(this));
+            });
 
             // Delete button event listener for individual delete
             $(document).on('click', '.btn-delete', function() {
@@ -320,13 +321,10 @@
                     return;
                 }
 
-                // Show confirmation modal
-                $('#deleteSelectedModal').modal('show');
-
-                // Confirm delete selected suppliers
-                $('#confirmDeleteSelected').off('click').on('click', function() {
+                $('#confirmDelete').modal('show'); // Tampilkan modal konfirmasi
+                $('#confirmDeleteButton').off('click').on('click', function() {
                     $.ajax({
-                        url: `{{ config('app.api_url') }}/suppliers/delete`, // Adjust the endpoint as necessary
+                        url: `{{ config('app.api_url') }}/suppliers/delete-selected`, // Endpoint penghapusan
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + '{{ session('token') }}',
@@ -338,8 +336,8 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Supplier terpilih berhasil dihapus!');
-                                $('#deleteSelectedModal').modal('hide');
+                                    'Selected data was successfully delected!');
+                                $('#confirmDelete').modal('hide');
                                 $('#supplier-table').DataTable().ajax.reload();
                             } else {
                                 showNotification('error',
@@ -347,6 +345,7 @@
                             }
                         },
                         error: function(xhr) {
+                            console.error(xhr);
                             let message = xhr.responseJSON?.message ||
                                 'Terjadi kesalahan saat menghapus supplier terpilih.';
                             showNotification('error', message);
@@ -409,7 +408,7 @@
             });
 
             // Add supplier form submission
-            $('form[action="{{ route('supplier.store') }}"]').on('submit', function(e) {
+            $('form[id="addSupplierForm"]').on('submit', function(e) {
                 e.preventDefault();
                 var phoneField = $('#tambah-telepon');
                 var errorField = $('#error-tambahtelepon');
@@ -423,34 +422,41 @@
                 let $submitButton = $(this).find('button[type="submit"]');
 
                 // Disable the submit button to prevent multiple clicks
-                $submitButton.prop('disabled', true).html(
-                    '<i class="spinner-border spinner-border-sm"></i>');
+                $submitButton.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i>');
 
-                // Sending the data via AJAX
-                $.post($(this).attr('action'), formData)
-                    .done(function(response) {
+                // Sending the data via AJAX to the API
+                $.ajax({
+                    url: '{{ config('app.api_url') }}/suppliers', // Use AJAX to avoid issues with POST
+                    method: 'POST',
+                    data: formData,
+                    dataType: 'json',
+                    success: function(response) {
                         console.log(response); // Debugging line
-                        // Check for success in the response
-                        if (response && response.success) {
+
+                        // Set notification message based on controller response
+                        if (response.success) {
+                            // If successful, show success message
                             showNotification('success', response.message);
-                            $('#tambahData').modal('hide');
-                            $('#supplier-table').DataTable().ajax.reload(); // Reload the DataTable
                         } else {
-                            // Handle unexpected response structure
-                            showNotification('error', response?.message ||
-                                'Gagal menambahkan supplier.');
+                            // If not successful, show error message
+                            showNotification('error', response.message || 'Gagal menambahkan supplier.');
                         }
-                    })
-                    .fail(function(xhr) {
+                    },
+                    error: function(xhr) {
                         // Handle AJAX errors
-                        let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menambahkan supplier.';
-                        showNotification('error', message);
-                    })
-                    .always(function() {
-                        // Re-enable the submit button
-                        $submitButton.prop('disabled', false).html('Save');
-                    });
+                        let message = xhr.responseJSON?.message || 'Terjadi kesalahan saat menambahkan supplier.';
+                        showNotification('error', message); // Show error message
+                    },
+                    complete: function() {
+                        // Hide the modal after a delay
+                        setTimeout(function() {
+                            $('#tambahData').modal('hide'); // Hide modal
+                            $('#supplier-table').DataTable().ajax.reload(); // Reload DataTable if needed
+                        }, 1000); // Delay of 1 second before hiding the modal
+
+                        $submitButton.prop('disabled', false).html('Save'); // Re-enable button
+                    }
+                });
             });
 
             // Reset add form on modal close
