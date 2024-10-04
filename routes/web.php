@@ -71,13 +71,17 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/barangmasuk', [BarangMasukController::class, 'index'])->name('barangmasuk.index');
     Route::get('/barangmasuk/create/{id?}', [BarangMasukController::class, 'create'])->name('barangmasuk.create');
-    Route::get('/barangmasuk/create', [BarangMasukController::class, 'create'])->name('barangmasuk.create');
+    Route::get('/barangmasuk/create', [BarangMasukController::class, 'create']);
     Route::get('/barangmasuk/get-by-jenis/{id}', [BarangMasukController::class, 'getBarangByJenis']);
     Route::post('/barangmasuk/store', [BarangMasukController::class, 'store'])->name('barangmasuk.store');
     //Route::get('/barangmasuk/edit/{id}', [BarangMasukController::class, 'edit'])->name('barangmasuk.edit');
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
-    Route::delete('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
+    Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
+
+    Route::get('/template/download', [BarangMasukController::class, 'downloadTemplate'])->name('template.download');
+    Route::post('/upload/excel', [BarangMasukController::class, 'uploadExcel'])->name('upload.excel');
+
 
     Route::get('/serialnumber', [SerialNumberController::class, 'index'])->name('serialnumber.index');
     Route::get('/serialnumber/create', [SerialNumberController::class, 'create'])->name('serialnumber.create');
@@ -89,6 +93,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/permintaanbarangkeluar', [PermintaanBarangKeluarController::class, 'index'])->name('permintaanbarangkeluar.index');
     Route::get('/permintaanbarangkeluar/create', [PermintaanBarangKeluarController::class, 'create'])->name('permintaanbarangkeluar.create');
+    Route::get('/permintaanbarangkeluar/get-stok/{barang_id}', [PermintaanBarangKeluarController::class, 'getStok']);
     Route::get('/permintaanbarangkeluar/get-by-jenis/{id}', [PermintaanBarangKeluarController::class, 'getBarangByJenis']);
     Route::get('/permintaanbarangkeluar/get-by-barang/{id}', [PermintaanBarangKeluarController::class, 'getSerialNumberByBarang']);
     Route::post('/permintaanbarangkeluar/store', [PermintaanBarangKeluarController::class, 'store'])->name('permintaanbarangkeluar.store');

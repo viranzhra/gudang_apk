@@ -1,337 +1,376 @@
 @extends('layouts.navigation')
 
 @section('content')
+    <style>
+        .card {
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
 
-<head>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-    <link rel="stylesheet" href="../assets/css/styles.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-</head>
+        .table-responsive {
+            margin-top: 20px;
+        }
 
-<style>
-    .card {
-        background-color: #ffffff;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            color: black;
+        }
 
-    .table-responsive {
-        margin-top: 20px;
-    }                                  
+        th {
+            background-color: #f2f2f2;
+            cursor: default;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.829);
+        }
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-        color: black;
-    }
+        .search-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
 
-    th {
-        background-color: #f2f2f2;
-        cursor: default;
-        font-weight: bold;
-        color: rgba(0, 0, 0, 0.829);
-    }
+        .search-box {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
 
-    .search-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-    }
+        .search-box input[type="search"] {
+            padding: 5px 30px 5px 10px;
+            width: 250px;
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-    .search-box {
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
+        .search-box .search-icon {
+            position: absolute;
+            right: 5px;
+            padding: 5px;
+            font-size: 18px;
+            color: gray;
+            cursor: pointer;
+        }
 
-    .search-box input[type="search"] {
-        padding: 5px 30px 5px 10px;
-        width: 250px;
-        height: 40px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+        .search-container label {
+            margin-right: 10px;
+        }
 
-    .search-box .search-icon {
-        position: absolute;
-        right: 5px;
-        padding: 5px;
-        font-size: 18px;
-        color: gray;
-        cursor: pointer;
-    }
+        .search-container select {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
 
-    .search-container label {
-        margin-right: 10px;
-    }
+        .btn-actions-container {
+            display: flex;
+            /* Align items in a row */
+            justify-content: flex-end;
+            /* Align items to the right */
+            gap: 5px;
+            /* Space between buttons */
+            align-items: center;
+            /* Center items vertically */
+        }
 
-    .search-container select {
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-    }
+        .btn-action {
+            border: none;
+            /* Remove border */
+            background: none;
+            /* Remove background */
+            padding: 0;
+            /* Remove padding */
+            cursor: pointer;
+            /* Pointer cursor for interaction */
+        }
 
-    .btn-actions-container {
-        display: flex; /* Align items in a row */
-        justify-content: flex-end; /* Align items to the right */
-        gap: 5px; /* Space between buttons */
-        align-items: center; /* Center items vertically */
-    }
+        .icon-edit,
+        .icon-delete,
+        .icon-detail,
+        .icon-tambah {
+            color: #ffffff;
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50px;
+            margin-right: 5px;
+        }
 
-    .btn-action {
-        border: none; /* Remove border */
-        background: none; /* Remove background */
-        padding: 0; /* Remove padding */
-        cursor: pointer; /* Pointer cursor for interaction */
-    }
+        .icon-detail {
+            background-color: #112337;
+        }
 
-    .icon-edit, .icon-delete, .icon-detail, .icon-tambah {
-        color: #ffffff; 
-        font-size: 18px;
-        width: 30px; 
-        height: 30px; 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50px;
-        margin-right: 5px;
-    }
+        .icon-tambah {
+            background-color: #01578d;
+        }
 
-    .icon-detail {
-        background-color: #112337;
-    }
+        .icon-edit {
+            background-color: #01578d;
+        }
 
-    .icon-tambah {
-        background-color: #01578d;
-    }
+        .icon-delete {
+            background-color: #910a0a;
+        }
 
-    .icon-edit {
-        background-color: #01578d;
-    }
+        .btn-action:hover .icon-edit,
+        .btn-action:hover .icon-delete {
+            opacity: 0.8;
+        }
 
-    .icon-delete {
-        background-color: #910a0a;
-    }
+        /* Ensure the button and controls container adapt well to various screen sizes */
+        .controls-container {
+            display: flex;
+            align-items: center;
+            /* Align items vertically in the center */
+            gap: 10px;
+            /* Spacing between elements */
+            flex-wrap: wrap;
+            /* Allow items to wrap to the next line on smaller screens */
+        }
 
-    .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
-        opacity: 0.8; 
-    }
+        .controls-container label {
+            margin-right: 5px;
+            /* Space between label and select */
+        }
 
-    /* Ensure the button and controls container adapt well to various screen sizes */
-    .controls-container {
-    display: flex;
-    align-items: center; /* Align items vertically in the center */
-    gap: 10px; /* Spacing between elements */
-    flex-wrap: wrap; /* Allow items to wrap to the next line on smaller screens */
-    }
+        .controls-container select {
+            margin-right: 5px;
+            /* Space between select and other elements */
+        }
 
-    .controls-container label {
-    margin-right: 5px; /* Space between label and select */
-    }
+        .btn-primary {
+            display: flex;
+            /* Align icon and text in a row */
+            align-items: center;
+            background-color: #635bff;
+            color: #ffffff;
+            border: none;
+            padding: 7px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            /* Adjust font size for better responsiveness */
+            white-space: nowrap;
+            /* Prevent text from wrapping */
+        }
 
-    .controls-container select {
-    margin-right: 5px; /* Space between select and other elements */
-    }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Color on hover */
+        }
 
-    .btn-primary {
-    display: flex; /* Align icon and text in a row */
-    align-items: center;
-    background-color: #635bff;
-    color: #ffffff;
-    border: none;
-    padding: 7px 10px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 14px; /* Adjust font size for better responsiveness */
-    white-space: nowrap; /* Prevent text from wrapping */
-    }
+        /* Media query for small screens */
+        @media (max-width: 576px) {
+            .search-container {
+                flex-direction: column;
+                /* Stack items vertically */
+                align-items: flex-start;
+                /* Align items to the start of the container */
+            }
 
-    .btn-primary:hover {
-    background-color: #0056b3; /* Color on hover */
-    }
+            .search-box input[type="search"] {
+                width: 100%;
+                /* Make the search input full width */
+                margin-bottom: 10px;
+                /* Add space below the search input */
+            }
 
-    /* Media query for small screens */
-    @media (max-width: 576px) {
-    .search-container {
-        flex-direction: column; /* Stack items vertically */
-        align-items: flex-start; /* Align items to the start of the container */
-    }
+            .btn-primary {
+                width: 100%;
+                /* Make the button full width */
+                text-align: center;
+                /* Center the text */
+                font-size: 16px;
+                /* Adjust font size for better readability */
+            }
 
-    .search-box input[type="search"] {
-        width: 100%; /* Make the search input full width */
-        margin-bottom: 10px; /* Add space below the search input */
-    }
+            .controls-container {
+                flex-direction: column;
+                /* Stack controls vertically on small screens */
+                align-items: stretch;
+                /* Stretch controls to full width */
+            }
+        }
 
-    .btn-primary {
-        width: 100%; /* Make the button full width */
-        text-align: center; /* Center the text */
-        font-size: 16px; /* Adjust font size for better readability */
-    }
+        /* Flex container for info and pagination */
+        .info-pagination-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
 
-    .controls-container {
-        flex-direction: column; /* Stack controls vertically on small screens */
-        align-items: stretch; /* Stretch controls to full width */
-    }
-    }
+        .info-text {
+            margin: 0;
+            font-size: 14px;
+            color: #8a8a8a;
+        }
 
-    /* Flex container for info and pagination */
-    .info-pagination-container {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
+        .pagination-container {
+            margin: 0;
+        }
 
-    .info-text {
-        margin: 0;
-        font-size: 14px;
-        color: #8a8a8a;
-    }
+        /* Pagination */
+        .pagination-container {
+            margin-top: 20px;
+            text-align: right;
+        }
 
-    .pagination-container {
-        margin: 0;
-    }
+        .pagination {
+            display: inline-flex;
+            padding-left: 0;
+            list-style: none;
+            border-radius: 0.25rem;
+        }
 
-    /* Pagination */
-    .pagination-container {
-        margin-top: 20px;
-        text-align: right;
-    }
+        .pagination .page-item {
+            display: inline;
+        }
 
-    .pagination {
-        display: inline-flex;
-        padding-left: 0;
-        list-style: none;
-        border-radius: 0.25rem;
-    }
+        .pagination .page-link {
+            position: relative;
+            display: block;
+            padding: 0.5rem 0.75rem;
+            margin: 0;
+            font-size: 14px;
+            /* Ukuran font untuk ikon */
+            line-height: 1.25;
+            color: #007bff;
+            text-decoration: none;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
 
-    .pagination .page-item {
-        display: inline;
-    }
+        .pagination .page-link .fa {
+            font-size: 14px;
+            /* Ukuran font ikon panah */
+        }
 
-    .pagination .page-link {
-        position: relative;
-        display: block;
-        padding: 0.5rem 0.75rem;
-        margin: 0;
-        font-size: 14px; /* Ukuran font untuk ikon */
-        line-height: 1.25;
-        color: #007bff;
-        text-decoration: none;
-        background-color: #ffffff;
-        border: 1px solid #dee2e6;
-        border-radius: 0.25rem;
-    }
+        .pagination .page-item.active .page-link {
+            background-color: #635bff;
+            border-color: #635bff;
+            color: #ffffff;
+        }
 
-    .pagination .page-link .fa {
-        font-size: 14px; /* Ukuran font ikon panah */
-    }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+        }
 
-    .pagination .page-item.active .page-link {
-        background-color: #635bff;
-        border-color: #635bff;
-        color: #ffffff;
-    }
+        .pagination .page-item .page-link:hover {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+        }
 
-    .pagination .page-item.disabled .page-link {
-        color: #6c757d;
-        pointer-events: none;
-    }
+        .hidden {
+            display: none;
+        }
 
-    .pagination .page-item .page-link:hover {
-        background-color: #e9ecef;
-        border-color: #dee2e6;
-    }
+        /* Modal Body */
+        .modal-body {
+            padding: 1.5rem;
+            color: black;
+        }
 
-    .hidden {
-        display: none;
-    }
+        /* Detail Item */
+        .detail-item {
+            margin-bottom: 1rem;
+            /* Jarak antara baris detail */
+            display: flex;
+            align-items: center;
+            /* Vertically center the content */
+        }
 
-    /* Modal Body */
-    .modal-body {
-        padding: 1.5rem;
-        color: black;
-    }
+        /* Label */
+        .detail-item strong {
+            margin-right: 1rem;
+            /* Jarak antara label dan isi */
+            flex: 0 0 100px;
+            /* Width of label column */
+        }
 
-    /* Detail Item */
-    .detail-item {
-        margin-bottom: 1rem; /* Jarak antara baris detail */
-        display: flex;
-        align-items: center; /* Vertically center the content */
-    }
+        /* Isi Detail */
+        .detail-item span {
+            color: #333;
+            font-size: 1rem;
+        }
 
-    /* Label */
-    .detail-item strong {
-        margin-right: 1rem; /* Jarak antara label dan isi */
-        flex: 0 0 100px; /* Width of label column */
-    }
+        #notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            justify-content: flex-start;
+            /* Tetap di sebelah kiri */
+            align-items: center;
+            text-align: left;
+            /* Teks tetap rata kiri */
+            /* Hidden by default */
+        }
+    </style>
 
-    /* Isi Detail */
-    .detail-item span {
-        color: #333; 
-        font-size: 1rem; 
-    }
-</style>
+    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+        <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
+        <!-- Notification Element -->
+        <div id="notification" class="alert" style="display: none;">
+            <strong id="notificationTitle">Notification</strong>
+            <p id="notificationMessage"></p>
+        </div>
 
-<div class="container mt-3" style="padding: 30px; padding-bottom: 13px;">
-    <h4 class="mb-4" style="color: #8a8a8a;">Incoming Item</h4>
-        <div class="search-container">
-            <form action="{{ route('barangmasuk.index') }}" method="GET" class="search-box">
-                <input type="search" id="search-input" name="search" placeholder="Search..." value="{{ request('search') }}">
-                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
-            </form>
-            <div class="controls-container">
-                <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#tambahDataModal">
-                    <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                    Add
-                </a> 
-                <button id="delete-selected"
-                    class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-2xl text-sm py-2 px-3 text-center hidden"
-                    style="background-color: #910a0a;
-                            border-radius: 10px;
-                            height: 35px;
-                            border: none;">
-                    <i icon="mdi:delete" class="fas fa-trash-alt" style="margin-right: 5px; font-size: 16px;"></i>
-                    Hapus Terpilih
+        <div class="d-flex align-items-center gap-3 justify-content-end pb-3">
+            <!-- Tombol Unduh Template -->
+            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center"
+                style="height: 40px;">
+                <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                Unduh Template
+            </a>
+
+            <!-- Form Upload -->
+            <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
+                class="d-flex align-items-center">
+                @csrf
+                <label class="btn btn-success d-flex align-items-center justify-content-center" for="fileInput"
+                    style="cursor: pointer; height: 40px;">
+                    <iconify-icon icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                    Upload File
+                </label>
+                <input type="file" id="fileInput" name="file" class="d-none" accept=".xlsx, .xls, .csv" required>
+                <button type="submit" class="btn btn-primary ms-2" style="height: 40px;">
+                    Kirim
                 </button>
-            </div>
+            </form>
+
+            <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
+                style="height: 40px;">
+                <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                Add
+            </a>
+
+            <!-- Delete Selected Button -->
+            <button id="deleteSelected" class="btn btn-danger d-none d-flex align-items-center"
+                style="height: 40px; background-color: #910a0a; border: none;">
+                <iconify-icon icon="mdi:delete" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                Delete Selected
+            </button>
         </div>
 
-    <!-- Notifikasi flash message -->
-    @if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    @if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-    </div>
-    @endif
-
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <strong>Ups!</strong> Terjadi kesalahan:
-            <ul class="mb-0">
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <div class="table-responsive">
-        @if (!$barangMasuk->isEmpty())
-        <table class="table">
-            <thead class="thead-lightblue">
+        <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
+            <thead class="thead-dark">
                 <tr>
-                    <th scope="col" class="px-6 py-3">
-                        <input type="checkbox" id="select-all">
-                    </th>
+                    <th><input type="checkbox" id="select-all"></th>
                     <th>No</th>
                     <th>Barang</th>
                     <th>Jumlah</th>
@@ -341,267 +380,425 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($barangMasuk as $d)
-                <tr>
-                    <td class="w-4 px-6 py-4">
-                        <input type="checkbox" class="select-item flex justify-center items-center"
-                            value="{{ $d->barang_masuk_id }}">
-                    </td>
-                    <td>{{ $loop->iteration + ($barangMasuk->currentPage() - 1) * $barangMasuk->perPage() }}</td>
-                    <td>{{ $d->nama_barang }}</td>
-                    <td>{{ $d->jumlah ?: 0 }}</td>
-                    <td>{{ $d->keterangan }}</td>
-                    <td>{{ $d->tanggal }}</td>
-                    <td>
-                        <div class="btn-actions-container">
-                            <button type="button" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#detailModal{{ $d->barang_masuk_id }}" 
-                                    aria-label="Detail" 
-                                    class="btn-action">
-                                <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                            </button>                      
-                            <a href="/barangmasuk/create/{{ $d->barang_masuk_id }}" class="btn-action">
-                                <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
-                            </a>                        
-                            <button data-id="{{ $d->barang_masuk_id }}" class="btn-action" aria-label="Hapus">
-                                <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                            </button>
-                        </div>
-                    </td>                                     
-                </tr>
-                @endforeach
             </tbody>
         </table>
-        <div class="info-pagination-container">
-            <div class="info-text">
-                Menampilkan {{ $barangMasuk->firstItem() }} - {{ $barangMasuk->lastItem() }} dari {{ $barangMasuk->total() }} data pada halaman {{ $barangMasuk->currentPage() }}.
-            </div>
-            <div class="pagination-container">
-                {{ $barangMasuk->appends(request()->query())->links('pagination::bootstrap-4') }}
-            </div>
-        </div>
-        @else
-        <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-            <div class="mx-auto max-w-screen-sm text-center">
-                <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Data tidak ditemukan.</p>
-            </div>   
-        </div>
-        @endif
     </div>
-</div>
 
-<!-- Modal Detail Barang -->
-<div class="modal fade" id="detailModal{{ $d->barang_masuk_id }}" tabindex="-1" aria-labelledby="detailModalLabel{{ $d->barang_masuk_id }}" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailModalLabel{{ $d->barang_masuk_id }}">Detail Barang Masuk</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Detail content here -->
-                <div class="grid grid-cols-10 gap-2">
-                    <div class="font-bold col-span-3">Nama Barang:</div>
-                    <div class="col-span-7">{{ $d->nama_barang }}</div>
-                    <div class="font-bold col-span-3">Jenis Barang:</div>
-                    <div class="col-span-7">{{ $d->nama_jenis_barang }}</div>
-                    <div class="font-bold col-span-3">Supplier:</div>
-                    <div class="col-span-7">{{ $d->nama_supplier }}</div>
-                    <div class="font-bold col-span-3">Tanggal Masuk:</div>
-                    <div class="col-span-7">{{ $d->tanggal }}</div>
-                    <div class="font-bold col-span-3">Keterangan:</div>
-                    <div class="col-span-7">{{ $d->keterangan }}</div>
-                    <div class="font-bold col-span-3">Jumlah:</div>
-                    <div class="col-span-7">{{ $d->jumlah }}</div>
-
-                    <!-- Detail barang -->
-                    @foreach ($d->detail as $index => $detail)
-                        <hr class="col-span-10 my-2">
-                        <div class="font-bold col-span-3">Barang {{ $index + 1 }}:</div>
-                        <div class="col-span-7">
-                            <div class="font-bold">SN / Kondisi</div>
-                            <div class="ml-5">{{ $detail->serial_number }} — {{ $detail->status_barang }}</div>
-                            <div class="font-bold">Kelengkapan</div>
-                            <div class="ml-5">{{ $detail->kelengkapan }}</div>
-                        </div>
-                    @endforeach
+    <!-- Modal Konfirmasi Hapus -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <span style="font-weight: bold;" id="barangmasuk"></span>?
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteForm" method="POST" action="">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn"
+                            style="background-color: #910a0a; color: white;">Delete</button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Modal Konfirmasi Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" style="color: black">
-                Apakah Anda yakin ingin menghapus <span id="itemName"></span> ini?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
-                <form id="deleteForm" method="POST" action="">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>                               
+    <!-- Modal hapus terpilih -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the selected data?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn" style="background-color: #910a0a; color: white;"
+                        id="confirmDeleteButton"><span id="confirmDeleteText">Delete</span>
+                        <span class="loading-icon" style="display: none;">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-    const searchIcon = document.getElementById('search-icon');
-    const searchForm = searchIcon.closest('form');
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap 4 integration -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
-    searchIcon.addEventListener('click', function() {
-        searchForm.submit(); // Submit the form
-    });
-});
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fungsi untuk menampilkan notifikasi
+            function showNotification(type, message) {
+                let notificationTitle = '';
+                let notificationClass = '';
 
-</script>
+                // Mengatur judul dan kelas berdasarkan tipe notifikasi
+                switch (type) {
+                    case 'success':
+                        notificationTitle = 'Success!';
+                        notificationClass = 'alert-success';
+                        break;
+                    case 'error':
+                        notificationTitle = 'Error!';
+                        notificationClass = 'alert-danger';
+                        break;
+                    default:
+                        notificationTitle = 'Notification';
+                        notificationClass = 'alert-info';
+                }
 
+                // Mengatur konten notifikasi
+                $('#notificationTitle').text(notificationTitle);
+                $('#notificationMessage').text(message);
+                $('#notification').removeClass('alert-success alert-danger alert-info').addClass(notificationClass);
 
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to auto-hide alerts
-        function autoHideAlert(selector, timeout) {
-            const alerts = document.querySelectorAll(selector);
-            alerts.forEach(alert => {
-                setTimeout(() => {
-                    alert.classList.remove('show');
-                    alert.classList.add('fade');
-                    setTimeout(() => alert.remove(), 500); // Remove alert after fade transition
-                }, timeout);
-            });
-        }
+                // Menampilkan notifikasi
+                $('#notification').fadeIn();
 
-        // Hide success messages after 3 seconds
-        autoHideAlert('.alert-success', 3000);
+                // Menyembunyikan notifikasi setelah 3 detik
+                setTimeout(function() {
+                    $('#notification').fadeOut();
+                }, 3000);
+            }
 
-        // Hide error messages after 3 seconds
-        autoHideAlert('.alert-danger', 3000);
-    });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            // Fungsi untuk membuka modal konfirmasi hapus
+            window.openDeleteModal = function(id, element) {
+                // Mendapatkan nama barang dari elemen yang diklik
+                const barangNama = $(element).closest('tr').find('td:nth-child(3)')
+                    .text(); // Ganti dengan indeks yang sesuai
 
-    document.querySelectorAll('[aria-label="Hapus"]').forEach(button => {
-        button.addEventListener('click', function() {
-            const itemId = this.getAttribute('data-id');
-            const itemName = this.closest('tr').querySelector('td:nth-child(3)').innerText;
-            
-            document.getElementById('itemName').innerText = itemName;
-            document.getElementById('deleteForm').action = `/barangmasuk/delete/${itemId}`;
-            
-            deleteModal.show();
-        });
-    });
-});
-</script>
+                // Mengisi informasi barang di modal
+                $('#barangmasuk').text(barangNama);
 
-{{-- untuk hapus terpilih --}}
-<script>
-    document.getElementById('select-all').addEventListener('change', function(e) {
-        const checkboxes = document.querySelectorAll('.select-item');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = e.target.checked;
-        });
-        toggleDeleteButton();
-    });
+                // Menetapkan URL penghapusan pada form
+                $('#deleteForm').attr('action',
+                    `{{ config('app.api_url') }}/barangmasuk/${id}`); // Pastikan URL sesuai dengan route
 
-    document.querySelectorAll('.select-item').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            toggleDeleteButton();
-        });
-    });
+                // Menampilkan modal konfirmasi hapus
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                deleteModal.show();
+            }
 
-    function toggleDeleteButton() {
-        const selected = document.querySelectorAll('.select-item:checked').length;
-        const deleteButton = document.getElementById('delete-selected');
-        if (selected > 0) {
-            deleteButton.classList.remove('hidden');
-        } else {
-            deleteButton.classList.add('hidden');
-        }
-    }
+            // Menangani pengiriman form penghapusan
+            $('#deleteForm').on('submit', function(e) {
+                e.preventDefault(); // Mencegah pengiriman form default
 
-    document.getElementById('delete-selected').addEventListener('click', function() {
-        const selected = [];
-        document.querySelectorAll('.select-item:checked').forEach(checkbox => {
-            selected.push(checkbox.value);
-        });
-
-        if (selected.length > 0) {
-            if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                fetch('/barangmasuk/delete-selected', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                // Mengirim permintaan AJAX untuk menghapus data
+                $.ajax({
+                    url: $(this).attr('action'),
+                    type: 'DELETE',
+                    data: {
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content'), // Menyertakan CSRF token
                     },
-                    body: JSON.stringify({
-                        ids: selected
-                    })
-                }).then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        alert('Gagal menghapus data.');
+                    success: function(response) {
+                        showNotification('success', 'Data berhasil dihapus.');
+                        // Refresh DataTable setelah penghapusan
+                        table.ajax.reload();
+                    },
+                    error: function(xhr) {
+                        // Menampilkan pesan kesalahan yang lebih informatif
+                        let errorMessage = 'Terjadi kesalahan saat menghapus data.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage = xhr.responseJSON
+                                .message; // Menampilkan pesan kesalahan dari server
+                        }
+                        showNotification('error', errorMessage);
                     }
                 });
-            }
-        } else {
-            alert('Tidak ada data yang dipilih.');
-        }
-    });
-</script>
 
-{{-- detail --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener to all detail buttons
-        document.querySelectorAll('.btn-action[data-bs-toggle="modal"]').forEach(button => {
-            button.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-bs-target').replace('#detailModal', '');
-                
-                // Fetch data from server
-                fetch(`/barang/detail/${itemId}`)
-                    .then(response => response.json())
+                // Menutup modal setelah pengiriman form
+                const deleteModal = bootstrap.Modal.getInstance(document.getElementById('deleteModal'));
+                deleteModal.hide();
+            });
+
+
+            // Fungsi untuk menampilkan detail modal
+            window.showDetailModal = function(id, namaBarang, namaJenisBarang, namaSupplier, tanggalBarang,
+                keteranganBarang, jumlah) {
+                const existingModal = document.getElementById('detailModal');
+                if (existingModal) {
+                    existingModal.remove();
+                }
+
+                fetch(`{{ config('app.api_url') }}/barangmasuk/${id}`, {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        // Update modal content
-                        const modal = document.querySelector(`#detailModal${itemId}`);
-                        modal.querySelector('.modal-title').textContent = `Detail Barang Masuk ${data.nama_barang}`;
-                        modal.querySelector('.modal-body').innerHTML = `
-                            <div class="grid grid-cols-10 gap-2">
-                                <div class="font-bold col-span-3">Nama Barang:</div>
-                                <div class="col-span-7">${data.nama_barang}</div>
-                                <div class="font-bold col-span-3">Jenis Barang:</div>
-                                <div class="col-span-7">${data.nama_jenis_barang}</div>
-                                <div class="font-bold col-span-3">Supplier:</div>
-                                <div class="col-span-7">${data.nama_supplier}</div>
-                                <div class="font-bold col-span-3">Tanggal Masuk:</div>
-                                <div class="col-span-7">${data.tanggal}</div>
-                                <div class="font-bold col-span-3">Keterangan:</div>
-                                <div class="col-span-7">${data.keterangan}</div>
-                                <div class="font-bold col-span-3">Jumlah:</div>
-                                <div class="col-span-7">${data.jumlah}</div>
+                        if (!Array.isArray(data)) {
+                            console.error('Unexpected data format:', data);
+                            showNotification('error',
+                                'Error loading item details.'); // Tampilkan notifikasi
+                            return;
+                        }
+
+                        const detailContent = data.map((detail, index) => `
+                    <hr class="col-span-10 my-3">
+                    <div class="row">
+                        <div class="col-3"><strong>Barang ${index + 1}</strong></div>
+                        :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Kelengkapan</strong></div>
+                        :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+                    </div>
+                `).join('');
+
+                        const modalContent = `
+                    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <hr class="col-span-6 my-1" style="margin-top: 0; margin-bottom: 0;">
+                                <div class="modal-body">
+                                    <div class="grid grid-cols-10 gap-2">
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Nama Barang</strong></div>:
+                                            <div class="col-8">${namaBarang || '—'}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Jenis Barang</strong></div>:
+                                            <div class="col-8">${namaJenisBarang || '—'}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Supplier</strong></div>:
+                                            <div class="col-8">${namaSupplier || '—'}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Tanggal Masuk</strong></div>:
+                                            <div class="col-8">${tanggalBarang || '—'}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Keterangan</strong></div>:
+                                            <div class="col-8">${keteranganBarang ? keteranganBarang : '—'}</div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-3"><strong>Jumlah</strong></div>:
+                                            <div class="col-8">${jumlah || 0}</div>
+                                        </div>
+                                        ${detailContent}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                        document.body.insertAdjacentHTML('beforeend', modalContent);
+                        new bootstrap.Modal(document.getElementById('detailModal')).show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching details:', error);
+                        showNotification('error', 'Error loading item details.'); // Tampilkan notifikasi
+                    });
+            }
+
+            // Inisialisasi DataTable
+            const table = new DataTable('#barang-table', {
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: '{{ config('app.api_url') }}/barangmasuk',
+                    headers: {
+                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                    }
+                },
+                columns: [{
+                        data: 'barang_masuk_id',
+                        name: 'barang_masuk.id',
+                        orderable: false,
+                        render: function(data) {
+                            return `<input type="checkbox" class="select-item" value="${data}">`;
+                        }
+                    },
+                    {
+                        data: null,
+                        sortable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
+                        }
+                    },
+                    {
+                        data: 'nama_barang',
+                        name: 'barang.nama',
+                        defaultContent: 'Data tidak tersedia'
+                    },
+                    {
+                        data: 'jumlah',
+                        name: 'barang_masuk.jumlah',
+                        searchable: false,
+                        defaultContent: '0'
+                    },
+                    {
+                        data: 'keterangan_barangmasuk',
+                        name: 'barang_masuk.keterangan',
+                        defaultContent: '-'
+                    },
+                    {
+                        data: 'tanggal_barang',
+                        searchable: false,
+                        defaultContent: '-'
+                    },
+                    {
+                        data: 'barang_masuk_id',
+                        name: 'barang_masuk.id',
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return `
+                            <div class="d-flex">
+                                <button aria-label="Detail" onclick="showDetailModal(${data}, '${row.nama_barang}', '${row.nama_jenis_barang}', '${row.nama_supplier}', '${row.tanggal_barang}', '${row.keterangan_barangmasuk}', ${row.jumlah})" class="btn-detail btn-action" style="border: none;">
+                                    <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                                </button>
+                                <a href="/barangmasuk/create/${data}" class="btn-action">
+                                    <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
+                                </a> 
+                                <button id="deleteModal-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete" onclick="openDeleteModal('${data}', this)">
+                                    <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                                </button>
                             </div>
                         `;
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
+                        }
+                    }
+                ],
+                order: [
+                    [2, 'asc']
+                ]
             });
         });
-    });
-</script>
+    </script>
 
+    <script>
+        $(document).ready(function() {
+            // Menangani pemilihan semua checkbox
+            $('#select-all').on('click', function() {
+                const isChecked = $(this).is(':checked');
+                $('.select-item').prop('checked', isChecked);
+                toggleDeleteButton();
+            });
+
+            // Menangani perubahan pada checkbox item
+            $('#barang-table tbody').on('change', '.select-item', function() {
+                toggleDeleteButton();
+            });
+
+            // Fungsi untuk menampilkan/hide tombol delete
+            function toggleDeleteButton() {
+                const anyChecked = $('.select-item:checked').length > 0;
+                console.log('Checkbox checked:', anyChecked);
+                if (anyChecked) {
+                    $('#deleteSelected').removeClass('d-none');
+                } else {
+                    $('#deleteSelected').addClass('d-none');
+                }
+            }
+
+            // Menangani klik tombol hapus terpilih
+            $('#deleteSelected').on('click', function() {
+                $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
+            });
+
+            // Menangani konfirmasi penghapusan
+            $('#confirmDeleteButton').on('click', function() {
+                const selectedItems = $('.select-item:checked');
+                const idsToDelete = [];
+
+                // Ambil ID dari checkbox yang terpilih
+                selectedItems.each(function() {
+                    idsToDelete.push($(this).val());
+                });
+
+                // Menampilkan ikon loading dan menyembunyikan teks tombol
+                $('#confirmDeleteText').hide(); // Sembunyikan teks tombol
+                $('.loading-icon').show(); // Tampilkan ikon loading
+
+                // Kirim permintaan AJAX untuk menghapus item
+                $.ajax({
+                    url: '{{ config('app.api_url') }}/barangmasuk/delete-selected', // Ganti dengan URL endpoint yang sesuai
+                    type: 'POST', // Gunakan POST jika DELETE tidak berfungsi di server
+                    data: {
+                        ids: idsToDelete,
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content') // Jika menggunakan Laravel
+                    },
+                    success: function(response) {
+                        // Hapus baris yang terpilih dari tabel
+                        selectedItems.each(function() {
+                            $(this).closest('tr').remove();
+                        });
+
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi sukses
+                            showNotification('Data berhasil dihapus.', 'success');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi gagal
+                            showNotification('Terjadi kesalahan saat menghapus data: ' +
+                                xhr.responseText, 'error');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    complete: function() {
+                        // Menyembunyikan ikon loading dan menampilkan teks tombol
+                        $('.loading-icon').hide(); // Sembunyikan ikon loading
+                        $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
+                        $('#confirmDeleteModal').modal(
+                        'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                    }
+                });
+            });
+
+            // Fungsi untuk menampilkan notifikasi
+            function showNotification(message, type) {
+                // Atur judul dan pesan notifikasi
+                $('#notificationTitle').text(type === 'success' ? 'Sukses' : 'Error');
+                $('#notificationMessage').text(message);
+
+                // Set kelas alert berdasarkan tipe
+                const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                $('#notification').removeClass('alert-success alert-danger').addClass(alertClass).fadeIn();
+
+                // Tampilkan notifikasi
+                $('#notification').show();
+
+                // Menghilangkan notifikasi setelah 3 detik
+                setTimeout(() => {
+                    $('#notification').fadeOut(); // Menghilangkan notifikasi
+                }, 3000);
+            }
+        });
+    </script>
 @endsection

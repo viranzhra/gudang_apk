@@ -13,7 +13,8 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
         .container {
             width: 80%;
@@ -204,8 +205,11 @@
             <!-- Sidebar scroll-->
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="./index.html" class="text-nowrap logo-img">
-                        <img src="../assets/images/logos/logo.svg" alt="" />
+                    <a href="#" class="text-nowrap logo-img">
+                        <img src="../assets/images/logos/logo_ptjaringsolusi.png" style="width: 100px;
+                            border-radius: 7px;
+                            margin-left: 50px;
+                            margin-top: 15px;" alt="" />
                     </a>
                     <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                         <i class="ti ti-x fs-8"></i>
@@ -279,9 +283,9 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Type Requirement</span>
+                                <span class="hide-menu">Requirement Type</span>
                             </a>
                         </li>
                         <li>
@@ -322,7 +326,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="#" aria-expanded="false">
+                            <a class="sidebar-link" href="permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
