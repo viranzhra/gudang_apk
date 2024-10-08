@@ -67,6 +67,13 @@
             border: 1px solid #f5c6cb;
             height: 80px;
         }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            height: 80px;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
@@ -118,7 +125,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addSupplierForm" method="post" action="{{ route('supplier.store') }}" enctype="multipart/form-data">
+                    <form id="addSupplierForm" method="post" action="{{ route('supplier.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="tambah-nama" class="form-label">Supplier</label>
@@ -206,6 +214,36 @@
         </div>
     </div>
 
+    <!-- Modal Detail Data -->
+    <div class="modal fade" id="detailData" tabindex="-1" aria-labelledby="detailDataLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailDataLabel">Detail Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Supplier:</strong></div>
+                        <div class="col-8"><span class="detail-nama"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Address:</strong></div>
+                        <div class="col-8"><span class="detail-alamat"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Phone:</strong></div>
+                        <div class="col-8"><span class="detail-telepon"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Description:</strong></div>
+                        <div class="col-8"><span class="detail-keterangan"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Modal Konfirmasi Penghapusan dipilih -->
     <div class="modal fade" id="confirmDelete" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteLabel"
         aria-hidden="true">
@@ -233,6 +271,35 @@
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+    {{-- detail --}}
+    <script>
+        $(document).on('click', '.btn-detail', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+
+            // mengambil data customer menggunakan API
+            $.ajax({
+                url: `{{ config('app.api_url') }}/suppliers/${id}`,
+                type: 'GET',
+                success: function(data) {
+                    // sesuaikan dengan yang di modal
+                    $('.detail-nama').text(data.nama);
+                    $('.detail-alamat').text(data.alamat);
+                    $('.detail-telepon').text(data.telepon);
+                    $('.detail-keterangan').text(data.keterangan);
+
+                    // perbarui judul dan menampilkan modal
+                    $('#detailDataLabel').text('Detail Supplier');
+                    $('#detailData').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to fetch supplier data:', xhr.responseText);
+                    alert('Failed to fetch supplier data.');
+                }
+            });
+        });
+    </script>
 
     {{-- konfirmasi hapus --}}
     <script>
@@ -422,7 +489,8 @@
                 let $submitButton = $(this).find('button[type="submit"]');
 
                 // Disable the submit button to prevent multiple clicks
-                $submitButton.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i>');
+                $submitButton.prop('disabled', true).html(
+                    '<i class="spinner-border spinner-border-sm"></i>');
 
                 // Sending the data via AJAX to the API
                 $.ajax({
@@ -439,19 +507,22 @@
                             showNotification('success', response.message);
                         } else {
                             // If not successful, show error message
-                            showNotification('error', response.message || 'Gagal menambahkan supplier.');
+                            showNotification('error', response.message ||
+                                'Gagal menambahkan supplier.');
                         }
                     },
                     error: function(xhr) {
                         // Handle AJAX errors
-                        let message = xhr.responseJSON?.message || 'Terjadi kesalahan saat menambahkan supplier.';
+                        let message = xhr.responseJSON?.message ||
+                            'Terjadi kesalahan saat menambahkan supplier.';
                         showNotification('error', message); // Show error message
                     },
                     complete: function() {
                         // Hide the modal after a delay
                         setTimeout(function() {
                             $('#tambahData').modal('hide'); // Hide modal
-                            $('#supplier-table').DataTable().ajax.reload(); // Reload DataTable if needed
+                            $('#supplier-table').DataTable().ajax
+                                .reload(); // Reload DataTable if needed
                         }, 1000); // Delay of 1 second before hiding the modal
 
                         $submitButton.prop('disabled', false).html('Save'); // Re-enable button
@@ -493,7 +564,15 @@
                         data: 'nama'
                     },
                     {
-                        data: 'alamat'
+                        data: 'alamat',
+                        render: function(data) {
+                            // Batasi alamat ke 50 karakter, tambahkan ".." jika lebih panjang
+                            var fullAddress = data;
+                            if (data.length > 50) {
+                                return `<span title="${fullAddress}">${data.substr(0, 50)}..</span>`;
+                            }
+                            return `<span title="${fullAddress}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'telepon'
@@ -505,7 +584,17 @@
                         data: 'id',
                         orderable: false,
                         render: function(data) {
-                            return `<div class="d-flex"><button data-id="${data}" class="btn-edit btn-action" aria-label="Edit"><iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon></button><button data-id="${data}" class="btn-delete btn-action" aria-label="Delete"><iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon></button></div>`;
+                            return `<div class="d-flex">
+                                <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                    <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                                </button>
+                                <button data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
+                                    <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+                                </button>
+                                <button data-id="${data}" class="btn-delete btn-action" aria-label="Delete">
+                                    <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                                </button>
+                                </div>`;
                         }
                     }
                 ],
