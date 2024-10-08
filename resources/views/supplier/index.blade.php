@@ -144,7 +144,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tambah-keterangan" class="form-label">Description</label>
-                            <input type="text" id="tambah-keterangan" name="keterangan" class="form-control">
+                            <textarea id="tambah-keterangan" name="keterangan" class="form-control"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
@@ -181,9 +181,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit-keterangan" class="form-label">Description</label>
-                            <input type="text" id="edit-keterangan" name="keterangan" class="form-control">
+                            <textarea name="keterangan" id="edit-keterangan" class="form-control"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Edit</button>
                     </form>
                 </div>
             </div>

@@ -70,7 +70,7 @@
         }
     </style>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    {{-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> --}}
 
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
@@ -99,8 +99,10 @@
                 <tr>
                     <th style="width: 20px"><input type="checkbox" id="select-all"></th>
                     <th style="width: 25px">No</th>
-                    <th style="width: 450px">Requirement Type</th>
+                    <th>Requirement Type</th>
                     <th>2 Dates?</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
                     <th style="width: 50px">Action</th>
                 </tr>
             </thead>
@@ -114,17 +116,16 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title" id="tambahDataLabel"><strong>Add Type</strong></h2>
+                    <h5 class="modal-title" id="tambahDataLabel">Add Requirement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}"
-                        enctype="multipart/form-data">
+                    <form method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
                                 role="alert">
-                                <strong class="font-bold">Ups!</strong> Terjadi kesalahan:
+                                <strong class="font-bold">Oops!</strong> Terjadi kesalahan:
                                 <ul class="mt-3 list-disc list-inside">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -132,11 +133,15 @@
                                 </ul>
                             </div>
                         @endif
+
+                        <!-- Requirement Type -->
                         <div class="mb-3">
                             <label for="nama" class="form-label">Requirement Type</label>
                             <input type="text" id="nama" name="nama" class="form-control"
                                 placeholder="Untuk Dipinjam" required />
                         </div>
+
+                        <!-- Checkbox for 2 Dates -->
                         <div class="mb-3">
                             <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
                             <label for="extend" class="form-check-labe">Extend</label>
@@ -147,18 +152,32 @@
                                 document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
 
                                 document.getElementById('nama_tanggal_akhir').required = this.checked;
+                                document.getElementById('start_date').required = this.checked;
+                                document.getElementById('end_date').required = this.checked;
                             });
                         </script>
+
                         <div id="tanggalInputs" style="display: none;">
                             <div class="mb-3">
                                 <div class="relative z-0 w-full mb-3 group md:col-span-2">
                                     <label for="nama_tanggal_akhir" class="form-label">Extension Name</label>
                                     <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Tanggal Pengembalian"
-                                        value="Tanggal Pengembalian" />
+                                        class="form-control" placeholder="Tanggal Pengembalian"/>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="start_date" class="form-label">Start Date</label>
+                                        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ date('Y-m-d') }}" disabled />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="end_date" class="form-label">End Date</label>
+                                        <input type="date" id="end_date" name="end_date" class="form-control"/>
+                                    </div>
+                                </div>
+                                
                             </div>
                         </div>
+
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
@@ -167,40 +186,54 @@
     </div>
 
     <!-- Modal Edit Data -->
-<div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="editDataLabel"><strong>Edit Type</strong></h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="post" action="" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" id="edit-id" name="id" />
+    <div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDataLabel">Edit Type</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="post" action="" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" id="edit-id" name="id" />
 
-                    <div class="mb-3">
-                        <label for="edit-nama" class="form-label">Requirement Type</label>
-                        <input type="text" id="edit-nama" name="nama" class="form-control" placeholder="Requirement Type" required />
-                    </div>
+                        <div class="mb-3">
+                            <label for="edit-nama" class="form-label">Requirement Type</label>
+                            <input type="text" id="edit-nama" name="nama" class="form-control"
+                                placeholder="Requirement Type" required />
+                        </div>
 
-                    <div class="mb-3">
-                        <input id="edit-extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                        <label for="edit-extend" class="form-check-label">Extend</label>
-                    </div>
+                        <div class="mb-3">
+                            <input id="edit-extend" type="checkbox" name="extend" value="0"
+                                class="form-check-input">
+                            <label for="edit-extend" class="form-check-label">Extend</label>
+                        </div>
 
-                    <div id="editExtensionNameField" class="mb-3" style="display: none;">
-                        <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
-                        <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir" class="form-control" placeholder="Tanggal Pengembalian" />
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+                        <div id="editExtensionNameField" class="mb-3" style="display: none;">
+                            <div class="relative z-0 w-full mb-3 group md:col-span-2">
+                                <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
+                                <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir"
+                                    class="form-control" placeholder="Tanggal Pengembalian" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ date('Y-m-d') }}" disabled/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" id="end_date" name="end_date" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
@@ -485,77 +518,84 @@
 
             // Untuk edit data
             $('#editForm').on('submit', function(e) {
-    e.preventDefault();
+                e.preventDefault();
 
-    // Ambil ID dari input hidden
-    var id = $('#edit-id').val(); // ID yang akan di-update
+                // Ambil ID dari input hidden
+                var id = $('#edit-id').val(); // ID yang akan di-update
 
-    // Konversi form data ke array dan tambahkan nilai extend secara manual
-    var formData = $(this).serializeArray();
-    formData.push({ name: 'extend', value: $('#edit-extend').is(':checked') ? '1' : '0' });
+                // Konversi form data ke array dan tambahkan nilai extend secara manual
+                var formData = $(this).serializeArray();
+                formData.push({
+                    name: 'extend',
+                    value: $('#edit-extend').is(':checked') ? '1' : '0'
+                });
 
-    $.ajax({
-        url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
-        type: 'PUT', // Metode PUT untuk update data
-        data: $.param(formData), // Kirim form data
-        success: function(response) {
-            if (response.success) {
-                // Tampilkan notifikasi jika berhasil
-                showNotification('success', response.message);
-                $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
-            } else {
-                // Notifikasi jika gagal
-                showNotification('error', response.message || 'Gagal memperbarui requirement type.');
-            }
-        },
-        error: function(xhr) {
-            let message = xhr.responseJSON?.message || 'Terjadi kesalahan saat memperbarui requirement type.';
-            showNotification('error', message); // Tampilkan notifikasi error
-        },
-        complete: function() {
-            $('#editData').modal('hide'); // Tutup modal setelah proses selesai
-        }
-    });
-});
+                $.ajax({
+                    url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
+                    type: 'PUT', // Metode PUT untuk update data
+                    data: $.param(formData), // Kirim form data
+                    success: function(response) {
+                        if (response.success) {
+                            // Tampilkan notifikasi jika berhasil
+                            showNotification('success', response.message);
+                            $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
+                        } else {
+                            // Notifikasi jika gagal
+                            showNotification('error', response.message ||
+                                'Gagal memperbarui requirement type.');
+                        }
+                    },
+                    error: function(xhr) {
+                        let message = xhr.responseJSON?.message ||
+                            'Terjadi kesalahan saat memperbarui requirement type.';
+                        showNotification('error', message); // Tampilkan notifikasi error
+                    },
+                    complete: function() {
+                        $('#editData').modal('hide'); // Tutup modal setelah proses selesai
+                    }
+                });
+            });
 
-// Menangani perubahan checkbox extend pada form edit data
-$('#edit-extend').change(function() {
-    if ($(this).is(':checked')) {
-        $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
-    } else {
-        $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
-        $('#edit_extension_name').val(''); // Kosongkan input extension name
-    }
-});
+            // Menangani perubahan checkbox extend pada form edit data
+            $('#edit-extend').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
+                } else {
+                    $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
+                    $('#edit_extension_name').val(''); // Kosongkan input extension name
+                }
+            });
 
-// Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
-$(document).on('click', '.btn-edit', function() {
-    var id = $(this).data('id');
-    var url = `{{ config('app.api_url') }}/keperluan/${id}`;
+            // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
+            $(document).on('click', '.btn-edit', function() {
+                var id = $(this).data('id');
+                var url = `{{ config('app.api_url') }}/keperluan/${id}`;
 
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function(data) {
-            $('#edit-nama').val(data.nama);
-            $('#edit-extend').prop('checked', data.extend == 1); // Sesuaikan checkbox
-            $('#edit-id').val(id);
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#edit-nama').val(data.nama);
+                        $('#edit-extend').prop('checked', data.extend ==
+                            1); // Sesuaikan checkbox
+                        $('#edit-id').val(id);
 
-            if (data.extend == 1) {
-                $('#editExtensionNameField').show();
-                $('#edit_extension_name').val(data.extension_name); // Isi extension name jika ada
-            } else {
-                $('#editExtensionNameField').hide();
-                $('#edit_extension_name').val(''); // Kosongkan extension name
-            }
+                        if (data.extend == 1) {
+                            $('#editExtensionNameField').show();
+                            $('#edit_extension_name').val(data
+                                .extension_name); // Isi extension name jika ada
+                        } else {
+                            $('#editExtensionNameField').hide();
+                            $('#edit_extension_name').val(''); // Kosongkan extension name
+                        }
 
-            $('#editData').modal('show'); // Tampilkan modal edit
-        },
-        error: function(xhr) {
-            showNotification('error', 'Error fetching type requirement data.');
-        }
-    });
-});
+                        $('#editData').modal('show'); // Tampilkan modal edit
+                    },
+                    error: function(xhr) {
+                        showNotification('error', 'Error fetching type requirement data.');
+                    }
+                });
+            });
 
 
             // DataTable initialization
@@ -589,6 +629,20 @@ $(document).on('click', '.btn-edit', function() {
                         data: 'extend',
                         render: function(data) {
                             return data == 1 ? 'Iya' : 'Tidak';
+                        }
+                    },
+                    {
+                        data: 'created_at', // Tanggal Awal Dibuat (Start Date)
+                        render: function(data) {
+                            return data ? new Date(data).toLocaleDateString('id-ID') :
+                            '-'; // Format tanggal
+                        }
+                    },
+                    {
+                        data: 'end_date', // Menampilkan End Date
+                        render: function(data) {
+                            return data ? new Date(data).toLocaleDateString('id-ID') :
+                            '-'; // Format tanggal
                         }
                     },
                     {
