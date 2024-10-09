@@ -39,8 +39,15 @@
                         <label for="serial_number_{{ $barangId }}_{{ $i }}" class="form-label">Serial Number {{ $i + 1 }}</label>
                         <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2">
                             <option value="">Pilih Serial Number</option>
+                            {{-- TIDAK SELECTED OTOMATIS 
+
                             @foreach ($serialNumbers as $serialOption)
                                 <option value="{{ $serialOption->serial_number_id }}">{{ $serialOption->serial_number }}</option>
+                            @endforeach 
+                            
+                            --}}
+                            @foreach ($serialNumbers as $key => $serialOption)
+                                <option value="{{ $serialOption->serial_number_id }}" {{ $key === $i ? 'selected' : '' }}>{{ $serialOption->serial_number }}</option>
                             @endforeach
                         </select>
                         @error('serial_number_ids.' . $barangId . '.' . $i)
