@@ -122,7 +122,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar', $request->all());
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Anda berhasil menambahkan data!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         if ($response->status() === 422) {
@@ -140,7 +140,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->delete(config('app.api_url') . '/permintaanbarangkeluar/' . $id);
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Data berhasil dihapus!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         return back()->withErrors('Gagal menghapus data permintaan barang keluar.');
@@ -181,7 +181,13 @@ class PermintaanBarangKeluarController extends Controller
             return view('permintaanbarangkeluar.selectSN', compact('groupedSerialNumbers', 'id'));
         }
 
-        return back()->withErrors('Gagal mengambil data serial number.');
+        if ($response->status() === 404) {
+            // Ambil pesan dari API
+            $message = $response->json('message');
+            return redirect('/permintaanbarangkeluar')->with('error', $message);
+        }
+        
+        return redirect('/permintaanbarangkeluar')->with('error', $message);
     }
 
     public function setSN(Request $request)
@@ -211,7 +217,7 @@ class PermintaanBarangKeluarController extends Controller
         // ]);
 
         if ($response->successful()) {
-            return redirect()->route('permintaanbarangkeluar.index')->with('success', 'Serial number berhasil dikirim.');
+            return redirect()->route('permintaanbarangkeluar.index')->with('success', $response->json('message'));
         }
 
         return back()->withErrors('Gagal mengirim serial number.');

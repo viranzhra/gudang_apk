@@ -24,13 +24,6 @@
             </div>
         </div>
 
-        <!-- Alert -->
-        @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-            </div>
-        @endif
-
         @if ($errors->any())
             <div class="alert alert-danger">
                 <strong>Ups!</strong> Terjadi kesalahan:
@@ -419,13 +412,24 @@ function updateStatus(id, status) {
                 // menyembunyikan notifikasi setelah 3 detik
                 setTimeout(function() {
                     $('#notification').fadeOut();
-                }, 3000);
+                }, 5000);
             }
 
             // @if (session('success'))
             //     showNotification('success', '{{ session('success') }}');
             // @endif
     </script>
+
+    <!-- Alert -->
+    @if (session('error'))
+        <script>
+            showNotification('error', '{{ session('error') }}');
+        </script>
+    @elseif (session('success'))
+        <script>
+            showNotification('success', '{{ session('success') }}');
+        </script>
+    @endif
 
     {{-- Select All Checkbox --}}
     <script>
