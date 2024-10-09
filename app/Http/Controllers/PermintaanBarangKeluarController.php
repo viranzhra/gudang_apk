@@ -122,7 +122,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar', $request->all());
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Anda berhasil menambahkan data!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         if ($response->status() === 422) {
@@ -140,7 +140,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->delete(config('app.api_url') . '/permintaanbarangkeluar/' . $id);
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Data berhasil dihapus!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         return back()->withErrors('Gagal menghapus data permintaan barang keluar.');
@@ -165,4 +165,62 @@ class PermintaanBarangKeluarController extends Controller
             $response->status(),
         );
     }
+
+    public function selectSN($id)
+    {
+        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
+
+        if ($response->successful()) {
+            $serialNumbers = collect($response->json())->map(function ($item) {
+                return (object) $item;
+            });
+
+            // Mengelompokkan SN berdasarkan barang_id
+            $groupedSerialNumbers = $serialNumbers->groupBy('barang_id');
+
+            return view('permintaanbarangkeluar.selectSN', compact('groupedSerialNumbers', 'id'));
+        }
+
+        if ($response->status() === 404) {
+            // Ambil pesan dari API
+            $message = $response->json('message');
+            return redirect('/permintaanbarangkeluar')->with('error', $message);
+        }
+        
+        return redirect('/permintaanbarangkeluar')->with('error', $message);
+    }
+
+    public function setSN(Request $request)
+    {
+        $validated = $request->validate([
+            'permintaan_id' => 'required|integer',
+            'serial_number_ids' => 'required|array',
+            'serial_number_ids.*' => 'required|array',  // Barang ID
+            'serial_number_ids.*.*' => 'required|integer',  // SN ID
+        ]);
+
+        $payload = [
+            'permintaan_id' => $validated['permintaan_id'],
+            'serial_number_ids' => $validated['serial_number_ids']
+        ];
+
+        \Log::info('Mengirim data ke API:', $payload);
+
+        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
+
+        // // Log respons dari API
+        // \Log::info('Respons dari API:', [
+        //     'status' => $response->status(),
+        //     'body' => $response->body(),
+        //     'successful' => $response->successful(),
+        //     'json' => $response->json()
+        // ]);
+
+        if ($response->successful()) {
+            return redirect()->route('permintaanbarangkeluar.index')->with('success', $response->json('message'));
+        }
+
+        return back()->withErrors('Gagal mengirim serial number.');
+    }
+
 }

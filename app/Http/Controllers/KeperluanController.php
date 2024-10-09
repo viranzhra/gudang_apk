@@ -55,8 +55,8 @@ class KeperluanController extends Controller
 
 		if ($response->successful()) {
 			$data = $response->json();
-			// $data = (object) $data;
-			return view('keperluan.edit', compact('data'));
+			$data = (object) $data;
+			return view('keperluan.index', compact('data'));
 		}
 
 		return redirect('/keperluan')->withErrors('Gagal mengambil data keperluan.');
