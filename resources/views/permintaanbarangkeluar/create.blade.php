@@ -71,7 +71,7 @@
             </div>
             <div class="mb-3">
                 <label id="label-tanggal-awal" for="tanggal_awal" class="form-label">Tanggal Permintaan</label>
-                <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="{{ date('Y-m-d') }}" required />
+                <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="{{ date('Y-m-d') }}" disabled />
             </div>
 
             <!-- Input Tanggal Akhir (Awalnya Disembunyikan) -->
