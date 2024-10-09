@@ -307,14 +307,24 @@
                             <ul id="itemSubmenu"
                                 class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}"
                                 aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
-                                <li class="sidebar-sub-item">
+                                {{-- <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}"
                                         href="/barangmasuk">
                                         <span class="hide-menu"
                                             style="color: {{ request()->is('barangmasuk') ? '#635bff' : 'gray' }};">Incoming
                                             Item</span>
                                     </a>
+                                </li> --}}
+                                <li class="sidebar-sub-item">
+                                    <a class="sidebar-link {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? 'active' : '' }}"
+                                        href="/barangmasuk">
+                                        <span class="hide-menu"
+                                            style="color: {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? '#635bff' : 'gray' }};">
+                                            Incoming Item
+                                        </span>
+                                    </a>
                                 </li>
+                                
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">

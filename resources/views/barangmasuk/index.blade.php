@@ -303,6 +303,32 @@
             font-size: 1rem;
         }
 
+        /* Remove top border of the table header */
+        #previewTable thead tr {
+            border-top: none;
+            /* Remove top border */
+        }
+
+        /* Add a bottom border to each table row */
+        #previewTable tbody tr {
+            border-bottom: 1px solid #dee2e6;
+            /* Adjust color and width as needed */
+        }
+
+        /* Optional: Remove the border from the last row */
+        #previewTable tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite; /* Animasi berputar */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         #notification {
             position: fixed;
             top: 10px;
@@ -330,28 +356,96 @@
             <p id="notificationMessage"></p>
         </div>
 
-        <div class="d-flex align-items-center gap-3 justify-content-end pb-3">
+        @if (session('success'))
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger');
+                notificationElement.classList.add('alert-success');
+                document.getElementById('notificationTitle').innerText = "Success";
+                document.getElementById('notificationMessage').innerText = "{{ session('success') }}";
+                notificationElement.style.display = 'block';
+
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 5000); // Sembunyikan setelah 5 detik
+            </script>
+        @endif
+
+        @if (session('notifications'))
+            <script>
+                const notificationElement = document.getElementById('notification');
+                let notificationQueue = @json(session('notifications'));
+
+                // Fungsi untuk menampilkan notifikasi satu per satu
+                function displayNotification(message) {
+                    // Ubah kelas notifikasi menjadi alert-danger (notifikasi error)
+                    notificationElement.classList.remove('alert-success');
+                    notificationElement.classList.add('alert-danger');
+                    document.getElementById('notificationTitle').innerText = "Error";
+                    document.getElementById('notificationMessage').innerText = message;
+                    notificationElement.style.display = 'block';
+
+                    // Sembunyikan notifikasi setelah beberapa detik
+                    setTimeout(() => {
+                        notificationElement.style.display = 'none';
+                        notificationElement.classList.remove('alert-danger');
+                        processNextNotification(); // Lanjutkan ke notifikasi berikutnya
+                    }, 5000); // Sembunyikan setelah 5 detik
+                }
+
+                // Proses antrian notifikasi
+                function processNextNotification() {
+                    if (notificationQueue.length > 0) {
+                        let nextNotification = notificationQueue.shift(); // Ambil notifikasi berikutnya
+                        displayNotification(nextNotification); // Tampilkan notifikasi berikutnya
+                    }
+                }
+
+                // Mulai memproses antrian notifikasi
+                processNextNotification();
+            </script>
+        @endif
+
+        {{-- @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif --}}
+
+
+        <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
             <!-- Tombol Unduh Template -->
             <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center"
                 style="height: 40px;">
                 <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                Unduh Template
+                Template
             </a>
 
-            <!-- Form Upload -->
+            <!-- Form untuk Unggah File Excel -->
             <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
-                class="d-flex align-items-center">
+                class="d-flex align-items-center gap-2" id="uploadForm">
                 @csrf
-                <label class="btn btn-success d-flex align-items-center justify-content-center" for="fileInput"
-                    style="cursor: pointer; height: 40px;">
-                    <iconify-icon icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                    Upload File
-                </label>
-                <input type="file" id="fileInput" name="file" class="d-none" accept=".xlsx, .xls, .csv" required>
-                <button type="submit" class="btn btn-primary ms-2" style="height: 40px;">
-                    Kirim
+                <div class="input-group mb-0">
+                    <input type="file" name="file" id="file" required class="form-control"
+                        aria-label="Unggah File Excel" style="width: 250px;">
+                    <button type="submit" class="btn btn-primary" id="uploadButton" title="Klik untuk mengunggah">
+                        <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+                    </button>
+                </div>
+                <button type="button" id="previewButton"
+                    class="btn btn-info d-none align-items-center justify-content-center" onclick="previewData()"
+                    style="height: 40px; width: 150px; display: flex;">
+                    <iconify-icon icon="mdi:eye" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                    <span style="flex: 1; text-align: center;">Preview</span>
                 </button>
             </form>
+
 
             <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
                 style="height: 40px;">
@@ -365,6 +459,26 @@
                 <iconify-icon icon="mdi:delete" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
                 Delete Selected
             </button>
+        </div>
+
+        <!-- Tabel untuk menampilkan data pratinjau -->
+        <div id="previewContainer" style="display:none;">
+            <div class="table-responsive" style="overflow-x: auto;"> <!-- Add this wrapper -->
+                <table id="previewTable" class="table table-bordered table-striped table-hover">
+                    <thead style="text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <tr>
+                            <th style="background-color: #46caeb; color: white;">No</th>
+                            <th style="background-color: #46caeb; color: white;">Barang ID</th>
+                            <th style="background-color: #46caeb; color: white;">Keterangan</th>
+                            <th style="background-color: #46caeb; color: white;">Serial Number</th>
+                            <th style="background-color: #46caeb; color: white;">Kondisi Barang</th>
+                            <th style="background-color: #46caeb; color: white;">Kelengkapan</th>
+                        </tr>
+                    </thead>
+                    <tbody style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></tbody>
+                </table>
+            </div> <!-- End of wrapper -->
+            <div id="pagination" class="pagination" style="float: right; margin-bottom: 20px; margin-top: 20px;"></div>
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
@@ -409,8 +523,8 @@
     </div>
 
     <!-- Modal hapus terpilih -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -432,14 +546,138 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const uploadIcon = document.getElementById('uploadIcon');
+
+            // Ganti ikon menjadi loading dan tambahkan kelas loading
+            uploadIcon.setAttribute('icon', 'mdi:sync');
+            uploadIcon.classList.add('loading');
+        });
+    </script>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script>
+        // Global variables for pagination
+        let currentPage = 1;
+        const rowsPerPage = 5;
+        let jsonData = [];
+
+        // Mengatur event listener untuk input file
+        document.getElementById('file').addEventListener('change', function() {
+            // Tampilkan tombol Preview jika file dipilih
+            const previewButton = document.getElementById('previewButton');
+            if (this.files.length > 0) {
+                previewButton.classList.remove('d-none');
+            } else {
+                previewButton.classList.add('d-none');
+            }
+        });
+
+        // Fungsi untuk melakukan preview data dari file yang diunggah
+        function previewData() {
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+
+            // Memastikan ada file yang dipilih
+            if (!file) {
+                alert('Silakan pilih file terlebih dahulu!');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, {
+                    type: 'binary'
+                });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                    header: 1
+                });
+
+                // Mengosongkan tabel preview
+                const previewTableBody = document.getElementById('previewTable').getElementsByTagName('tbody')[0];
+
+                // Menghapus isi tabel sebelumnya
+                previewTableBody.innerHTML = '';
+
+                // Menambahkan data ke tabel pratinjau dari baris kedua
+                jsonData.slice(1).forEach((row) => {
+                    // Hanya tambahkan baris jika ada data di kolom pertama (ID Barang)
+                    if (row[0]) {
+                        const newRow = previewTableBody.insertRow();
+                        newRow.insertCell(0).textContent = ''; // Placeholder for row number
+                        newRow.insertCell(1).textContent = row[0] || ''; // Barang ID
+                        newRow.insertCell(2).textContent = row[1] || ''; // Keterangan
+                        newRow.insertCell(3).textContent = row[2] || ''; // Serial Number
+                        newRow.insertCell(4).textContent = row[3] || ''; // Kondisi Barang
+                        newRow.insertCell(5).textContent = row[4] || ''; // Kelengkapan
+                    }
+                });
+
+                // Menampilkan kontainer pratinjau
+                document.getElementById('previewContainer').style.display = 'block';
+                updateTable();
+            };
+
+            reader.onerror = function(error) {
+                console.error('Error reading file:', error);
+                alert('Error reading file. Please try again.');
+            };
+
+            reader.readAsBinaryString(file); // Membaca file sebagai binary string
+        }
+
+        function updateTable() {
+            const previewTableBody = document.getElementById('previewTable').getElementsByTagName('tbody')[0];
+            const totalRows = previewTableBody.rows.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            // Clear existing rows for pagination
+            for (let i = 0; i < totalRows; i++) {
+                previewTableBody.rows[i].style.display = 'none';
+            }
+
+            // Calculate the start and end indices for the current page
+            const start = (currentPage - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+
+            // Show rows for the current page
+            for (let i = start; i < end && i < totalRows; i++) {
+                previewTableBody.rows[i].style.display = '';
+                previewTableBody.rows[i].cells[0].textContent = i + 1; // Update No column
+            }
+
+            // Update pagination controls
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.className = `page-button btn btn-outline-primary mx-1` + (i === currentPage ? ' active' : '');
+                pageButton.onclick = function() {
+                    currentPage = i;
+                    updateTable();
+                };
+                paginationContainer.appendChild(pageButton);
+            }
+        }
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -558,59 +796,60 @@
                         }
 
                         const detailContent = data.map((detail, index) => `
-                    <hr class="col-span-10 my-3">
-                    <div class="row">
-                        <div class="col-3"><strong>Barang ${index + 1}</strong></div>
-                        :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>Kelengkapan</strong></div>
-                        :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
-                    </div>
-                `).join('');
+                            <hr class="col-span-10 my-3">
+                            <div class="row">
+                                <div class="col-3"><strong>Barang ${index + 1}</strong></div>
+                                :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"><strong>Kelengkapan</strong></div>
+                                :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+                            </div>
+                        `).join('');
 
                         const modalContent = `
-                    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <hr class="col-span-6 my-1" style="margin-top: 0; margin-bottom: 0;">
-                                <div class="modal-body">
-                                    <div class="grid grid-cols-10 gap-2">
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Nama Barang</strong></div>:
-                                            <div class="col-8">${namaBarang || '—'}</div>
+                            <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Jenis Barang</strong></div>:
-                                            <div class="col-8">${namaJenisBarang || '—'}</div>
+                                        <div class="modal-body">
+                                            <div class="grid grid-cols-10 gap-2">
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Nama Barang</strong></div>:
+                                                    <div class="col-8">${namaBarang || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Jenis Barang</strong></div>:
+                                                    <div class="col-8">${namaJenisBarang || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Supplier</strong></div>:
+                                                    <div class="col-8">${namaSupplier || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Tanggal Masuk</strong></div>:
+                                                    <div class="col-8">${tanggalBarang || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Keterangan</strong></div>:
+                                                    <div class="col-8">
+                                                        ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Jumlah</strong></div>:
+                                                    <div class="col-8">${jumlah || 0}</div>
+                                                </div>
+                                                ${detailContent}
+                                            </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Supplier</strong></div>:
-                                            <div class="col-8">${namaSupplier || '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Tanggal Masuk</strong></div>:
-                                            <div class="col-8">${tanggalBarang || '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Keterangan</strong></div>:
-                                            <div class="col-8">${keteranganBarang ? keteranganBarang : '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Jumlah</strong></div>:
-                                            <div class="col-8">${jumlah || 0}</div>
-                                        </div>
-                                        ${detailContent}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `;
+                        `;
 
                         document.body.insertAdjacentHTML('beforeend', modalContent);
                         new bootstrap.Modal(document.getElementById('detailModal')).show();
@@ -776,7 +1015,7 @@
                         $('.loading-icon').hide(); // Sembunyikan ikon loading
                         $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
                         $('#confirmDeleteModal').modal(
-                        'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                            'hide'); // Sembunyikan modal hanya setelah semua proses selesai
                     }
                 });
             });
