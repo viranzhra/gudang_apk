@@ -55,6 +55,7 @@ public function uploadExcel(Request $request)
     // Inisialisasi variabel untuk menyimpan pesan
     $successCount = 0;
     $errorMessages = [];
+    $duplicateSerialNumbers = []; // Array untuk menyimpan serial number yang sudah terpakai
 
     // Proses data dari Excel
     foreach ($data[0] as $row) {
@@ -87,29 +88,50 @@ public function uploadExcel(Request $request)
         // Cek apakah respons API sukses
         if ($response->successful()) {
             $successCount++;
-            // Tampilkan pesan sukses umum
         } else {
             // Menyusun pesan kesalahan berdasarkan respons API
             $responseData = $response->json();
             $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat mengimpor data.';
-            // Tampilkan pesan kesalahan
-            $errorMessages[] = "Error: {$errorMessage} untuk barang: {$nama_barang}";
+
+            // Jika kesalahan adalah serial number sudah terpakai, tambahkan ke array
+            if (str_contains($errorMessage, 'Serial number sudah terpakai')) {
+                // Ekstrak serial number yang sudah terpakai
+                preg_match('/Serial number sudah terpakai: (\d+)/', $errorMessage, $matches);
+                if (isset($matches[1])) {
+                    $duplicateSerialNumbers[] = $matches[1]; // Tambahkan SN yang sudah terpakai
+                }
+            } else {
+                // Tampilkan pesan kesalahan lain selain serial number
+                $errorMessages[] = "Error: {$errorMessage} untuk barang: {$nama_barang}";
+            }
         }
     }
 
     // Menampilkan notifikasi berdasarkan jumlah keberhasilan dan kesalahan
+    $finalMessage = '';
+
+    // Tambahkan pesan sukses jika ada data yang berhasil disimpan
     if ($successCount > 0) {
-        session()->flash('success', "$successCount data berhasil diimpor.");
+        $finalMessage .= "$successCount data berhasil diimpor.";
     }
 
-    // Jika ada kesalahan, tampilkan semua pesan kesalahan
-    if (!empty($errorMessages)) {
-        $finalMessage = "Data gagal diimpor, silakan periksa kembali data Anda.";
-        session()->flash('notifications', array_merge($errorMessages, [$finalMessage]));
+    // Jika ada serial number yang sudah terpakai
+    if (!empty($duplicateSerialNumbers)) {
+        $serialList = implode(', ', $duplicateSerialNumbers);
+        $finalMessage .= " Namun, terdapat " . count($duplicateSerialNumbers) . " data dengan serial number sudah terpakai: $serialList.";
     }
+
+    // Tambahkan pesan error lainnya jika ada
+    if (!empty($errorMessages)) {
+        $finalMessage .= ' ' . implode(' ', $errorMessages); // Gabungkan semua pesan error
+    }
+
+    // Simpan pesan dalam session
+    session()->flash('finalMessage', $finalMessage);
 
     return redirect()->back();
 }
+
 
 
 	public function index(Request $request)

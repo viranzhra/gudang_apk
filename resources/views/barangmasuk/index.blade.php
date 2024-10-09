@@ -369,7 +369,7 @@
                 // Sembunyikan notifikasi setelah beberapa detik
                 setTimeout(() => {
                     notificationElement.style.display = 'none';
-                }, 5000); // Sembunyikan setelah 5 detik
+                }, 7000); // Sembunyikan setelah 5 detik
             </script>
         @endif
 
@@ -392,7 +392,7 @@
                         notificationElement.style.display = 'none';
                         notificationElement.classList.remove('alert-danger');
                         processNextNotification(); // Lanjutkan ke notifikasi berikutnya
-                    }, 5000); // Sembunyikan setelah 5 detik
+                    }, 7000);
                 }
 
                 // Proses antrian notifikasi
@@ -408,6 +408,31 @@
             </script>
         @endif
 
+        @if (session('finalMessage'))
+    <script>
+        // Reset kelas dan konten untuk notifikasi
+        const notificationElement = document.getElementById('notification');
+        notificationElement.classList.remove('alert-danger', 'alert-success'); // Hapus kelas apapun
+        notificationElement.style.display = 'block'; // Tampilkan notifikasi
+
+        // Ambil pesan dari session
+        const message = "{{ session('finalMessage') }}";
+        if (message.includes("Error")) {
+            notificationElement.classList.add('alert-danger'); // Jika ada error, tambahkan kelas danger
+            document.getElementById('notificationTitle').innerText = "Error";
+        } else {
+            notificationElement.classList.add('alert-success'); // Jika tidak ada error, tambahkan kelas success
+            document.getElementById('notificationTitle').innerText = "Success";
+        }
+        document.getElementById('notificationMessage').innerText = message;
+
+        // Sembunyikan notifikasi setelah beberapa detik
+        setTimeout(() => {
+            notificationElement.style.display = 'none';
+        }, 5000); // Sembunyikan setelah 5 detik
+    </script>
+@endif
+
         {{-- @if ($errors->any())
     <div class="alert alert-danger">
         <ul>
@@ -421,10 +446,10 @@
 
         <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
             <!-- Tombol Unduh Template -->
-            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center"
+            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center" title="Download Template"
                 style="height: 40px;">
                 <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                Template
+                Template File
             </a>
 
             <!-- Form untuk Unggah File Excel -->
@@ -434,7 +459,7 @@
                 <div class="input-group mb-0">
                     <input type="file" name="file" id="file" required class="form-control"
                         aria-label="Unggah File Excel" style="width: 250px;">
-                    <button type="submit" class="btn btn-primary" id="uploadButton" title="Klik untuk mengunggah">
+                    <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                         <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
                     </button>
                 </div>
@@ -468,11 +493,11 @@
                     <thead style="text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         <tr>
                             <th style="background-color: #46caeb; color: white;">No</th>
-                            <th style="background-color: #46caeb; color: white;">Barang ID</th>
-                            <th style="background-color: #46caeb; color: white;">Keterangan</th>
+                            <th style="background-color: #46caeb; color: white;">Item</th>
+                            <th style="background-color: #46caeb; color: white;">Description</th>
                             <th style="background-color: #46caeb; color: white;">Serial Number</th>
-                            <th style="background-color: #46caeb; color: white;">Kondisi Barang</th>
-                            <th style="background-color: #46caeb; color: white;">Kelengkapan</th>
+                            <th style="background-color: #46caeb; color: white;">Status Item</th>
+                            <th style="background-color: #46caeb; color: white;">Requirement</th>
                         </tr>
                     </thead>
                     <tbody style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></tbody>
@@ -486,10 +511,10 @@
                 <tr>
                     <th><input type="checkbox" id="select-all"></th>
                     <th>No</th>
-                    <th>Barang</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                    <th>Tanggal Masuk</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Description</th>
+                    <th>Date of Entry</th>
                     <th>Action</th>
                 </tr>
             </thead>
