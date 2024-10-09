@@ -5,8 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Matdash Free</title>
-    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Yajra Datatables -->
@@ -206,7 +206,7 @@
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
                     <a href="#" class="text-nowrap logo-img">
-                        <img src="../assets/images/logos/logo_ptjaringsolusi.png" style="width: 100px;
+                        <img src="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}" style="width: 100px;
                             border-radius: 7px;
                             margin-left: 50px;
                             margin-top: 15px;" alt="" />
@@ -326,7 +326,7 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="permintaanbarangkeluar" aria-expanded="false">
+                            <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}" href="/permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>

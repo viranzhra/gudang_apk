@@ -176,9 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-9">${jumlah || '—'}</div>
                             <div class="col-3 fw-bold">Status:</div>
                             <div class="col-9">
-                                ${status === 'Ditolak' ? `<span class="text-danger">${status}</span>` :
-                                  status === 'Belum Disetujui' ? `<span class="text-warning">${status}</span>` :
-                                  status === 'Disetujui' ? `<span class="text-success">${status}</span>` :
+                                ${status === 'Ditolak' ? `<span class="badge text-bg-danger">${status}</span>` :
+                                  status === 'Belum Disetujui' ? `<span class="badge text-bg-warning">${status}</span>` :
+                                  status === 'Disetujui' ? `<span class="badge text-bg-success">${status}</span>` :
                                   status}
                             </div>
                             ${detailContent}
@@ -194,11 +194,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update footer content
                     const footerContent = status === 'Belum Disetujui' ? `
                         <button type="button" class="btn btn-success me-2"
-                            onclick="updateStatus(${id}, 'Disetujui')"
-                            data-bs-dismiss="modal">Setujui</button>
+                            onclick="updateStatus(${id}, 'Diproses')"
+                            data-bs-dismiss="modal">Proses</button>
                         <button type="button" class="btn btn-danger"
                             onclick="updateStatus(${id}, 'Ditolak')"
                             data-bs-dismiss="modal">Tolak</button>
+                    ` : status === 'Diproses' ? `
+                        <button type="button" class="btn btn-primary"
+                            onclick="window.location.href='/permintaanbarangkeluar/selectSN/${id}'">
+                            Pilih SN
+                        </button>
                     ` : '';
                     document.getElementById('modalFooterContent').innerHTML = footerContent;
                 })
@@ -293,13 +298,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultContent: '-',
                 render: function(data, type, row) {
                     if (data === 'Ditolak') {
-                        return '<span class="text-danger">' + data + '</span>';
+                        return '<span class="badge text-bg-danger">' + data + '</span>';
                     } else if (data === 'Belum Disetujui') {
-                        return '<span class="text-warning">' + data + '</span>';
+                        return '<span class="badge text-bg-warning">' + data + '</span>';
                     } else if (data === 'Disetujui') {
-                        return '<span class="text-success">' + data + '</span>';
+                        return '<span class="badge text-bg-success">' + data + '</span>';
                     } else {
-                        return data;
+                        return '<span class="badge text-bg-secondary">' + data + '</span>';
                     }
                 }
             },
@@ -347,10 +352,15 @@ function updateStatus(id, status) {
                 // }).then(() => {
                 //     location.reload();
                 // });
-                showNotification('success', data.message);
-                setTimeout(function() {
-                    location.reload();
-                }, 3000);
+
+                if (status === 'Diproses') {
+                    window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
+                } else {
+                    showNotification('success', data.message);
+                    setTimeout(function() {
+                        location.reload();
+                    }, 3000);
+                }            
             } else {
                 // Swal.fire({
                 //     title: 'Gagal!',

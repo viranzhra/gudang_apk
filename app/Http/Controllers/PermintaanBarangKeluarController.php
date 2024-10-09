@@ -165,4 +165,56 @@ class PermintaanBarangKeluarController extends Controller
             $response->status(),
         );
     }
+
+    public function selectSN($id)
+    {
+        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
+
+        if ($response->successful()) {
+            $serialNumbers = collect($response->json())->map(function ($item) {
+                return (object) $item;
+            });
+
+            // Mengelompokkan SN berdasarkan barang_id
+            $groupedSerialNumbers = $serialNumbers->groupBy('barang_id');
+
+            return view('permintaanbarangkeluar.selectSN', compact('groupedSerialNumbers', 'id'));
+        }
+
+        return back()->withErrors('Gagal mengambil data serial number.');
+    }
+
+    public function setSN(Request $request)
+    {
+        $validated = $request->validate([
+            'permintaan_id' => 'required|integer',
+            'serial_number_ids' => 'required|array',
+            'serial_number_ids.*' => 'required|array',  // Barang ID
+            'serial_number_ids.*.*' => 'required|integer',  // SN ID
+        ]);
+
+        $payload = [
+            'permintaan_id' => $validated['permintaan_id'],
+            'serial_number_ids' => $validated['serial_number_ids']
+        ];
+
+        \Log::info('Mengirim data ke API:', $payload);
+
+        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
+
+        // // Log respons dari API
+        // \Log::info('Respons dari API:', [
+        //     'status' => $response->status(),
+        //     'body' => $response->body(),
+        //     'successful' => $response->successful(),
+        //     'json' => $response->json()
+        // ]);
+
+        if ($response->successful()) {
+            return redirect()->route('permintaanbarangkeluar.index')->with('success', 'Serial number berhasil dikirim.');
+        }
+
+        return back()->withErrors('Gagal mengirim serial number.');
+    }
+
 }

@@ -101,6 +101,8 @@ Route::middleware('auth')->group(function () {
     //Route::get('/permintaanbarangkeluar/edit/{id}', [PermintaanBarangKeluarController::class, 'edit'])->name('permintaanbarangkeluar.edit');
     Route::put('/permintaanbarangkeluar/update/{id}', [PermintaanBarangKeluarController::class, 'update'])->name('permintaanbarangkeluar.update');
     Route::get('/permintaanbarangkeluar/delete/{id}', [PermintaanBarangKeluarController::class, 'delete'])->name('permintaanbarangkeluar.delete');
+    Route::get('/permintaanbarangkeluar/selectSN/{id}', [PermintaanBarangKeluarController::class, 'selectSN'])->name('permintaanbarangkeluar.selectSN');
+    Route::post('/permintaanbarangkeluar/setSN', [PermintaanBarangKeluarController::class, 'setSN'])->name('permintaanbarangkeluar.setSN');
 
     Route::get('/barangkeluar', [BarangKeluarController::class, 'index'])->name('barangkeluar.index');
     Route::get('/barangkeluar/create/{id?}', [BarangKeluarController::class, 'create'])->name('barangkeluar.create');
