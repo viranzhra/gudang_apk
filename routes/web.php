@@ -78,8 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
     Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
+    Route::get('/preview/data', [BarangMasukController::class, 'getData'])->name('preview.data');
 
-    Route::get('/template/download', [BarangMasukController::class, 'downloadTemplate'])->name('template.download');
+    Route::get('/download-template', [BarangMasukController::class, 'downloadTemplate'])->name('download.template');
     Route::post('/upload/excel', [BarangMasukController::class, 'uploadExcel'])->name('upload.excel');
 
 

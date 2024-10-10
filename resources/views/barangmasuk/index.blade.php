@@ -321,12 +321,18 @@
         }
 
         .loading {
-            animation: spin 1s linear infinite; /* Animasi berputar */
+            animation: spin 1s linear infinite;
+            /* Animasi berputar */
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         #notification {
@@ -409,29 +415,29 @@
         @endif
 
         @if (session('finalMessage'))
-    <script>
-        // Reset kelas dan konten untuk notifikasi
-        const notificationElement = document.getElementById('notification');
-        notificationElement.classList.remove('alert-danger', 'alert-success'); // Hapus kelas apapun
-        notificationElement.style.display = 'block'; // Tampilkan notifikasi
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger', 'alert-success'); // Hapus kelas apapun
+                notificationElement.style.display = 'block'; // Tampilkan notifikasi
 
-        // Ambil pesan dari session
-        const message = "{{ session('finalMessage') }}";
-        if (message.includes("Error")) {
-            notificationElement.classList.add('alert-danger'); // Jika ada error, tambahkan kelas danger
-            document.getElementById('notificationTitle').innerText = "Error";
-        } else {
-            notificationElement.classList.add('alert-success'); // Jika tidak ada error, tambahkan kelas success
-            document.getElementById('notificationTitle').innerText = "Success";
-        }
-        document.getElementById('notificationMessage').innerText = message;
+                // Ambil pesan dari session
+                const message = "{{ session('finalMessage') }}";
+                if (message.includes("Error")) {
+                    notificationElement.classList.add('alert-danger'); // Jika ada error, tambahkan kelas danger
+                    document.getElementById('notificationTitle').innerText = "Error";
+                } else {
+                    notificationElement.classList.add('alert-success'); // Jika tidak ada error, tambahkan kelas success
+                    document.getElementById('notificationTitle').innerText = "Success";
+                }
+                document.getElementById('notificationMessage').innerText = message;
 
-        // Sembunyikan notifikasi setelah beberapa detik
-        setTimeout(() => {
-            notificationElement.style.display = 'none';
-        }, 5000); // Sembunyikan setelah 5 detik
-    </script>
-@endif
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 5000); // Sembunyikan setelah 5 detik
+            </script>
+        @endif
 
         {{-- @if ($errors->any())
     <div class="alert alert-danger">
@@ -446,8 +452,8 @@
 
         <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
             <!-- Tombol Unduh Template -->
-            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center" title="Download Template"
-                style="height: 40px;">
+            <a href="{{ route('download.template') }}" class="btn btn-primary d-flex align-items-center"
+                title="Download Template" style="height: 40px;">
                 <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
                 Template File
             </a>
@@ -486,24 +492,23 @@
             </button>
         </div>
 
-        <!-- Tabel untuk menampilkan data pratinjau -->
-        <div id="previewContainer" style="display:none;">
-            <div class="table-responsive" style="overflow-x: auto;"> <!-- Add this wrapper -->
-                <table id="previewTable" class="table table-bordered table-striped table-hover">
-                    <thead style="text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        <tr>
-                            <th style="background-color: #46caeb; color: white;">No</th>
-                            <th style="background-color: #46caeb; color: white;">Item</th>
-                            <th style="background-color: #46caeb; color: white;">Description</th>
-                            <th style="background-color: #46caeb; color: white;">Serial Number</th>
-                            <th style="background-color: #46caeb; color: white;">Status Item</th>
-                            <th style="background-color: #46caeb; color: white;">Requirement</th>
-                        </tr>
-                    </thead>
-                    <tbody style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></tbody>
-                </table>
-            </div> <!-- End of wrapper -->
-            <div id="pagination" class="pagination" style="float: right; margin-bottom: 20px; margin-top: 20px;"></div>
+        <!-- Container for preview table -->
+        <div id="previewContainer" style="display: none;">
+            <table id="previewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 5px;">No</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Serial Number</th>
+                        <th>Status Item</th>
+                        <th>Requirement</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <!-- Pagination controls -->
+            <div id="pagination" class="mt-3"></div>
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
@@ -548,8 +553,8 @@
     </div>
 
     <!-- Modal hapus terpilih -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
-        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -591,118 +596,101 @@
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script>
-        // Global variables for pagination
-        let currentPage = 1;
-        const rowsPerPage = 5;
-        let jsonData = [];
 
-        // Mengatur event listener untuk input file
-        document.getElementById('file').addEventListener('change', function() {
-            // Tampilkan tombol Preview jika file dipilih
-            const previewButton = document.getElementById('previewButton');
-            if (this.files.length > 0) {
-                previewButton.classList.remove('d-none');
-            } else {
-                previewButton.classList.add('d-none');
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi DataTable
+            const table = $('#previewTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    // Menonaktifkan pesan peringatan
+                    error: ''
+                },
+                columnDefs: [{ // Menyembunyikan kolom pertama untuk nomor urut
+                    targets: 0,
+                    orderable: false, // Membuat kolom tidak dapat diurutkan
+                    searchable: false, // Membuat kolom tidak dapat dicari
+                }]
+            });
+
+            // Mengatur event listener untuk input file
+            document.getElementById('file').addEventListener('change', function() {
+                const previewButton = document.getElementById('previewButton');
+                if (this.files.length > 0) {
+                    previewButton.classList.remove('d-none');
+                } else {
+                    previewButton.classList.add('d-none');
+                }
+            });
+
+            // Fungsi untuk melakukan preview data dari file yang diunggah
+            window.previewData = function() {
+                const fileInput = document.getElementById('file');
+                const file = fileInput.files[0];
+
+                // Memastikan ada file yang dipilih
+                if (!file) {
+                    alert('Silakan pilih file terlebih dahulu!');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = e.target.result;
+                    const workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                        header: 1
+                    });
+
+                    // Mengosongkan tabel preview
+                    table.clear(); // Kosongkan tabel DataTable
+
+                    // Menambahkan data ke tabel pratinjau dari baris kedua
+                    jsonData.slice(1).forEach((row) => {
+                        // Hanya tambahkan baris jika ada data di kolom pertama (ID Barang)
+                        if (row[0]) {
+                            table.row.add([
+                                '', // Placeholder untuk nomor urut (akan diupdate nanti)
+                                row[0] || '', // Barang ID
+                                row[1] || '', // Keterangan
+                                row[2] || '', // Serial Number
+                                row[3] || '', // Kondisi Barang
+                                row[4] || '' // Kelengkapan
+                            ]).draw(false); // false untuk tidak mengubah halaman
+                        }
+                    });
+
+                    // Mengupdate nomor urut setelah data ditambahkan
+                    updateRowNumbers();
+
+                    // Menampilkan kontainer pratinjau
+                    document.getElementById('previewContainer').style.display = 'block';
+                };
+
+                reader.onerror = function(error) {
+                    console.error('Error reading file:', error);
+                    alert('Error reading file. Please try again.');
+                };
+
+                reader.readAsBinaryString(file); // Membaca file sebagai binary string
+            };
+
+            // Fungsi untuk mengupdate nomor urut
+            function updateRowNumbers() {
+                table.rows().every(function(rowIdx) {
+                    this.data()[0] = rowIdx + 1; // Update nomor urut
+                    this.invalidate(); // Tandai data untuk pembaruan
+                });
+                table.draw(); // Gambar ulang tabel
             }
         });
-
-        // Fungsi untuk melakukan preview data dari file yang diunggah
-        function previewData() {
-            const fileInput = document.getElementById('file');
-            const file = fileInput.files[0];
-
-            // Memastikan ada file yang dipilih
-            if (!file) {
-                alert('Silakan pilih file terlebih dahulu!');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = e.target.result;
-                const workbook = XLSX.read(data, {
-                    type: 'binary'
-                });
-                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                    header: 1
-                });
-
-                // Mengosongkan tabel preview
-                const previewTableBody = document.getElementById('previewTable').getElementsByTagName('tbody')[0];
-
-                // Menghapus isi tabel sebelumnya
-                previewTableBody.innerHTML = '';
-
-                // Menambahkan data ke tabel pratinjau dari baris kedua
-                jsonData.slice(1).forEach((row) => {
-                    // Hanya tambahkan baris jika ada data di kolom pertama (ID Barang)
-                    if (row[0]) {
-                        const newRow = previewTableBody.insertRow();
-                        newRow.insertCell(0).textContent = ''; // Placeholder for row number
-                        newRow.insertCell(1).textContent = row[0] || ''; // Barang ID
-                        newRow.insertCell(2).textContent = row[1] || ''; // Keterangan
-                        newRow.insertCell(3).textContent = row[2] || ''; // Serial Number
-                        newRow.insertCell(4).textContent = row[3] || ''; // Kondisi Barang
-                        newRow.insertCell(5).textContent = row[4] || ''; // Kelengkapan
-                    }
-                });
-
-                // Menampilkan kontainer pratinjau
-                document.getElementById('previewContainer').style.display = 'block';
-                updateTable();
-            };
-
-            reader.onerror = function(error) {
-                console.error('Error reading file:', error);
-                alert('Error reading file. Please try again.');
-            };
-
-            reader.readAsBinaryString(file); // Membaca file sebagai binary string
-        }
-
-        function updateTable() {
-            const previewTableBody = document.getElementById('previewTable').getElementsByTagName('tbody')[0];
-            const totalRows = previewTableBody.rows.length;
-            const totalPages = Math.ceil(totalRows / rowsPerPage);
-
-            // Clear existing rows for pagination
-            for (let i = 0; i < totalRows; i++) {
-                previewTableBody.rows[i].style.display = 'none';
-            }
-
-            // Calculate the start and end indices for the current page
-            const start = (currentPage - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-
-            // Show rows for the current page
-            for (let i = start; i < end && i < totalRows; i++) {
-                previewTableBody.rows[i].style.display = '';
-                previewTableBody.rows[i].cells[0].textContent = i + 1; // Update No column
-            }
-
-            // Update pagination controls
-            renderPagination(totalPages);
-        }
-
-        function renderPagination(totalPages) {
-            const paginationContainer = document.getElementById('pagination');
-            paginationContainer.innerHTML = '';
-
-            for (let i = 1; i <= totalPages; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.className = `page-button btn btn-outline-primary mx-1` + (i === currentPage ? ' active' : '');
-                pageButton.onclick = function() {
-                    currentPage = i;
-                    updateTable();
-                };
-                paginationContainer.appendChild(pageButton);
-            }
-        }
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -848,7 +836,9 @@
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Jenis Barang</strong></div>:
-                                                    <div class="col-8">${namaJenisBarang || '—'}</div>
+                                                    <div class="col-8">
+                                                        ${namaJenisBarang !== null && namaJenisBarang !== '' && namaJenisBarang !== 'null' ? namaJenisBarang : '—'}
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Supplier</strong></div>:
