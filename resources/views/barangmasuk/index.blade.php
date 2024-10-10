@@ -375,7 +375,7 @@
                 // Sembunyikan notifikasi setelah beberapa detik
                 setTimeout(() => {
                     notificationElement.style.display = 'none';
-                }, 7000); // Sembunyikan setelah 5 detik
+                }, 7000);
             </script>
         @endif
 
@@ -435,7 +435,7 @@
                 // Sembunyikan notifikasi setelah beberapa detik
                 setTimeout(() => {
                     notificationElement.style.display = 'none';
-                }, 5000); // Sembunyikan setelah 5 detik
+                }, 7000);
             </script>
         @endif
 
