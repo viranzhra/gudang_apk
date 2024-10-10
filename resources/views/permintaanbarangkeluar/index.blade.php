@@ -338,7 +338,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                <button type="button" class="btn btn-primary" onclick="submitRejection(${id})">Simpan</button>
+                                <button type="button" class="btn btn-primary" id="submitRejectBtn" onclick="submitRejection(${id})">Simpan</button>
                             </div>
                         </div>
                     </div>
@@ -370,11 +370,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const existingModal = document.getElementById('rejectModal');
-        if (existingModal) {
-            const bsModal = bootstrap.Modal.getInstance(existingModal);
-            bsModal.hide();
-        }
+        const submitBtn = document.getElementById('submitRejectBtn');
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        submitBtn.disabled = true;
 
         submitStatusUpdate(id, 'Ditolak', reason);
     }
@@ -394,6 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
+            const existingModal = document.getElementById('rejectModal');
+            if (existingModal) {
+                const bsModal = bootstrap.Modal.getInstance(existingModal);
+                bsModal.hide();
+            }
+
             if (data.success) {
                 if (status === 'Diproses') {
                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;

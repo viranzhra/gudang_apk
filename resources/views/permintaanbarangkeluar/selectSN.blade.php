@@ -37,7 +37,7 @@
                     @for ($i = 0; $i < $serialNumbers[0]->jumlah; $i++)
                     <div class="ps-3 mb-2">
                         <label for="serial_number_{{ $barangId }}_{{ $i }}" class="form-label">Serial Number {{ $i + 1 }}</label>
-                        <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2">
+                        <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2" required>
                             <option value="">Pilih Serial Number</option>
                             {{-- TIDAK SELECTED OTOMATIS 
 
