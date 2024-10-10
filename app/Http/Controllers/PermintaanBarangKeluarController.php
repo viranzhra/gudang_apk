@@ -208,19 +208,11 @@ class PermintaanBarangKeluarController extends Controller
 
         $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
 
-        // // Log respons dari API
-        // \Log::info('Respons dari API:', [
-        //     'status' => $response->status(),
-        //     'body' => $response->body(),
-        //     'successful' => $response->successful(),
-        //     'json' => $response->json()
-        // ]);
-
         if ($response->successful()) {
             return redirect()->route('permintaanbarangkeluar.index')->with('success', $response->json('message'));
         }
 
-        return back()->withErrors('Gagal mengirim serial number.');
+        return redirect()->route('permintaanbarangkeluar.index')->with('error', $response->json('message'));
     }
 
 }
