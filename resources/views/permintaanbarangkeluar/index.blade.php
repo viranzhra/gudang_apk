@@ -50,12 +50,13 @@
             </thead>
             <tbody class="text-gray"></tbody>
         </table>
+        
     </div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     window.showDetailModal = function(id, namaCustomer, namaKeperluan, tanggalAwal, extend,
-        namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status) {
+        namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status, alasan) {
         // Hapus modal sebelumnya jika ada
         const existingModal = document.getElementById('detailModal');
         if (existingModal) {
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-9">${jumlah || '—'}</div>
                             <div class="col-3 fw-bold">Status:</div>
                             <div class="col-9">
-                                ${status === 'Ditolak' ? `<span class="badge text-bg-danger">${status}</span>` :
+                                ${status === 'Ditolak' ? `<span class="badge text-bg-danger">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Alasan:</span></div><p>${alasan}</p></span>` :
                                   status === 'Belum Disetujui' ? `<span class="badge text-bg-warning">${status}</span>` :
                                   status === 'Disetujui' ? `<span class="badge text-bg-success">${status}</span>` :
                                   status}
@@ -308,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 render: function(data, type, row) {
                     return `
                         <div class="flex gap-x-2">
-                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}')">
+                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}', '${row.alasan || ''}')">
                                 <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                             </button>
                         </div>
@@ -321,10 +322,65 @@ document.addEventListener('DOMContentLoaded', function() {
         ]
     });
 });
-</script>
-<script>
-function updateStatus(id, status) {
-    fetch('/permintaanbarangkeluar/update-status', {
+
+    function updateStatus(id, status) {
+        if (status === 'Ditolak') {
+            const modalHtml = `
+                <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <textarea id="rejectReason" class="form-control" placeholder="Masukkan alasan penolakan..." maxlength="150" rows="3"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
+                                <button type="button" class="btn btn-primary" onclick="submitRejection(${id})">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Hapus modal sebelumnya jika ada
+            const existingModal = document.getElementById('rejectModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Tambahkan modal ke body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // Tampilkan modal
+            const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
+            rejectModal.show();
+        } else {
+            submitStatusUpdate(id, status);
+        }
+    }
+
+    function submitRejection(id) {
+        const reason = document.getElementById('rejectReason').value;
+
+        if (!reason) {
+            showNotification('error', 'Alasan penolakan harus diisi.');
+            return;
+        }
+
+        const existingModal = document.getElementById('rejectModal');
+        if (existingModal) {
+            const bsModal = bootstrap.Modal.getInstance(existingModal);
+            bsModal.hide();
+        }
+
+        submitStatusUpdate(id, 'Ditolak', reason);
+    }
+
+    function submitStatusUpdate(id, status, reason = null) {
+        fetch('/permintaanbarangkeluar/update-status', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -332,20 +388,13 @@ function updateStatus(id, status) {
             },
             body: JSON.stringify({
                 id: id,
-                status: status
+                status: status,
+                reason: reason
             })
         })
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // Swal.fire({
-                //     title: 'Berhasil!',
-                //     text: data.message,
-                //     icon: 'success'
-                // }).then(() => {
-                //     location.reload();
-                // });
-
                 if (status === 'Diproses') {
                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
                 } else {
@@ -353,13 +402,8 @@ function updateStatus(id, status) {
                     setTimeout(function() {
                         location.reload();
                     }, 3000);
-                }            
+                }
             } else {
-                // Swal.fire({
-                //     title: 'Gagal!',
-                //     text: data.message,
-                //     icon: 'error'
-                // });
                 showNotification('error', data.message);
                 setTimeout(function() {
                     location.reload();
@@ -367,17 +411,97 @@ function updateStatus(id, status) {
             }
         })
         .catch(error => {
-            // Swal.fire({
-            //     title: 'Error',
-            //     text: 'Terjadi kesalahan: ' + error.message,
-            //     icon: 'error'
-            // });
             showNotification('error', error.message);
             setTimeout(function() {
                 location.reload();
             }, 3000);
         });
-}
+    }
+
+// function updateStatus(id, status) {
+//     fetch('/permintaanbarangkeluar/update-status', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+//             },
+//             body: JSON.stringify({
+//                 id: id,
+//                 status: status
+//             })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.success) {
+//                 // Swal.fire({
+//                 //     title: 'Berhasil!',
+//                 //     text: data.message,
+//                 //     icon: 'success'
+//                 // }).then(() => {
+//                 //     location.reload();
+//                 // });
+
+//                 if (status === 'Diproses') {
+//                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
+//                 } else {
+//                     showNotification('success', data.message);
+//                     setTimeout(function() {
+//                         location.reload();
+//                     }, 3000);
+//                 }            
+//             } else {
+//                 // Swal.fire({
+//                 //     title: 'Gagal!',
+//                 //     text: data.message,
+//                 //     icon: 'error'
+//                 // });
+//                 showNotification('error', data.message);
+//                 setTimeout(function() {
+//                     location.reload();
+//                 }, 3000);
+//             }
+//         })
+//         .catch(error => {
+//             // Swal.fire({
+//             //     title: 'Error',
+//             //     text: 'Terjadi kesalahan: ' + error.message,
+//             //     icon: 'error'
+//             // });
+//             showNotification('error', error.message);
+//             setTimeout(function() {
+//                 location.reload();
+//             }, 3000);
+//         });
+// }
+
+// /* Alasan Penolakan */
+// function submitRejection() {
+//     const id = document.getElementById('rejectId').value;
+//     const reason = document.getElementById('reason').value;
+
+//     // Kirim alasan penolakan beserta ID
+//     fetch('/permintaanbarangkeluar/reject', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'X-CSRF-TOKEN': '{{ csrf_token() }}'
+//         },
+//         body: JSON.stringify({
+//             id: id,
+//             status: 'Ditolak',
+//             reason: reason
+//         })
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             location.reload();
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error rejecting request:', error);
+//     });
+// }
 </script>
 
     {{-- Notifikasi --}}
@@ -430,67 +554,5 @@ function updateStatus(id, status) {
             showNotification('success', '{{ session('success') }}');
         </script>
     @endif
-
-    {{-- Select All Checkbox --}}
-    <script>
-        $(document).ready(function() {            
-            // Ketika checkbox select-all diubah
-            $(document).on('change', '#select-all', function() {
-                const isChecked = $(this).is(':checked');
-                $('.select-item').prop('checked', isChecked);
-                toggleDeleteButton();
-            });
-
-            // Ketika checkbox item diubah
-            $(document).on('change', '.select-item', function() {
-                toggleDeleteButton();
-            });
-
-            // Menampilkan/menghilangkan tombol "Hapus"
-            function toggleDeleteButton() {
-                const selected = $('.select-item:checked').length;
-                const deleteButton = $('#delete-selected');
-                if (selected > 0) {
-                    deleteButton.removeClass('d-none');
-                } else {
-                    deleteButton.addClass('d-none');
-                }
-            }
-
-            // Ketika tombol "Hapus" di klik
-            $(document).on('click', '#delete-selected', function() {
-                const selected = [];
-                $('.select-item:checked').each(function() {
-                    selected.push($(this).val());
-                });
-
-                if (selected.length > 0) {
-                    $('#deleteModal').modal('show');
-                    $('#itemName').text(selected.length + ' item');
-                    $('#deleteForm').attr('action', '/barang/delete-selected');
-                    $('#deleteForm').off('submit').on('submit', function(e) {
-                        e.preventDefault();
-                        fetch('/barang/delete-selected', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                ids: selected
-                            })
-                        }).then(response => {
-                            if (response.ok) {
-                                location.reload();
-                            } else {
-                                alert('Gagal menghapus data.');
-                            }
-                        });
-                    });
-                } else {
-                    alert('Tidak ada data yang dipilih.');
-                }
-            });
-        });
-    </script>
+    
 @endsection
