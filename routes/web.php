@@ -106,6 +106,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/permintaanbarangkeluar/setSN', [PermintaanBarangKeluarController::class, 'setSN'])->name('permintaanbarangkeluar.setSN');
 
     Route::get('/barangkeluar', [BarangKeluarController::class, 'index'])->name('barangkeluar.index');
+    Route::get('/barangkeluar/show', [BarangKeluarController::class, 'show'])->name('barangkeluar.show');
     Route::get('/barangkeluar/create/{id?}', [BarangKeluarController::class, 'create'])->name('barangkeluar.create');
     Route::get('/barangkeluar/get-by-jenis/{id}', [BarangKeluarController::class, 'getBarangByJenis']);
     Route::post('/barangkeluar/store', [BarangKeluarController::class, 'store'])->name('barangkeluar.store');

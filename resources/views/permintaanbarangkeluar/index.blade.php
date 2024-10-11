@@ -3,13 +3,14 @@
 @section('content')
 <style>
 #notification{position:fixed;top:10px;right:10px;width:300px;padding:15px;border-radius:5px;z-index:9999;display:none;text-align:center;justify-content:flex-start;align-items:center;text-align:left}
+.alert{border-radius: 18px !important}
 /* .alert-success{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;height:80px}.alert-danger{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;height:80px}.alert-info{background-color:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;height:80px} */
 </style>
     <div class="container mt-3 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; width: 1160px;border-radius: 20px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
-            <strong id="notificationTitle">Notification</strong>
-            <p id="notificationMessage"></p>
+            <strong id="notificationTitle" style="font-size: 15px">Notification</strong>
+            <p id="notificationMessage" style="margin-top: 10px"></p>
         </div>
 
         <div class="d-flex justify-content-between align-items-center my-3">
@@ -173,7 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 ${status === 'Ditolak' ? `<span class="badge text-bg-danger">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Alasan:</span></div><p>${alasan}</p></span>` :
                                   status === 'Belum Disetujui' ? `<span class="badge text-bg-warning">${status}</span>` :
                                   status === 'Disetujui' ? `<span class="badge text-bg-success">${status}</span>` :
-                                  status}
+                                  status ? `<span class="badge text-bg-secondary">${status}</span>` : '—'}
                             </div>
                             ${detailContent}
                         </div>

@@ -124,54 +124,75 @@
 
     <script>
         $(document).ready(function() {
-                console.log('Tabel ditemukan. Memulai DataTables.');
-                var table = $('#outboundTable').DataTable({
-                    processing: true,
-                    serverSide: true,
-                    ajax: {
-                        url: '{{ config('app.api_url') }}/barangkeluar',
-                    },
-                    columns: [{
-                            data: 'permintaan_barang_keluar_id',
-                            orderable: false,
-                            searchable: false
-                        },
-                        {
-                        data: null,
+            console.log('Tabel ditemukan. Memulai DataTables.');
+            var table = $('#outboundTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: 'https://doaibutiri.my.id/gudang/api/barangkeluar',
+                    error: function (xhr, error, thrown) {
+                        console.error('Ajax error:', error);
+                        alert('An error occurred while fetching data. Please try again later.');
+                    }
+                },
+                columns: [
+                    {
+                        data: 'id',
                         sortable: false,
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
-                        {
-                            data: 'nama_customer',
-                            defaultContent: 'Data tidak tersedia'
-                        },
-                        {
-                            data: 'nama_keperluan',
-                            defaultContent: '0'
-                        },
-                        {
-                            data: 'jumlah',
-                            defaultContent: '-'
-                        },
-                        {
-                            data: 'tanggal',
-                            defaultContent: '-'
-                        },
-                        {
-                            data: 'permintaan_barang_keluar_id',
-                            orderable: false,
-                            render: function(data) {
-                                return `<div class="d-flex">
-                            <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
-                                <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                            </button>
-                        </div>`;
-                            }
+                    {
+                        data: 'nama_customer',
+                        defaultContent: 'Data tidak tersedia'
+                    },
+                    {
+                        data: 'nama_keperluan',
+                        defaultContent: '-'
+                    },
+                    {
+                        data: 'jumlah',
+                        defaultContent: '0'
+                    },
+                    {
+                        data: 'tanggal',
+                        defaultContent: '-'
+                    },
+                    {
+                        data: 'permintaan_barang_keluar_id',
+                        orderable: false,
+                        render: function(data, type, row) {
+                            return `<div class="d-flex">
+                                <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                    <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                                </button>
+                            </div>`;
                         }
-                    ]
-                });
+                    }
+                ],
+                drawCallback: function(settings) {
+                    $('.btn-detail').on('click', function() {
+                        var id = $(this).data('id');
+                        var rowData = table.row($(this).closest('tr')).data();
+                        var detailHtml = '';
+                        
+                        if (rowData && rowData.detail) {
+                            rowData.detail.forEach(function(item) {
+                                detailHtml += `<tr>
+                                    <td>${item.serial_number}</td>
+                                    <td>${item.nama_barang}</td>
+                                    <td>${item.nama_jenis_barang}</td>
+                                    <td>${item.nama_supplier}</td>
+                                </tr>`;
+                            });
+                        }
+                        
+                        $('#modalDetailBody').html(detailHtml);
+                        $('#detailModal').modal('show');
+                    });
+                }
+            });
         });
     </script>
 
