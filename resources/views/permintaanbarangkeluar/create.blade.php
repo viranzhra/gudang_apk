@@ -77,7 +77,7 @@
             <!-- Input Tanggal Akhir (Awalnya Disembunyikan) -->
             <div id="tanggal-akhir-container" class="mb-3 d-none">
                 <label id="label-tanggal-akhir" for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
-                <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="{{ date('Y-m-d', strtotime('+0 days')) }}" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+90 days')) }}" />
+                <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="{{ date('Y-m-d', strtotime('+1 days')) }}" min="{{ date('Y-m-d', strtotime('+1 days')) }}" max="{{ date('Y-m-d', strtotime('+90 days')) }}" />
             </div>
 
             <div class="mb-4">
@@ -299,7 +299,7 @@
                         var batas_hari_fix = new Date();
                         batas_hari_fix.setDate(batas_hari_fix.getDate() + parseInt(batas_hari));
                         $('#tanggal_akhir').prop('max', batas_hari_fix.toISOString().split('T')[0]); 
-                        $('#tanggal_akhir').val(new Date().toISOString().split('T')[0]);
+                        $('#tanggal_akhir').val(new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]);
 
                         const namaTanggalAwal = selectedOption.data('tanggal-awal');
                         const namaTanggalAkhir = selectedOption.data('tanggal-akhir');
@@ -313,7 +313,7 @@
                             var batas_hari_fix = new Date();
                             batas_hari_fix.setDate(batas_hari_fix.getDate() + parseInt(batas_hari));
                             $('#tanggal_akhir').prop('max', batas_hari_fix.toISOString().split('T')[0]);
-                            $('#tanggal_akhir').val(new Date().toISOString().split('T')[0]);
+                            $('#tanggal_akhir').val(new Date(new Date().getTime() + 86400000).toISOString().split('T')[0]);
                         } else {
                             $('#tanggal-akhir-container').addClass('d-none');
                             $('#label-tanggal-awal').text('Tanggal Permintaan');
