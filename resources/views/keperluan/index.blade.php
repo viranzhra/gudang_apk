@@ -120,12 +120,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
+                    <form class="" method="post" action="{{ route('keperluan.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
                                 role="alert">
-                                <strong class="font-bold">Oops!</strong> Terjadi kesalahan:
+                                <strong class="font-bold">Ups!</strong> Terjadi kesalahan:
                                 <ul class="mt-3 list-disc list-inside">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
@@ -134,51 +135,104 @@
                             </div>
                         @endif
 
-                        <!-- Requirement Type -->
-                        <div class="mb-3">
-                            <label for="nama" class="form-label">Requirement Type</label>
-                            <input type="text" id="nama" name="nama" class="form-control"
+                        <div class="mb-5">
+                            <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
+                                Keperluan</label>
+                            <input type="text" id="nama" name="nama"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 placeholder="Untuk Dipinjam" required />
                         </div>
 
-                        <!-- Checkbox for 2 Dates -->
-                        <div class="mb-3">
-                            <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                            <label for="extend" class="form-check-labe">Extend</label>
+                        <div class="flex items-center mb-5">
+                            <input id="extend" type="checkbox" name="extend" value="0"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500">
+                            <label for="extend" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Terapkan
+                                dua tanggal</label>
                         </div>
                         <script>
                             document.getElementById('extend').addEventListener('change', function() {
                                 this.value = this.checked ? '1' : '0';
                                 document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
-
+                                // document.getElementById('nama_tanggal_awal').required = this.checked;
                                 document.getElementById('nama_tanggal_akhir').required = this.checked;
-                                document.getElementById('start_date').required = this.checked;
-                                document.getElementById('end_date').required = this.checked;
                             });
                         </script>
 
                         <div id="tanggalInputs" style="display: none;">
-                            <div class="mb-3">
-                                <div class="relative z-0 w-full mb-3 group md:col-span-2">
-                                    <label for="nama_tanggal_akhir" class="form-label">Extension Name</label>
-                                    <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Tanggal Pengembalian"/>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label for="start_date" class="form-label">Start Date</label>
-                                        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ date('Y-m-d') }}" disabled />
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="end_date" class="form-label">End Date</label>
-                                        <input type="date" id="end_date" name="end_date" class="form-control"/>
-                                    </div>
-                                </div>
-                                
+
+                            {{-- <div class="grid md:grid-cols-3 md:gap-3">
+                            <div class="relative z-0 w-full mb-5 group md:col-span-2">
+                                <label for="nama_tanggal_awal" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Tanggal Awal</label>
+                                <input type="text" id="nama_tanggal_awal" name="nama_tanggal_awal"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Tanggal Permintaan" />
                             </div>
+                            <div class="relative z-0 w-full mb-5 group">
+                                <label for="tanggal_awal" class="block opacity-0 mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Awal</label>
+                                <input type="date" id="tanggal_awal"
+                                    class="bg-gray-200 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                                    value="{{ date('Y-m-d') }}" disabled />
+                            </div>
+                        </div> --}}
+
+                            <div class="grid md:grid-cols-3 md:gap-3">
+                                <div class="relative z-0 w-full mb-5 group md:col-span-2">
+                                    <label for="nama_tanggal_akhir"
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Tanggal
+                                        Akhir</label>
+                                    <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                        placeholder="Tanggal Pengembalian" value="Tanggal Pengembalian" />
+                                </div>
+                                <!-- Input Tanggal Permintaan (Disabled, Ditetapkan 7 Hari ke Depan) -->
+                                <!-- Input Batas Waktu -->
+                                <div class="mb-3">
+                                    <label for="batas_waktu" class="form-label">Batas Waktu (Hari)</label>
+                                    <input type="number" id="batas_waktu" name="batas_waktu" class="form-control"
+                                        min="1" max="90" value="1" required />
+                                </div>
+
+                                <!-- Input Tanggal Pengembalian -->
+                                <div class="mb-3">
+                                    <label id="label-tanggal-akhir" for="tanggal_akhir" class="form-label">Tanggal
+                                        Pengembalian</label>
+                                    <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control"
+                                        disabled />
+                                </div>
+
+                                <script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        const batasWaktuInput = document.getElementById('batas_waktu');
+                                        const tanggalAkhirInput = document.getElementById('tanggal_akhir');
+
+                                        // Fungsi untuk memperbarui tanggal pengembalian berdasarkan batas waktu
+                                        function updateTanggalAkhir() {
+                                            const batasWaktu = parseInt(batasWaktuInput.value) || 1;
+
+                                            // Mengambil tanggal permintaan dari server (disesuaikan dengan format yang sesuai)
+                                            const tanggalPermintaan = new Date("{{ date('Y-m-d') }}"); // Sesuaikan format tanggal jika perlu
+
+                                            const tanggalAkhir = new Date(tanggalPermintaan);
+                                            tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu); // Menambahkan batas waktu
+                                            tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[
+                                            0]; // Mengatur nilai untuk tanggal akhir
+                                        }
+
+                                        // Event listener jika batas waktu diubah
+                                        batasWaktuInput.addEventListener('input', updateTanggalAkhir);
+
+                                        // Inisialisasi tanggal akhir saat halaman dimuat
+                                        updateTanggalAkhir();
+                                    });
+                                </script>
+
+                            </div>
+
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="submit"
+                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+
                     </form>
                 </div>
             </div>
@@ -220,7 +274,8 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <label for="start_date" class="form-label">Start Date</label>
-                                    <input type="date" id="start_date" name="start_date" class="form-control" value="{{ date('Y-m-d') }}" disabled/>
+                                    <input type="date" id="start_date" name="start_date" class="form-control"
+                                        value="{{ date('Y-m-d') }}" disabled />
                                 </div>
                                 <div class="col-md-6">
                                     <label for="end_date" class="form-label">End Date</label>
@@ -295,9 +350,9 @@
             var formData = {
                 _token: '{{ csrf_token() }}', // Pastikan CSRF token disertakan
                 nama: $('#nama').val(),
-                nama_tanggal_akhir: $('#setDates').is(':checked') ? $('#end_date').val() :
-                '', // Kirim string kosong bukan null
-                extend: $('#setDates').is(':checked') // Mengubah menjadi boolean secara otomatis
+                nama_tanggal_akhir: $('#extend').is(':checked') ? $('#end_date').val() :
+                '', // Kirim string kosong jika tidak dicentang
+                extend: $('#extend').is(':checked') // Mengubah menjadi boolean secara otomatis
             };
 
             console.log("Data yang dikirim:", formData); // Debug: cek data yang dikirim
@@ -359,7 +414,7 @@
         });
 
         // Menangani perubahan checkbox extend pada form tambah data
-        $('#setDates').change(function() {
+        $('#extend').change(function() {
             if ($(this).is(':checked')) {
                 $('#extension_name').show(); // Tampilkan kolom extension_name jika checkbox dicentang
             } else {
@@ -635,14 +690,14 @@
                         data: 'created_at', // Tanggal Awal Dibuat (Start Date)
                         render: function(data) {
                             return data ? new Date(data).toLocaleDateString('id-ID') :
-                            '-'; // Format tanggal
+                                '-'; // Format tanggal
                         }
                     },
                     {
-                        data: 'end_date', // Menampilkan End Date
+                        data: 'batas_hari', // Menampilkan End Date
                         render: function(data) {
                             return data ? new Date(data).toLocaleDateString('id-ID') :
-                            '-'; // Format tanggal
+                                '-'; // Format tanggal
                         }
                     },
                     {

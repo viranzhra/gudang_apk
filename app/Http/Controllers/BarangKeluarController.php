@@ -16,6 +16,7 @@ class BarangKeluarController extends Controller
     {
         $search = $request->input('search');
 
+        // Ambil data dari tabel barang_keluar
         $data = DB::table('barang_keluar')
             ->leftJoin('permintaan_barang_keluar', 'barang_keluar.permintaan_id', '=', 'permintaan_barang_keluar.id')
             ->leftJoin('customer', 'permintaan_barang_keluar.customer_id', '=', 'customer.id')
@@ -28,21 +29,20 @@ class BarangKeluarController extends Controller
                 'permintaan_barang_keluar.jumlah',
                 'keperluan.extend as extend',
                 DB::raw("REPLACE(keperluan.nama_tanggal_awal, 'Tanggal ', '') as nama_tanggal_awal"),
-                DB::raw("REPLACE(keperluan.batas_akhir, 'Tanggal ', '') as batas_akhir")
+                DB::raw("REPLACE(keperluan.nama_tanggal_akhir, 'Tanggal ', '') as nama_tanggal_akhir"),
+                DB::raw("TO_CHAR(permintaan_barang_keluar.tanggal_awal, 'DD Mon YYYY') as tanggal_awal"),
+                DB::raw("TO_CHAR(permintaan_barang_keluar.tanggal_akhir, 'DD Mon YYYY') as tanggal_akhir")
             )
-            ->selectRaw("TO_CHAR(permintaan_barang_keluar.tanggal_awal, 'DD Mon YYYY') as tanggal_awal")
-            ->selectRaw("TO_CHAR(permintaan_barang_keluar.tanggal_akhir, 'DD Mon YYYY') as tanggal_akhir")
             ->when($search, function ($query) use ($search) {
-                return $query->where(function ($q) use ($search) {
-                    $q->where('customer.nama', 'like', '%' . $search . '%')
-                        ->orWhere('keperluan.nama', 'like', '%' . $search . '%')
-                        ->orWhere('permintaan_barang_keluar.jumlah', 'like', '%' . $search . '%')
-                        ->orWhere('barang_keluar.tanggal_awal', 'like', '%' . $search . '%');
-                });
-            })            
+                return $query->where('customer.nama', 'like', '%' . $search . '%')
+                    ->orWhere('keperluan.nama', 'like', '%' . $search . '%')
+                    ->orWhere('permintaan_barang_keluar.jumlah', 'like', '%' . $search . '%')
+                    ->orWhere('barang_keluar.tanggal', 'like', '%' . $search . '%');
+            })
             ->orderBy('barang_keluar.created_at', 'desc')
             ->paginate(7);
 
+        // Ambil detail untuk setiap item
         foreach ($data as $item) {
             $item->detail = DB::table('detail_permintaan_bk')
                 ->leftJoin('serial_number', 'detail_permintaan_bk.serial_number_id', '=', 'serial_number.id')
@@ -66,9 +66,8 @@ class BarangKeluarController extends Controller
             $item->tanggal_awal = \Carbon\Carbon::parse($item->tanggal_awal)->isoFormat('DD MMMM YYYY');
             $item->tanggal_akhir = \Carbon\Carbon::parse($item->tanggal_akhir)->isoFormat('DD MMMM YYYY');
             return $item;
-        });        
+        });
 
-        return view('barangkeluar.index', compact('data'));
+        return view('barangkeluar.index');
     }
-
 }

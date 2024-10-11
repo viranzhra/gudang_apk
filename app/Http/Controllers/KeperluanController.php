@@ -16,6 +16,18 @@ use Illuminate\Support\Facades\Log;
 class KeperluanController extends Controller
 {
 
+	// app/Http/Controllers/KeperluanController.php
+
+public function getBatasHari()
+{
+    // Ambil data batas_hari dari model atau langsung dari request
+    // Contoh: Ambil batas_hari dari data terakhir
+    $batasHari = Keperluan::latest()->value('batas_hari');
+
+    return response()->json(['batas_hari' => $batasHari]);
+}
+
+
 	public function index(Request $request)
 	{
 		return view('keperluan.index');

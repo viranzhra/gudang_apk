@@ -67,10 +67,10 @@
         <h4 class="mt-3" style="color: #8a8a8a;">Outbound Item</h4>
         <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px"></div>
 
-        <table class="table table-bordered table-striped table-hover" id="outbound-table" width="100%">
+        <table class="table table-bordered table-striped table-hover" id="outboundTable" width="100%">
             <thead class="thead-dark">
                 <tr>
-                    <th class="d-flex justify-content-center align-items-center">No</th>
+                    <th>No</th>
                     <th>Customer</th>
                     <th>Purpose</th>
                     <th>Quantity</th>
@@ -83,93 +83,141 @@
         </table>
     </div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <!-- DataTables Bootstrap 4 integration -->
+    <!-- Modal Detail -->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Detail Barang Keluar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Serial Number</th>
+                                <th>Nama Barang</th>
+                                <th>Jenis Barang</th>
+                                <th>Nama Supplier</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalDetailBody">
+                            <!-- Detail data akan dimasukkan ke sini -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
         $(document).ready(function() {
-            // Initialize DataTable
-            $('#outbound-table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: '{{ config('app.api_url') }}/barangkeluar',
-                    headers: {
-                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                console.log('Tabel ditemukan. Memulai DataTables.');
+                var table = $('#outboundTable').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    ajax: {
+                        url: '{{ config('app.api_url') }}/barangkeluar',
                     },
-                    dataSrc: function(json) {
-                        // Cek apakah ada data
-                        if (json.data && json.data.data) {
-                            return json.data.data; // Mengambil data dari json
-                        } else {
-                            return []; // Mengembalikan array kosong jika tidak ada data
+                    columns: [{
+                            data: 'permintaan_barang_keluar_id',
+                            orderable: false,
+                            searchable: false
+                        },
+                        {
+                        data: null,
+                        sortable: false,
+                        render: function(data, type, row, meta) {
+                            return meta.row + meta.settings._iDisplayStart + 1;
                         }
                     },
-                    error: function(xhr, error, thrown) {
-                        console.error('Ajax error:', xhr
-                        .responseText); // Menampilkan detail error di console
-                        alert('Error fetching data: ' + xhr.status + ' ' + xhr
-                        .statusText); // Menampilkan alert dengan status error
-                    }
-                },
-                columns: [{
-                        data: 'DT_RowIndex',
-                        orderable: false,
-                        searchable: false
-                    },
-                    {
-                        data: 'nama_customer',
-                        name: 'customer.nama',
-                        defaultContent: 'Data tidak tersedia'
-                    },
-                    {
-                        data: 'nama_keperluan',
-                        name: 'keperluan.nama',
-                        defaultContent: '0'
-                    },
-                    {
-                        data: 'jumlah_permintaan',
-                        name: 'permintaan_barang_keluar.jumlah',
-                        defaultContent: '-'
-                    },
-                    {
-                        data: 'tanggal_awal',
-                        name: 'permintaan_barang_keluar.tanggal',
-                        defaultContent: '-'
-                    },
-                    {
-                        data: 'id',
-                        orderable: false,
-                        render: function(data) {
-                            return `
-                                <div class="d-flex">
-                                    <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
-                                        <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                                    </button>
-                                </div>`;
+                        {
+                            data: 'nama_customer',
+                            defaultContent: 'Data tidak tersedia'
+                        },
+                        {
+                            data: 'nama_keperluan',
+                            defaultContent: '0'
+                        },
+                        {
+                            data: 'jumlah',
+                            defaultContent: '-'
+                        },
+                        {
+                            data: 'tanggal',
+                            defaultContent: '-'
+                        },
+                        {
+                            data: 'permintaan_barang_keluar_id',
+                            orderable: false,
+                            render: function(data) {
+                                return `<div class="d-flex">
+                            <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                            </button>
+                        </div>`;
+                            }
                         }
-                    }
-                ],
-                order: [
-                    [2, 'asc']
-                ]
-            });
+                    ]
+                });
+        });
+    </script>
 
-            // Event listener for detail button
-            $(document).on('click', '.btn-detail', function() {
-                var id = $(this).data('id');
-                // Fetch detail data and show modal
-                fetch(`/barangkeluar/${id}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Populate modal content (implement the modal structure here)
-                        console.log(data);
-                    });
-            });
+    <script>
+        $(document).on('click', '.btn-detail', function() {
+            var id = $(this).data('id');
+
+            // Tampilkan spinner loading di modal
+            $('#modalDetailBody').html('<tr><td colspan="4">Loading...</td></tr>');
+
+            // Ambil data dari API
+            fetch('https://doaibutiri.my.id/gudang/api/barangkeluar/' + id)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    let detailHtml = '';
+                    if (data.detail && Array.isArray(data.detail)) {
+                        // Iterasi setiap detail dan buat baris tabel
+                        data.detail.forEach(function(detail) {
+                            detailHtml += `
+                        <tr>
+                            <td>${detail.serial_number || 'Tidak tersedia'}</td>
+                            <td>${detail.nama_barang || 'Tidak tersedia'}</td>
+                            <td>${detail.nama_jenis_barang || 'Tidak tersedia'}</td>
+                            <td>${detail.nama_supplier || 'Tidak tersedia'}</td>
+                        </tr>`;
+                        });
+                    } else {
+                        detailHtml = '<tr><td colspan="4">Detail tidak tersedia</td></tr>';
+                    }
+
+                    // Tampilkan data detail di dalam modal
+                    $('#modalDetailBody').html(detailHtml);
+                })
+                .catch(error => {
+                    console.error('Error fetching detail:', error);
+                    $('#modalDetailBody').html(
+                        '<tr><td colspan="4">Gagal mengambil detail. Silakan coba lagi.</td></tr>');
+                });
+
+            // Tampilkan modal
+            $('#detailModal').modal('show');
         });
     </script>
 @endsection
