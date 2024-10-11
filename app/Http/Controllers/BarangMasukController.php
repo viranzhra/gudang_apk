@@ -48,14 +48,15 @@ class BarangMasukController extends Controller
         }
     
         // Inisialisasi variabel untuk menyimpan pesan
-        $successCount = 0;
         $errorMessages = [];
         $duplicateSerialNumbers = []; // Array untuk menyimpan serial number yang sudah terpakai
+        $failedItems = []; // Array untuk menyimpan nama barang yang gagal diimpor
+        $successfulImports = 0; // Counter untuk menyimpan jumlah barang yang berhasil diimpor
     
         // Proses data dari Excel
         foreach ($data[0] as $row) {
             // Validasi baris data sebelum diproses
-            if (empty($row['barang_id']) || empty($row['serial_number']) || empty($row['kondisi_barang'])) {
+            if (empty($row['barang_id']) || empty($row['serial_number'])) {
                 $errorMessages[] = "Data tidak lengkap untuk barang: {$row['barang_id']}";
                 continue; // Jika data tidak lengkap, lewati ke baris berikutnya
             }
@@ -64,18 +65,23 @@ class BarangMasukController extends Controller
             $nama_barang = $row['barang_id'];
             $keterangan = $row['keterangan'] ?? null;
             $serial_numbers = explode(',', $row['serial_number']); // Pisahkan SN berdasarkan koma
-            $kondisi_barangs = explode(',', $row['kondisi_barang']); // Pisahkan kondisi barang berdasarkan koma
+            $kondisi_barangs = !empty($row['kondisi_barang']) ? explode(',', $row['kondisi_barang']) : []; // Pisahkan kondisi barang jika ada
             $kelengkapan = $row['kelengkapan'] ?? null;
     
             // Periksa apakah jumlah kondisi barang lebih sedikit dari serial number
             if (count($kondisi_barangs) < count($serial_numbers)) {
-                // Jika kurang, isi sisa kondisi dengan kondisi yang pertama
-                $firstCondition = $kondisi_barangs[0];
-                $kondisi_barangs = array_pad($kondisi_barangs, count($serial_numbers), $firstCondition);
+                // Jika kurang, isi sisa kondisi dengan kondisi yang pertama jika ada
+                if (!empty($kondisi_barangs)) {
+                    $firstCondition = $kondisi_barangs[0];
+                    $kondisi_barangs = array_pad($kondisi_barangs, count($serial_numbers), $firstCondition);
+                } else {
+                    // Jika tidak ada kondisi sama sekali, isi dengan null
+                    $kondisi_barangs = array_fill(0, count($serial_numbers), null);
+                }
             }
     
             // Pisahkan kelengkapan berdasarkan tanda "-"
-            $kelengkapans = explode('-', $kelengkapan);
+            $kelengkapans = !empty($kelengkapan) ? explode('-', $kelengkapan) : [];
     
             // Pastikan jumlah kelengkapan sesuai dengan jumlah serial number
             if (count($kelengkapans) < count($serial_numbers)) {
@@ -104,7 +110,8 @@ class BarangMasukController extends Controller
     
             // Cek apakah respons API sukses
             if ($response->successful()) {
-                $successCount += count($serial_numbers); // Tambah jumlah sukses berdasarkan jumlah SN
+                $successfulImports++; // Increment counter for successful imports
+                continue; 
             } else {
                 // Menyusun pesan kesalahan berdasarkan respons API
                 $responseData = $response->json();
@@ -119,28 +126,32 @@ class BarangMasukController extends Controller
                     }
                 } else {
                     // Tampilkan pesan kesalahan lain selain serial number
-                    $errorMessages[] = "Error: {$errorMessage} untuk barang: {$nama_barang}";
+                    $failedItems[] = $nama_barang; // Tambahkan barang yang gagal diimpor ke dalam array
                 }
             }
         }
     
-        // Menampilkan notifikasi berdasarkan jumlah keberhasilan dan kesalahan
+        // Menampilkan notifikasi berdasarkan kesalahan
         $finalMessage = '';
     
-        // Tambahkan pesan sukses jika ada data yang berhasil disimpan
-        if ($successCount > 0) {
-            $finalMessage .= "$successCount data berhasil diimpor.";
-        }
+        // Jika ada data yang berhasil diimpor
+        if ($successfulImports > 0) {
+            $finalMessage .= "$successfulImports data berhasil diimpor."; // Pesan sukses
     
-        // Jika ada serial number yang sudah terpakai
-        if (!empty($duplicateSerialNumbers)) {
-            $serialList = implode(', ', $duplicateSerialNumbers);
-            $finalMessage .= " Namun, terdapat " . count($duplicateSerialNumbers) . " data dengan serial number sudah terpakai: $serialList.";
-        }
+            // Jika ada serial number yang sudah terpakai
+            if (!empty($duplicateSerialNumbers)) {
+                $serialList = implode(', ', $duplicateSerialNumbers);
+                $finalMessage .= " Namun, terdapat " . count($duplicateSerialNumbers) . " data dengan serial number sudah terpakai: $serialList.";
+            }
     
-        // Tambahkan pesan error lainnya jika ada
-        if (!empty($errorMessages)) {
-            $finalMessage .= ' ' . implode(' ', $errorMessages); // Gabungkan semua pesan error
+            // Jika ada barang yang gagal diimpor
+            if (!empty($failedItems)) {
+                $failedItemList = implode(', ', $failedItems);
+                $finalMessage .= " Terjadi kesalahan saat mengimpor data untuk barang: $failedItemList. Bisa jadi karena data tidak sesuai dengan tabel Barang";
+            }
+        } else {
+            // Jika tidak ada data yang berhasil diimpor
+            $finalMessage .= 'Error: Tidak ada data yang berhasil diimpor.';
         }
     
         // Simpan pesan dalam session
@@ -149,9 +160,6 @@ class BarangMasukController extends Controller
         return redirect()->back();
     }
     
-
-
-
 
 	public function index(Request $request)
 	{
