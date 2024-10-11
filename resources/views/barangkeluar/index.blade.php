@@ -83,38 +83,22 @@
         </table>
     </div>
 
-    <!-- Modal Detail -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Detail Barang Keluar</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Serial Number</th>
-                                <th>Nama Barang</th>
-                                <th>Jenis Barang</th>
-                                <th>Nama Supplier</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modalDetailBody">
-                            <!-- Detail data akan dimasukkan ke sini -->
-                        </tbody>
-                    </table>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+    <!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Outbound Item Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailList">
+                    <!-- Data will be inserted here -->
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
@@ -197,48 +181,46 @@
     </script>
 
     <script>
-        $(document).on('click', '.btn-detail', function() {
-            var id = $(this).data('id');
+        // Detail button functionality
+        $(document).on('click', '.detail-btn', function() {
+            const permintaanId = $(this).data('id'); // Get the ID from the button
 
-            // Tampilkan spinner loading di modal
-            $('#modalDetailBody').html('<tr><td colspan="4">Loading...</td></tr>');
+            // Clear existing list content
+            $('#detailList').empty();
 
-            // Ambil data dari API
-            fetch('https://doaibutiri.my.id/gudang/api/barangkeluar/' + id)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    let detailHtml = '';
-                    if (data.detail && Array.isArray(data.detail)) {
-                        // Iterasi setiap detail dan buat baris tabel
-                        data.detail.forEach(function(detail) {
-                            detailHtml += `
-                        <tr>
-                            <td>${detail.serial_number || 'Tidak tersedia'}</td>
-                            <td>${detail.nama_barang || 'Tidak tersedia'}</td>
-                            <td>${detail.nama_jenis_barang || 'Tidak tersedia'}</td>
-                            <td>${detail.nama_supplier || 'Tidak tersedia'}</td>
-                        </tr>`;
+            // Fetch details from the server
+            $.ajax({
+                url: https://doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId},
+                type: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('token') }}',
+                },
+                success: function(data) {
+                    if (data.length > 0) {
+                        // Populate the modal with fetched data as a list
+                        data.forEach(item => {
+                            $('#detailList').append(`
+                                <div class="detail-item">
+                                    <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
+                                    <p>Item Name: <strong>${item.nama_barang}</strong></p>
+                                    <p>Item Type: <strong>${item.nama_jenis_barang}</strong></p>
+                                    <p>Supplier Name: <strong>${item.nama_supplier}</strong></p>
+                                    <hr>
+                                </div>
+                            `);
                         });
                     } else {
-                        detailHtml = '<tr><td colspan="4">Detail tidak tersedia</td></tr>';
+                        $('#detailList').append('<p class="text-center">No details available</p>');
                     }
 
-                    // Tampilkan data detail di dalam modal
-                    $('#modalDetailBody').html(detailHtml);
-                })
-                .catch(error => {
-                    console.error('Error fetching detail:', error);
-                    $('#modalDetailBody').html(
-                        '<tr><td colspan="4">Gagal mengambil detail. Silakan coba lagi.</td></tr>');
-                });
-
-            // Tampilkan modal
-            $('#detailModal').modal('show');
+                    // Show the modal
+                    $('#detailModal').modal('show');
+                },
+                error: function(xhr) {
+                    alert('Failed to fetch details. Please try again.');
+                    console.error(xhr.responseText);
+                }
+            });
         });
     </script>
 @endsection
