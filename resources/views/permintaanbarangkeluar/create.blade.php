@@ -57,7 +57,7 @@
                         class="select2 form-control">
                         <option selected>Pilih keperluan</option>
                         @foreach ($keperluan as $d)
-                            <option value="{{ $d->id }}" data-extend="{{ $d->extend }}" {{-- data-tanggal-awal="{{ $d->nama_tanggal_awal }}" --}}
+                            <option value="{{ $d->id }}" data-extend="{{ $d->extend }}" data-batas_hari="{{ $d->batas_hari }}" {{-- data-tanggal-awal="{{ $d->nama_tanggal_awal }}" --}}
                                 data-tanggal-akhir="{{ $d->nama_tanggal_akhir }}">
                                 {{ $d->nama }}
                             </option>
@@ -77,7 +77,7 @@
             <!-- Input Tanggal Akhir (Awalnya Disembunyikan) -->
             <div id="tanggal-akhir-container" class="mb-3 d-none">
                 <label id="label-tanggal-akhir" for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
-                <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" />
+                <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="{{ date('Y-m-d', strtotime('+0 days')) }}" min="{{ date('Y-m-d') }}" max="{{ date('Y-m-d', strtotime('+90 days')) }}" />
             </div>
 
             <div class="mb-4">
@@ -158,6 +158,7 @@
                 keperluanSelect.addEventListener('change', function() {
                     const selectedOption = this.options[this.selectedIndex];
                     const extend = selectedOption.getAttribute('data-extend');
+                    const batas_hari = selectedOption.getAttribute('data-batas_hari');
                     const namaTanggalAwal = selectedOption.getAttribute('data-tanggal-awal');
                     const namaTanggalAkhir = selectedOption.getAttribute('data-tanggal-akhir');
 
@@ -293,6 +294,13 @@
                     if (id === 'keperluan') {
                         const selectedOption = selectElement.find(':selected');
                         const extend = selectedOption.data('extend');
+
+                        const batas_hari = String(selectedOption.data('batas_hari')) || 90;
+                        var batas_hari_fix = new Date();
+                        batas_hari_fix.setDate(batas_hari_fix.getDate() + parseInt(batas_hari));
+                        $('#tanggal_akhir').prop('max', batas_hari_fix.toISOString().split('T')[0]); 
+                        $('#tanggal_akhir').val(new Date().toISOString().split('T')[0]);
+
                         const namaTanggalAwal = selectedOption.data('tanggal-awal');
                         const namaTanggalAkhir = selectedOption.data('tanggal-akhir');
 
@@ -301,6 +309,11 @@
                             $('#tanggal-akhir-container').removeClass('d-none');
                             $('#label-tanggal-awal').text(namaTanggalAwal);
                             $('#label-tanggal-akhir').text(namaTanggalAkhir);
+
+                            var batas_hari_fix = new Date();
+                            batas_hari_fix.setDate(batas_hari_fix.getDate() + parseInt(batas_hari));
+                            $('#tanggal_akhir').prop('max', batas_hari_fix.toISOString().split('T')[0]);
+                            $('#tanggal_akhir').val(new Date().toISOString().split('T')[0]);
                         } else {
                             $('#tanggal-akhir-container').addClass('d-none');
                             $('#label-tanggal-awal').text('Tanggal Permintaan');
