@@ -464,7 +464,7 @@
                 @csrf
                 <div class="input-group mb-0">
                     <input type="file" name="file" id="file" required class="form-control"
-                        aria-label="Unggah File Excel" style="width: 250px;">
+                        aria-label="Unggah File Excel" style="width: 235px;">
                     <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                         <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
                     </button>
@@ -494,6 +494,8 @@
 
         <!-- Container for preview table -->
         <div id="previewContainer" style="display: none;">
+            <hr class="col-span-10 my-3">
+            <h5 class="mt-3" style="color: #26116b; text-align: center;">Imported Data</h5>
             <table id="previewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
                 <thead>
                     <tr>
@@ -509,6 +511,7 @@
             </table>
             <!-- Pagination controls -->
             <div id="pagination" class="mt-3"></div>
+            <hr class="col-span-10 my-3">
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
