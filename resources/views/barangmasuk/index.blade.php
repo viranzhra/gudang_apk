@@ -2,6 +2,13 @@
 
 @section('content')
     <style>
+        #previewContainer {
+            background-color: #8a8a8a1c;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 16px;
+        }
+
         .card {
             background-color: #ffffff;
             padding: 20px;
@@ -465,15 +472,15 @@
                 <div class="input-group mb-0">
                     <input type="file" name="file" id="file" required class="form-control"
                         aria-label="Unggah File Excel" style="width: 235px;">
-                    <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                    {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                         <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
-                    </button>
+                    </button> --}}
+
                 </div>
-                <button type="button" id="previewButton"
-                    class="btn btn-info d-none align-items-center justify-content-center" onclick="previewData()"
-                    style="height: 40px; width: 150px; display: flex;">
-                    <iconify-icon icon="mdi:eye" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                    <span style="flex: 1; text-align: center;">Preview</span>
+                <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
+                    title="Click to Upload" style="height: 40px; width: 193px;">
+                    <iconify-icon id="uploadIcon" icon="mdi:upload"
+                        style="font-size: 20px; margin-right: 8px;"></iconify-icon>Import Data
                 </button>
             </form>
 
@@ -492,19 +499,25 @@
             </button>
         </div>
 
+        <div id="loadingIndicator" style="display: none;">Loading...</div>
+
         <!-- Container for preview table -->
         <div id="previewContainer" style="display: none;">
             <hr class="col-span-10 my-3">
-            <h5 class="mt-3" style="color: #26116b; text-align: center;">Imported Data</h5>
-            <table id="previewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
+            {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+            </button> --}}
+            <h5 class="mt-3" style="color: #26116b; text-align: center;">Preview Data</h5>
+            <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 5px;">No</th>
-                        <th>Item</th>
-                        <th>Description</th>
-                        <th>Serial Number</th>
-                        <th>Status Item</th>
-                        <th>Requirement</th>
+                        <th style="width: 5px; background-color:#cdcece;">No</th>
+                        <th style="background-color:#cdcece;">Item</th>
+                        <th style="background-color:#cdcece;">Description</th>
+                        <th style="background-color:#cdcece;">Serial Number</th>
+                        <th style="background-color:#cdcece;">Status Item</th>
+                        <th style="background-color:#cdcece;">Requirement</th>
+                        <th style="background-color:#cdcece;">Kesalahan</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -556,8 +569,8 @@
     </div>
 
     <!-- Modal hapus terpilih -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -608,28 +621,25 @@
                 pageLength: 5,
                 lengthMenu: [5, 10, 25, 50],
                 language: {
-                    // Menonaktifkan pesan peringatan
                     error: ''
                 },
-                columnDefs: [{ // Menyembunyikan kolom pertama untuk nomor urut
+                columnDefs: [{
                     targets: 0,
-                    orderable: false, // Membuat kolom tidak dapat diurutkan
-                    searchable: false, // Membuat kolom tidak dapat dicari
+                    orderable: false,
+                    searchable: false,
                 }]
             });
 
             // Mengatur event listener untuk input file
             document.getElementById('file').addEventListener('change', function() {
-                const previewButton = document.getElementById('previewButton');
+                // Memanggil fungsi previewData ketika file dipilih
                 if (this.files.length > 0) {
-                    previewButton.classList.remove('d-none');
-                } else {
-                    previewButton.classList.add('d-none');
+                    previewData(); // Panggil fungsi previewData ketika file dipilih
                 }
             });
 
             // Fungsi untuk melakukan preview data dari file yang diunggah
-            window.previewData = function() {
+            window.previewData = async function() {
                 const fileInput = document.getElementById('file');
                 const file = fileInput.files[0];
 
@@ -639,8 +649,12 @@
                     return;
                 }
 
+                // Tampilkan indikator loading
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                loadingIndicator.style.display = 'block';
+
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     const data = e.target.result;
                     const workbook = XLSX.read(data, {
                         type: 'binary'
@@ -650,50 +664,147 @@
                         header: 1
                     });
 
-                    // Mengosongkan tabel preview
-                    table.clear(); // Kosongkan tabel DataTable
+                    console.log('Data dari Excel:', jsonData); // Log data dari Excel
 
-                    // Menambahkan data ke tabel pratinjau dari baris kedua
-                    jsonData.slice(1).forEach((row) => {
-                        // Hanya tambahkan baris jika ada data di kolom pertama (ID Barang)
-                        if (row[0]) {
-                            table.row.add([
-                                '', // Placeholder untuk nomor urut (akan diupdate nanti)
-                                row[0] || '', // Barang ID
-                                row[1] || '', // Keterangan
-                                row[2] || '', // Serial Number
-                                row[3] || '', // Kondisi Barang
-                                row[4] || '' // Kelengkapan
-                            ]).draw(false); // false untuk tidak mengubah halaman
+                    // Mengosongkan tabel preview
+                    table.clear();
+
+                    // Panggil fungsi untuk validasi serial number menggunakan API
+                    const rowErrors = await checkExistingSerialNumbers(jsonData.slice(
+                        1)); // Validasi kesalahan
+
+                    console.log('Row Errors:', rowErrors); // Log kesalahan yang ditemukan
+
+                    // Menyimpan baris dengan dan tanpa kesalahan
+                    const rowsWithErrors = []; // Menyimpan baris dengan kesalahan
+                    const rowsWithoutErrors = []; // Menyimpan baris tanpa kesalahan
+
+                    // Mengolah data untuk ditambahkan ke tabel
+                    jsonData.slice(1).forEach((row, index) => {
+                        const errorMessage = rowErrors[index] ||
+                            ''; // Ambil pesan kesalahan untuk baris ini
+                        const rowData = [
+                            '', // Placeholder untuk nomor urut (akan diupdate nanti)
+                            row[0] || '', // Barang ID
+                            row[1] || '', // Keterangan
+                            row[2] || '', // Serial Number
+                            row[3] || '', // Kondisi Barang
+                            row[4] || '', // Kelengkapan
+                            errorMessage // Kesalahan
+                        ];
+
+                        if (errorMessage) {
+                            rowsWithErrors.push(
+                                rowData
+                            ); // Jika ada kesalahan, masukkan ke array rowsWithErrors
+                        } else {
+                            rowsWithoutErrors.push(
+                                rowData
+                            ); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
+                        }
+                    });
+
+                    // Gabungkan kedua array, rowsWithErrors di atas
+                    const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
+
+                    // Menambahkan data ke DataTable dengan pewarnaan
+                    combinedRows.forEach((row) => {
+                        const rowNode = table.row.add(row).draw(false)
+                            .node(); // Tambahkan baris ke DataTable
+                        if (row[6]) { // Cek jika ada kesalahan
+                            // Menggunakan atribut style untuk mengatur warna teks kolom kesalahan
+                            $(rowNode).find('td').last().css('color',
+                                '#f00'); // Ganti dengan warna yang Anda inginkan
                         }
                     });
 
                     // Mengupdate nomor urut setelah data ditambahkan
                     updateRowNumbers();
 
+                    // Tampilkan/ sembunyikan tombol upload berdasarkan hasil validasi
+                    toggleUploadButton(rowErrors);
+
                     // Menampilkan kontainer pratinjau
                     document.getElementById('previewContainer').style.display = 'block';
+
+                    // Sembunyikan indikator loading
+                    loadingIndicator.style.display = 'none';
                 };
 
                 reader.onerror = function(error) {
                     console.error('Error reading file:', error);
                     alert('Error reading file. Please try again.');
+                    loadingIndicator.style.display = 'none'; // Sembunyikan loading indicator
                 };
 
-                reader.readAsBinaryString(file); // Membaca file sebagai binary string
+                reader.readAsBinaryString(file);
             };
+
+            // Fungsi untuk mengecek serial number yang ada di database melalui API
+            async function checkExistingSerialNumbers(dataRows) {
+                try {
+                    // Panggil API untuk mendapatkan serial number yang sudah ada
+                    const response = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber', {
+                        method: 'GET', // Gunakan GET untuk mendapatkan data
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.text(); // Menangkap data kesalahan sebagai teks
+                        console.error('Error Response:', errorData); // Log error response
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`); // Tangkap kesalahan jika tidak OK
+                    }
+
+                    const existingData = await response.json(); // Ambil respons sebagai JSON
+                    const existingNumbers = existingData.map(item => item
+                        .serial_number); // Ambil hanya serial number
+                    console.log('Existing Serial Numbers:', existingNumbers); // Log serial numbers yang ada
+
+                    const errors = [];
+
+                    dataRows.forEach(row => {
+                        // Cek apakah serial number ada dan bukan undefined atau null
+                        const serialNumber = row[2]; // Ambil serial number dari baris saat ini
+
+                        if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
+                            errors.push(`Serial number sudah terpakai`); // Simpan pesan kesalahan
+                        } else {
+                            errors.push(''); // Jika tidak ada kesalahan, tambahkan string kosong
+                        }
+                    });
+
+                    return errors; // Kembalikan array pesan kesalahan
+                } catch (error) {
+                    console.error('Error fetching serial numbers:', error);
+                    return dataRows.map(() =>
+                        'Error checking serial numbers'); // Kembalikan error jika terjadi masalah
+                }
+            }
+
+            // Fungsi untuk menampilkan/ menyembunyikan tombol upload berdasarkan hasil validasi
+            function toggleUploadButton(rowErrors) {
+                const uploadButton = document.getElementById('uploadButton');
+                const hasErrors = rowErrors.some(error => error !== ''); // Cek apakah ada error
+                if (hasErrors) {
+                    uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
+                } else {
+                    uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
+                }
+            }
 
             // Fungsi untuk mengupdate nomor urut
             function updateRowNumbers() {
                 table.rows().every(function(rowIdx) {
-                    this.data()[0] = rowIdx + 1; // Update nomor urut
-                    this.invalidate(); // Tandai data untuk pembaruan
+                    this.data()[0] = rowIdx + 1;
+                    this.invalidate();
                 });
-                table.draw(); // Gambar ulang tabel
+                table.draw();
             }
         });
     </script>
-
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

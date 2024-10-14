@@ -134,7 +134,7 @@
                             </div>
                         @endif
 
-                        <div class="mb-5">
+                        <div class="mb-3">
                             <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
                                 Keperluan</label>
                             <input type="text" id="nama" name="nama"
@@ -142,7 +142,7 @@
                                 placeholder="Untuk Dipinjam" required />
                         </div>
 
-                        <div class="form-check mb-5">
+                        <div class="form-check mb-3">
                             <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
                             <label for="extend" class="form-check-label ms-2">Terapkan dua tanggal</label>
                         </div>

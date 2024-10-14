@@ -303,6 +303,38 @@
             font-size: 1rem;
         }
 
+        /* Remove top border of the table header */
+        #previewTable thead tr {
+            border-top: none;
+            /* Remove top border */
+        }
+
+        /* Add a bottom border to each table row */
+        #previewTable tbody tr {
+            border-bottom: 1px solid #dee2e6;
+            /* Adjust color and width as needed */
+        }
+
+        /* Optional: Remove the border from the last row */
+        #previewTable tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+            /* Animasi berputar */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         #notification {
             position: fixed;
             top: 10px;
@@ -330,33 +362,116 @@
             <p id="notificationMessage"></p>
         </div>
 
-        <div class="d-flex align-items-center gap-3 justify-content-end pb-3">
+        @if (session('success'))
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger');
+                notificationElement.classList.add('alert-success');
+                document.getElementById('notificationTitle').innerText = "Success";
+                document.getElementById('notificationMessage').innerText = "{{ session('success') }}";
+                notificationElement.style.display = 'block';
+
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 7000);
+            </script>
+        @endif
+
+        @if (session('notifications'))
+            <script>
+                const notificationElement = document.getElementById('notification');
+                let notificationQueue = @json(session('notifications'));
+
+                // Fungsi untuk menampilkan notifikasi satu per satu
+                function displayNotification(message) {
+                    // Ubah kelas notifikasi menjadi alert-danger (notifikasi error)
+                    notificationElement.classList.remove('alert-success');
+                    notificationElement.classList.add('alert-danger');
+                    document.getElementById('notificationTitle').innerText = "Error";
+                    document.getElementById('notificationMessage').innerText = message;
+                    notificationElement.style.display = 'block';
+
+                    // Sembunyikan notifikasi setelah beberapa detik
+                    setTimeout(() => {
+                        notificationElement.style.display = 'none';
+                        notificationElement.classList.remove('alert-danger');
+                        processNextNotification(); // Lanjutkan ke notifikasi berikutnya
+                    }, 7000);
+                }
+
+                // Proses antrian notifikasi
+                function processNextNotification() {
+                    if (notificationQueue.length > 0) {
+                        let nextNotification = notificationQueue.shift(); // Ambil notifikasi berikutnya
+                        displayNotification(nextNotification); // Tampilkan notifikasi berikutnya
+                    }
+                }
+
+                // Mulai memproses antrian notifikasi
+                processNextNotification();
+            </script>
+        @endif
+
+        @if (session('finalMessage'))
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger', 'alert-success'); // Hapus kelas apapun
+                notificationElement.style.display = 'block'; // Tampilkan notifikasi
+
+                // Ambil pesan dari session
+                const message = "{{ session('finalMessage') }}";
+                if (message.includes("Error")) {
+                    notificationElement.classList.add('alert-danger'); // Jika ada error, tambahkan kelas danger
+                    document.getElementById('notificationTitle').innerText = "Error";
+                } else {
+                    notificationElement.classList.add('alert-success'); // Jika tidak ada error, tambahkan kelas success
+                    document.getElementById('notificationTitle').innerText = "Success";
+                }
+                document.getElementById('notificationMessage').innerText = message;
+
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 7000);
+            </script>
+        @endif
+
+        {{-- @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif --}}
+
+
+        <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
             <!-- Tombol Unduh Template -->
-            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center"
-                style="height: 40px;">
+            <a href="{{ route('download.template') }}" class="btn btn-primary d-flex align-items-center"
+                title="Download Template" style="height: 40px;">
                 <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                Unduh Template
+                Template File
             </a>
 
-            <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center">
+            <!-- Form untuk Unggah File Excel -->
+            <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
+                class="d-flex align-items-center gap-2" id="uploadForm">
                 @csrf
-                <label class="btn btn-success d-flex align-items-center justify-content-center" for="fileInput" style="cursor: pointer; height: 40px; margin-right: 10px;">
-                    <iconify-icon icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                    Upload File
-                </label>
-                <input type="file" id="fileInput" name="file" class="d-none" accept=".xlsx, .xls, .csv" required onchange="displayFileName()">
-            
-                <!-- Label for displaying selected file -->
-                <div id="fileInfo" class="ms-2 d-none" style="font-size: 12px; font-weight: bold;">
-                    File yang akan diimpor: 
-                    <span id="fileName" class="badge ms-1" style="font-size: 12px; background-color: #635bff; color: white;"></span>
+                <div class="input-group mb-0">
+                    <input type="file" name="file" id="file" required class="form-control"
+                        aria-label="Unggah File Excel" style="width: 235px;">
+                    {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                        <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+                    </button> --}}
                 </div>
-            
-                <!-- Preview Button -->
-                <button id="previewButton" type="button" class="btn btn-secondary ms-3 d-none" onclick="previewFile()">
-                    Preview
-                </button>
             </form>
+
+
             <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
                 style="height: 40px;">
                 <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
@@ -371,38 +486,46 @@
             </button>
         </div>
 
-<!-- Table Preview -->
-<div id="previewTable" class="mt-4 d-none">
-    <h2>Preview Data</h2>
-    <table class="table table-bordered" id="dataPreview">
-        <thead>
-            <tr id="tableHeader"></tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
+        <div id="loadingIndicator" style="display: none;">Loading...</div>
 
-    <!-- Form untuk Konfirmasi Import -->
-<form id="importForm" action="{{ route('upload.excel') }}" method="POST" class="mt-4" enctype="multipart/form-data">
-    @csrf
-    <div class="form-group">
-        <label for="file">Upload File</label>
-        <input type="file" name="file" id="file" class="form-control" required onchange="setFileName()">
-    </div>
-    <input type="hidden" name="file_name" id="hiddenFileName">
-    <button type="submit" class="btn btn-success" id="importButton"><i class="fa fa-file"></i> Import Data</button>
-</form>
-
-</div>
+        <!-- Container for preview table -->
+        <div id="previewContainer" style="display: none;">
+            <hr class="col-span-10 my-3">
+            <div class="d-flex align-items-center justify-content-between" style="position: relative;">
+                <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload" style="position: absolute; top: 0; left: 0;">
+                    <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon> Import Data
+                </button>
+                <h5 class="mt-3" style="color: #26116b; text-align: center; flex-grow: 1;">Imported Data</h5>
+            </div>
+            
+            <table id="previewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
+                <thead>
+                    <tr>
+                        <th style="width: 5px;">No</th>
+                        <th>Item</th>
+                        <th>Description</th>
+                        <th>Serial Number</th>
+                        <th>Status Item</th>
+                        <th>Requirement</th>
+                        <th>Kesalahan</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <!-- Pagination controls -->
+            <div id="pagination" class="mt-3"></div>
+            <hr class="col-span-10 my-3">
+        </div>
 
         <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
             <thead class="thead-dark">
                 <tr>
                     <th><input type="checkbox" id="select-all"></th>
                     <th>No</th>
-                    <th>Barang</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                    <th>Tanggal Masuk</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Description</th>
+                    <th>Date of Entry</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -436,8 +559,8 @@
     </div>
 
     <!-- Modal hapus terpilih -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -459,6 +582,16 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const uploadIcon = document.getElementById('uploadIcon');
+
+            // Ganti ikon menjadi loading dan tambahkan kelas loading
+            uploadIcon.setAttribute('icon', 'mdi:sync');
+            uploadIcon.classList.add('loading');
+        });
+    </script>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -467,143 +600,229 @@
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 
     <script>
-        function setFileName() {
-            var fileInput = document.getElementById('file');
-            var hiddenFileName = document.getElementById('hiddenFileName');
-    
-            // Cek jika ada file yang dipilih
-            if (fileInput.files.length > 0) {
-                // Set nilai hidden input dengan nama file yang dipilih
-                hiddenFileName.value = fileInput.files[0].name;
-            } else {
-                hiddenFileName.value = ''; // Kosongkan jika tidak ada file yang dipilih
-            }
-        }
-    </script>
-    
-
-    <script>
-    // Import Form Submission
-$('#importForm').on('submit', function(e) {
-    e.preventDefault(); // Mencegah pengiriman form secara default
-
-    var formData = new FormData(this); // Mengambil data form
-
-    $.ajax({
-        url: $(this).attr('action'), // Menggunakan URL dari action form
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function(response) {
-            // Tangani respons sukses
-            $('#notification')
-                .removeClass('alert-danger')
-                .addClass('alert-success')
-                .show();
-
-            $('#notificationTitle').text('Sukses!');
-            $('#notificationMessage').text(response.message);
-            // Reset form after successful import
-            $('#importForm')[0].reset(); // Reset form fields
-            displayFileName(); // Hide file info after reset
+        $(document).ready(function() {
+    // Inisialisasi DataTable
+    const table = $('#previewTable').DataTable({
+        paging: true,
+        pageLength: 5,
+        lengthMenu: [5, 10, 25, 50],
+        language: {
+            error: ''
         },
-        error: function(xhr) {
-            let errorMessage = 'Terjadi kesalahan. Silakan coba lagi.';
-            let detailedMessages = [];
+        columnDefs: [{
+            targets: 0,
+            orderable: false,
+            searchable: false,
+        }]
+    });
 
-            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                // Loop through each error and push the messages into the detailedMessages array
-                $.each(xhr.responseJSON.errors, function(key, messages) {
-                    detailedMessages.push(messages.join(', ')); // Join multiple messages for each field
-                });
-                errorMessage = detailedMessages.join(' | '); // Join field messages with a separator
-            } else if (xhr.responseText) {
-                errorMessage = xhr.responseText; // Ambil pesan error dari response text
+    // Mengatur event listener untuk input file
+    document.getElementById('file').addEventListener('change', function() {
+        // Memanggil fungsi previewData ketika file dipilih
+        if (this.files.length > 0) {
+            previewData(); // Panggil fungsi previewData ketika file dipilih
+        }
+    });
+
+    // Fungsi untuk melakukan preview data dari file yang diunggah
+    window.previewData = async function() {
+        const fileInput = document.getElementById('file');
+        const file = fileInput.files[0];
+
+        // Memastikan ada file yang dipilih
+        if (!file) {
+            alert('Silakan pilih file terlebih dahulu!');
+            return;
+        }
+
+        // Tampilkan indikator loading
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        loadingIndicator.style.display = 'block';
+
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            const data = e.target.result;
+            const workbook = XLSX.read(data, {
+                type: 'binary'
+            });
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                header: 1
+            });
+
+            console.log('Data dari Excel:', jsonData); // Log data dari Excel
+
+            // Mengosongkan tabel preview
+            table.clear();
+
+            // Panggil fungsi untuk validasi serial number menggunakan API
+            const rowErrors = await checkExistingSerialNumbers(jsonData.slice(1)); // Validasi kesalahan
+
+            console.log('Row Errors:', rowErrors); // Log kesalahan yang ditemukan
+
+            // Menyimpan baris dengan dan tanpa kesalahan
+            const rowsWithErrors = []; // Menyimpan baris dengan kesalahan
+            const rowsWithoutErrors = []; // Menyimpan baris tanpa kesalahan
+
+            // Mengolah data untuk ditambahkan ke tabel
+            jsonData.slice(1).forEach((row, index) => {
+                const errorMessage = rowErrors[index] || ''; // Ambil pesan kesalahan untuk baris ini
+                const rowData = [
+                    '', // Placeholder untuk nomor urut (akan diupdate nanti)
+                    row[0] || '', // Barang ID
+                    row[1] || '', // Keterangan
+                    row[2] || '', // Serial Number
+                    row[3] || '', // Kondisi Barang
+                    row[4] || '', // Kelengkapan
+                    errorMessage // Kesalahan
+                ];
+
+                if (errorMessage) {
+                    rowsWithErrors.push(rowData); // Jika ada kesalahan, masukkan ke array rowsWithErrors
+                } else {
+                    rowsWithoutErrors.push(rowData); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
+                }
+            });
+
+            // Gabungkan kedua array, rowsWithErrors di atas
+            const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
+
+            // Menambahkan data ke DataTable dengan pewarnaan
+            combinedRows.forEach((row) => {
+                const rowNode = table.row.add(row).draw(false).node(); // Tambahkan baris ke DataTable
+                if (row[6]) { // Cek jika ada kesalahan
+                    // Menggunakan atribut style untuk mengatur warna teks kolom kesalahan
+                    $(rowNode).find('td').last().css('color', '#f00'); // Ganti dengan warna yang Anda inginkan
+                }
+            });
+
+            // Mengupdate nomor urut setelah data ditambahkan
+            updateRowNumbers();
+
+            // Tampilkan/ sembunyikan tombol upload berdasarkan hasil validasi
+            toggleUploadButton(rowErrors);
+
+            // Menampilkan kontainer pratinjau
+            document.getElementById('previewContainer').style.display = 'block';
+
+            // Sembunyikan indikator loading
+            loadingIndicator.style.display = 'none';
+        };
+
+        reader.onerror = function(error) {
+            console.error('Error reading file:', error);
+            alert('Error reading file. Please try again.');
+            loadingIndicator.style.display = 'none'; // Sembunyikan loading indicator
+        };
+
+        reader.readAsBinaryString(file);
+    };
+
+    // Fungsi untuk mengecek serial number yang ada di database melalui API
+    async function checkExistingSerialNumbers(dataRows) {
+        try {
+            // Panggil API untuk mendapatkan serial number yang sudah ada
+            const response = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber', {
+                method: 'GET', // Gunakan GET untuk mendapatkan data
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.text(); // Menangkap data kesalahan sebagai teks
+                console.error('Error Response:', errorData); // Log error response
+                throw new Error(`HTTP error! status: ${response.status}`); // Tangkap kesalahan jika tidak OK
             }
 
-            $('#notification')
-                .removeClass('alert-success')
-                .addClass('alert-danger')
-                .show();
+            const existingData = await response.json(); // Ambil respons sebagai JSON
+            const existingNumbers = existingData.map(item => item.serial_number); // Ambil hanya serial number
+            console.log('Existing Serial Numbers:', existingNumbers); // Log serial numbers yang ada
 
-            $('#notificationTitle').text('Error!');
-            $('#notificationMessage').text(errorMessage);
+            const errors = [];
+
+            dataRows.forEach(row => {
+                // Cek apakah serial number ada dan bukan undefined atau null
+                const serialNumber = row[2]; // Ambil serial number dari baris saat ini
+
+                if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
+                    errors.push(`Serial number sudah terpakai`); // Simpan pesan kesalahan
+                } else {
+                    errors.push(''); // Jika tidak ada kesalahan, tambahkan string kosong
+                }
+            });
+
+            return errors; // Kembalikan array pesan kesalahan
+        } catch (error) {
+            console.error('Error fetching serial numbers:', error);
+            return dataRows.map(() => 'Error checking serial numbers'); // Kembalikan error jika terjadi masalah
+        }
+    }
+
+    // Fungsi untuk menampilkan/ menyembunyikan tombol upload berdasarkan hasil validasi
+    function toggleUploadButton(rowErrors) {
+        const uploadButton = document.getElementById('uploadButton');
+        const hasErrors = rowErrors.some(error => error !== ''); // Cek apakah ada error
+        if (hasErrors) {
+            uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
+        } else {
+            uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
+        }
+    }
+
+    // Fungsi untuk mengupdate nomor urut
+    function updateRowNumbers() {
+        table.rows().every(function(rowIdx) {
+            this.data()[0] = rowIdx + 1;
+            this.invalidate();
+        });
+        table.draw();
+    }
+
+    // Event listener untuk tombol upload
+    document.getElementById('uploadButton').addEventListener('click', async function(event) {
+        event.preventDefault(); // Mencegah default form submission
+
+        // Ambil data dari tabel
+        const rows = table.rows().data().toArray();
+        const payload = rows.map(row => ({
+            barangId: row[1],
+            keterangan: row[2],
+            serialNumber: row[3],
+            kondisiBarang: row[4],
+            kelengkapan: row[5]
+        }));
+
+        // Kirim data ke server menggunakan fetch
+        try {
+            const response = await fetch('YOUR_API_ENDPOINT_HERE', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log('Upload Result:', result);
+            alert('Data berhasil diupload!'); // Notifikasi keberhasilan upload
+            table.clear().draw(); // Kosongkan tabel setelah upload
+            document.getElementById('file').value = ''; // Reset input file
+        } catch (error) {
+            console.error('Error uploading data:', error);
+            alert('Terjadi kesalahan saat mengupload data. Silakan coba lagi.'); // Notifikasi error
         }
     });
 });
 
-    </script>
-    
-
-    <script>
-        function displayFileName() {
-            const fileInput = document.getElementById('fileInput');
-            const fileInfo = document.getElementById('fileInfo');
-            const fileName = document.getElementById('fileName');
-            const previewButton = document.getElementById('previewButton');
-            
-            fileName.textContent = fileInput.files[0].name;
-            fileInfo.classList.remove('d-none');
-            previewButton.classList.remove('d-none');
-    
-            // Set nama file untuk form import
-            const importFileName = document.getElementById('importFileName');
-            const hiddenFileName = document.getElementById('hiddenFileName');
-            const hiddenFilePath = document.getElementById('hiddenFilePath');
-    
-            importFileName.textContent = fileInput.files[0].name;
-            hiddenFileName.value = fileInput.files[0].name;
-            hiddenFilePath.value = fileInput.files[0].path; // Menyimpan path file jika diperlukan
-        }
-    
-        function previewFile() {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-    
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const data = new Uint8Array(event.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
-    
-                // Tampilkan tabel preview
-                const tableHeader = document.getElementById('tableHeader');
-                const tableBody = document.getElementById('tableBody');
-    
-                // Kosongkan tabel sebelumnya
-                tableHeader.innerHTML = '';
-                tableBody.innerHTML = '';
-    
-                // Set header tabel
-                jsonData[0].forEach(header => {
-                    const th = document.createElement('th');
-                    th.textContent = header;
-                    tableHeader.appendChild(th);
-                });
-    
-                // Set isi tabel
-                jsonData.slice(1).forEach(row => {
-                    const tr = document.createElement('tr');
-                    row.forEach(cell => {
-                        const td = document.createElement('td');
-                        td.textContent = cell;
-                        tr.appendChild(td);
-                    });
-                    tableBody.appendChild(tr);
-                });
-    
-                // Tampilkan tabel dan form import
-                document.getElementById('previewTable').classList.remove('d-none');
-            };
-    
-            reader.readAsArrayBuffer(file);
-        }
     </script>
 
     <script>
@@ -750,7 +969,9 @@ $('#importForm').on('submit', function(e) {
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Jenis Barang</strong></div>:
-                                                    <div class="col-8">${namaJenisBarang || '—'}</div>
+                                                    <div class="col-8">
+                                                        ${namaJenisBarang !== null && namaJenisBarang !== '' && namaJenisBarang !== 'null' ? namaJenisBarang : '—'}
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Supplier</strong></div>:
@@ -762,7 +983,9 @@ $('#importForm').on('submit', function(e) {
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Keterangan</strong></div>:
-                                                    <div class="col-8">${keteranganBarang ? keteranganBarang : '—'}</div>
+                                                    <div class="col-8">
+                                                        ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
+                                                    </div>
                                                 </div>
                                                 <div class="row mb-3">
                                                     <div class="col-3"><strong>Jumlah</strong></div>:
@@ -777,12 +1000,12 @@ $('#importForm').on('submit', function(e) {
                         `;
 
                         document.body.insertAdjacentHTML('beforeend', modalContent);
-                            new bootstrap.Modal(document.getElementById('detailModal')).show();
-                        })
-                        .catch(error => {
-                            console.error('Error fetching details:', error);
-                            showNotification('error', 'Error loading item details.'); // Tampilkan notifikasi
-                        });
+                        new bootstrap.Modal(document.getElementById('detailModal')).show();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching details:', error);
+                        showNotification('error', 'Error loading item details.'); // Tampilkan notifikasi
+                    });
             }
 
             // Inisialisasi DataTable
