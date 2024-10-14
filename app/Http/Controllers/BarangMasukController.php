@@ -33,133 +33,125 @@ class BarangMasukController extends Controller
             ->toJson(); // Mengubah ke format JSON secara eksplisit
     }
 
-	public function uploadExcel(Request $request) {
-        // Validasi file yang diunggah
-        $request->validate([
-            'file' => 'required|file|mimes:xlsx,xls,csv',
-        ]);
-    
-        // Baca data dari file Excel
-        $data = Excel::toArray(new BarangMasukImport, $request->file('file'));
-    
-        // Cek apakah data ada
-        if (empty($data) || empty($data[0])) {
-            return redirect()->back()->withErrors('File Excel tidak memiliki data yang valid.');
-        }
-    
-        // Inisialisasi variabel untuk menyimpan pesan
-        $errorMessages = [];
-        $duplicateSerialNumbers = []; // Array untuk menyimpan serial number yang sudah terpakai
-        $failedItems = []; // Array untuk menyimpan nama barang yang gagal diimpor
-        $successfulImports = 0; // Counter untuk menyimpan jumlah barang yang berhasil diimpor
-    
-        // Proses data dari Excel
-        foreach ($data[0] as $row) {
-            // Validasi baris data sebelum diproses
-            if (empty($row['barang_id']) || empty($row['serial_number'])) {
-                $errorMessages[] = "Data tidak lengkap untuk barang: {$row['barang_id']}";
-                continue; // Jika data tidak lengkap, lewati ke baris berikutnya
-            }
-    
-            // Ambil data dari setiap baris
-            $nama_barang = $row['barang_id'];
-            $keterangan = $row['keterangan'] ?? null;
-            $serial_numbers = explode(',', $row['serial_number']); // Pisahkan SN berdasarkan koma
-            $kondisi_barangs = !empty($row['kondisi_barang']) ? explode(',', $row['kondisi_barang']) : []; // Pisahkan kondisi barang jika ada
-            $kelengkapan = $row['kelengkapan'] ?? null;
-    
-            // Periksa apakah jumlah kondisi barang lebih sedikit dari serial number
-            if (count($kondisi_barangs) < count($serial_numbers)) {
-                // Jika kurang, isi sisa kondisi dengan kondisi yang pertama jika ada
-                if (!empty($kondisi_barangs)) {
-                    $firstCondition = $kondisi_barangs[0];
-                    $kondisi_barangs = array_pad($kondisi_barangs, count($serial_numbers), $firstCondition);
-                } else {
-                    // Jika tidak ada kondisi sama sekali, isi dengan null
-                    $kondisi_barangs = array_fill(0, count($serial_numbers), null);
-                }
-            }
-    
-            // Pisahkan kelengkapan berdasarkan tanda "-"
-            $kelengkapans = !empty($kelengkapan) ? explode('-', $kelengkapan) : [];
-    
-            // Pastikan jumlah kelengkapan sesuai dengan jumlah serial number
-            if (count($kelengkapans) < count($serial_numbers)) {
-                $kelengkapans = array_pad($kelengkapans, count($serial_numbers), null); // Isi yang kosong dengan nilai null
-            }
-    
-            // Jika user memasukkan tanda "_", gantikan dengan null (untuk mengosongkan kelengkapan tersebut)
-            foreach ($kelengkapans as &$kel) {
-                if (trim($kel) === '_') {
-                    $kel = null; // Kosongkan jika ada tanda "_"
-                }
-            }
-    
-            // Buat array data untuk request ke API
-            $apiData = [
-                'barang_id' => $nama_barang,
-                'keterangan' => $keterangan,
-                'tanggal' => now()->format('Y-m-d'),
-                'serial_numbers' => $serial_numbers, // Kirim array SN
-                'status_barangs' => $kondisi_barangs, // Kirim kondisi barang yang sesuai
-                'kelengkapans' => $kelengkapans,     // Kirim kelengkapan untuk setiap SN
-            ];
-    
-            // Kirim data ke API menggunakan HTTP POST
-            $response = Http::post('https://doaibutiri.my.id/gudang/api/barangmasuk/excel', $apiData);
-    
-            // Cek apakah respons API sukses
-            if ($response->successful()) {
-                $successfulImports++; // Increment counter for successful imports
-                continue; 
-            } else {
-                // Menyusun pesan kesalahan berdasarkan respons API
-                $responseData = $response->json();
-                $errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat mengimpor data.';
-    
-                // Jika kesalahan adalah serial number sudah terpakai, tambahkan ke array
-                if (str_contains($errorMessage, 'Serial number sudah terpakai')) {
-                    // Ekstrak serial number yang sudah terpakai
-                    preg_match('/Serial number sudah terpakai: (\d+)/', $errorMessage, $matches);
-                    if (isset($matches[1])) {
-                        $duplicateSerialNumbers[] = $matches[1]; // Tambahkan SN yang sudah terpakai
-                    }
-                } else {
-                    // Tampilkan pesan kesalahan lain selain serial number
-                    $failedItems[] = $nama_barang; // Tambahkan barang yang gagal diimpor ke dalam array
-                }
-            }
-        }
-    
-        // Menampilkan notifikasi berdasarkan kesalahan
-        $finalMessage = '';
-    
-        // Jika ada data yang berhasil diimpor
-        if ($successfulImports > 0) {
-            $finalMessage .= "$successfulImports data berhasil diimpor."; // Pesan sukses
-    
-            // Jika ada serial number yang sudah terpakai
-            if (!empty($duplicateSerialNumbers)) {
-                $serialList = implode(', ', $duplicateSerialNumbers);
-                $finalMessage .= " Namun, terdapat " . count($duplicateSerialNumbers) . " data dengan serial number sudah terpakai: $serialList.";
-            }
-    
-            // Jika ada barang yang gagal diimpor
-            if (!empty($failedItems)) {
-                $failedItemList = implode(', ', $failedItems);
-                $finalMessage .= " Terjadi kesalahan saat mengimpor data untuk barang: $failedItemList. Bisa jadi karena data tidak sesuai dengan tabel Barang";
-            }
-        } else {
-            // Jika tidak ada data yang berhasil diimpor
-            $finalMessage .= 'Error: Tidak ada data yang berhasil diimpor.';
-        }
-    
-        // Simpan pesan dalam session
-        session()->flash('finalMessage', $finalMessage);
-    
-        return redirect()->back();
-    }
-    
+	public function preview(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls,csv',
+    ]);
+
+    $file = $request->file('file');
+    $data = Excel::toArray(new BarangMasukImport, $file);
+    $data = $data[0]; // Ambil sheet pertama
+
+    return view('barangmasuk.index', compact('data', 'file'));
+}
+
+	public function uploadExcel(Request $request)
+	{
+		// Validasi file yang diunggah
+		$request->validate([
+			'file' => 'required|file|mimes:xlsx,xls,csv',
+		]);
+
+		// Baca data dari file Excel
+		$data = Excel::toArray(new BarangMasukImport, $request->file('file'));
+
+		// Cek apakah data ada
+		if (empty($data) || empty($data[0])) {
+			return redirect()->back()->withErrors('File Excel tidak memiliki data yang valid.');
+		}
+
+		// Mengumpulkan semua serial number dari data Excel
+		$serialNumbers = [];
+		foreach ($data[0] as $row) {
+			if (!empty($row['serial_number'])) {
+				$serialNumbers[] = $row['serial_number'];
+			}
+		}
+
+		// Jika tidak ada serial number yang valid, hentikan proses
+		if (empty($serialNumbers)) {
+			return redirect()->back()->withErrors('Tidak ada serial number yang valid di file Excel.');
+		}
+
+		// Cek serial number yang sudah ada di database
+		$existingSerialNumbers = SerialNumber::whereIn('serial_number', $serialNumbers)->pluck('serial_number')->toArray();
+
+		// Jika ditemukan serial number yang sudah digunakan
+		if (!empty($existingSerialNumbers)) {
+			return redirect()->back()->withErrors('Serial number sudah terpakai: ' . implode(', ', $existingSerialNumbers));
+		}
+
+		// Inisialisasi variabel untuk menyimpan pesan
+		$successCount = 0;
+		$errorCount = 0;
+		$notificationMessages = [];
+
+		// Proses data dari Excel
+		foreach ($data[0] as $row) {
+			// Validasi baris data sebelum diproses
+			if (empty($row['barang_id']) || empty($row['serial_number']) || empty($row['kondisi_barang'])) {
+				$errorCount++;
+				continue; // Jika data tidak lengkap, lewati ke baris berikutnya
+			}
+
+			// Ambil data dari setiap baris
+			$nama_barang = $row['barang_id'];
+			$keterangan = $row['keterangan'] ?? null;
+			// $jumlah = $row['jumlah'];
+			$serial_number = $row['serial_number'];
+			$kondisi_barang = $row['kondisi_barang'];
+			$kelengkapan = $row['kelengkapan'] ?? null;
+
+			// Buat array data untuk request ke API
+			$apiData = [
+				'barang_id' => $nama_barang,
+				'keterangan' => $keterangan,
+				'tanggal' => now()->format('Y-m-d'),
+				'serial_numbers' => ["$serial_number"],
+				'status_barangs' => [$kondisi_barang],
+				'kelengkapans' => [$kelengkapan],
+			];
+
+			// Kirim data ke API menggunakan HTTP POST
+			$response = Http::post('https://doaibutiri.my.id/gudang/api/barangmasuk/excel', $apiData);
+
+			// Cek apakah respons API sukses
+			if ($response->successful()) {
+				$successCount++;
+				// Tampilkan pesan sukses umum
+				$notificationMessages[] = "Success: Data berhasil diimpor."; // Tampilkan "Success"
+			} else {
+				$errorCount++;
+				$responseData = $response->json();
+				// Menyusun pesan kesalahan berdasarkan respons API
+				$errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat mengimpor data.';
+				// Tampilkan pesan kesalahan
+				$notificationMessages[] = "Error: {$errorMessage}"; // Tampilkan error
+			}
+		}
+		
+		// Menampilkan notifikasi berdasarkan jumlah keberhasilan dan kesalahan
+		if ($successCount > 0) {
+			session()->flash('success', "$successCount data berhasil diimpor.");
+		}
+
+		if ($errorCount > 0) {
+			session()->flash('notifications', $notificationMessages);
+		}
+
+		// Jika ada kesalahan, tampilkan semua pesan kesalahan
+		if ($errorCount > 0) {
+			$finalMessage = "Data gagal diimpor, silakan periksa kembali data Anda.";
+			$notificationMessages[] = $finalMessage;
+			session()->flash('notifications', $notificationMessages);
+		} else {
+			$finalMessage = "$successCount data berhasil diimpor.";
+			session()->flash('success', $finalMessage);
+		}
+
+		return redirect()->back();
+	}
 
 	public function index(Request $request)
 	{

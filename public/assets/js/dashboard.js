@@ -102,47 +102,4 @@ $(function () {
   );
   chart.render();
 
-
-  // -----------------------------------------------------------------------
-  // Total Income
-  // -----------------------------------------------------------------------
-  var customers = {
-    chart: {
-      id: "sparkline3",
-      type: "line",
-      fontFamily: "inherit",
-      foreColor: "#adb0bb",
-      height: 60,
-      sparkline: {
-        enabled: true,
-      },
-      group: "sparklines",
-    },
-    series: [
-      {
-        name: "Income",
-        color: "var(--bs-danger)",
-        data: [30, 25, 35, 20, 30, 40],
-      },
-    ],
-    stroke: {
-      curve: "smooth",
-      width: 2,
-    },
-    markers: {
-      size: 0,
-    },
-    tooltip: {
-      theme: "dark",
-      fixed: {
-        enabled: true,
-        position: "right",
-      },
-      x: {
-        show: false,
-      },
-    },
-  };
-  new ApexCharts(document.querySelector("#total-income"), customers).render();
-
 })

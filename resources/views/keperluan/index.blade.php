@@ -140,6 +140,14 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
+                                Keperluan</label>
+                            <input type="text" id="nama" name="nama"
+                                class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg"
+                                placeholder="Untuk Dipinjam" required />
+                        </div>
+
+                        <div class="form-check mb-3">
                             <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
                             <label for="extend" class="form-check-label ms-1">2 Dates?</label>
                         </div>
