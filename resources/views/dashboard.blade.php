@@ -260,7 +260,7 @@
 
         <!-- Barang -->
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card">
+            <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-6 mb-4">
                         <span class="round-48 d-flex align-items-center justify-content-center rounded bg-danger-subtle">
@@ -283,7 +283,7 @@
 
         <!-- Barang Masuk -->
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card">
+            <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-6 mb-4">
                         <span class="round-48 d-flex align-items-center justify-content-center rounded bg-warning-subtle">
@@ -306,7 +306,7 @@
 
         <!-- Barang Keluar -->
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card">
+            <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-6 mb-4">
                         <span class="round-48 d-flex align-items-center justify-content-center rounded bg-success-subtle">
@@ -329,7 +329,7 @@
 
         <!-- Permintaan Barang Keluar -->
         <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card">
+            <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-flex align-items-center gap-6 mb-4">
                         <span class="round-48 d-flex align-items-center justify-content-center rounded bg-primary-subtle">
@@ -357,7 +357,7 @@
 
         <!-- Grafik Barang Masuk -->
         <div class="col-lg-6 d-flex align-items-strech">
-            <div class="card w-100">
+            <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                         <div class="mb-3 mb-sm-0">
@@ -379,7 +379,7 @@
 
         <!-- Grafik Barang Keluar -->
         <div class="col-lg-6 d-flex align-items-strech">
-            <div class="card w-100">
+            <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                         <div class="mb-3 mb-sm-0">
@@ -400,7 +400,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" style="border-radius: 20px !important">
         <div class="card-body">
             <h4 class="mb-4" style="color: #8a8a8a;">Item History</h4>
             <div class="search-container">
