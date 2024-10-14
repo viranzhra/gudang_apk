@@ -402,71 +402,73 @@
         </div>
 
         <div class="col-lg-4 d-flex align-items-stretch">
-            <div class="card w-100" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="mb-4">
-                        <h5 class="card-title fw-semibold">Daily activities</h5>
-                    </div>
-                    <div style="max-height: 300px; overflow-y:auto">
-                        <ul class="timeline-widget mb-0 position-relative mb-n5">
-                            <li class="timeline-item d-flex position-relative overflow-hidden">
-                                <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">09:46
-                                </div>
-                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                    <span class="timeline-badge bg-primary flex-shrink-0 mt-2"></span>
-                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                                </div>
-                                <div class="timeline-desc fs-3 text-dark mt-n1">Payment received from John
-                                    Doe of $385.90</div>
-                            </li>
-                            <li class="timeline-item d-flex position-relative overflow-hidden">
-                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
-                                </div>
-                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                    <span class="timeline-badge bg-warning flex-shrink-0"></span>
-                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                                </div>
-                                <div class="timeline-desc fs-3 text-dark mt-n6 fw-semibold">New sale
-                                    recorded <a href="javascript:void(0)"
-                                        class="text-primary d-block fw-normal ">#ML-3467</a>
-                                </div>
-                            </li>
-                            <li class="timeline-item d-flex position-relative overflow-hidden">
-                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
-                                </div>
-                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                    <span class="timeline-badge bg-warning flex-shrink-0"></span>
-                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                                </div>
-                                <div class="timeline-desc fs-3 text-dark mt-n6">Payment was made of $64.95
-                                    to Michael</div>
-                            </li>
-                            <li class="timeline-item d-flex position-relative overflow-hidden">
-                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
-                                </div>
-                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                    <span class="timeline-badge bg-secondary flex-shrink-0"></span>
-                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                                </div>
-                                <div class="timeline-desc fs-3 text-dark mt-n6 fw-semibold">New sale
-                                    recorded <a href="javascript:void(0)"
-                                        class="text-primary d-block fw-normal ">#ML-3467</a>
-                                </div>
-                            </li>
-                            <li class="timeline-item d-flex position-relative overflow-hidden">
-                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
-                                </div>
-                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                    <span class="timeline-badge bg-primary flex-shrink-0"></span>
-                                </div>
-                                <div class="timeline-desc fs-3 text-dark mt-n6">Payment received from John
-                                    Doe of $385.90</div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
+          <div class="card w-100" style="border-radius: 20px !important">
+              <div class="card-body">
+                  <div class="mb-4">
+                      <h5 class="card-title fw-semibold">Daily Activities</h5>
+                  </div>
+                  <div style="max-height: 300px; overflow-y:auto" id="activityList">
+                      <ul class="timeline-widget mb-0 position-relative mb-n5">
+                          <!-- Aktivitas akan ditambahkan di sini -->
+                      </ul>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mengambil data dari API
+            fetch('{{ config('app.api_url') }}/dashboard/daily-activity')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const activityList = document.querySelector('.timeline-widget');
+                    activityList.innerHTML = ''; // Mengosongkan daftar aktivitas yang ada
+                    
+                    // Menggabungkan aktivitas yang sama (dengan time dan description yang sama)
+                    const activityMap = new Map();
+    
+                    data.forEach(activity => {
+                        const key = `${activity.time}-${activity.description}`;
+    
+                        // Jika kombinasi time dan description sudah ada, tambahkan hitungannya
+                        if (activityMap.has(key)) {
+                            const existing = activityMap.get(key);
+                            existing.count += 1; // Tambah count
+                            activityMap.set(key, existing);
+                        } else {
+                            // Jika belum ada, masukkan dengan count 1
+                            activityMap.set(key, { ...activity, count: 1 });
+                        }
+                    });
+    
+                    // Tampilkan aktivitas setelah penggabungan
+                    activityMap.forEach((activity, key) => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
+                        const countDescription = activity.count > 1 
+                            ? `+${activity.count} ${activity.description.replace('+1', '')}` // Menyesuaikan jika lebih dari 1
+                            : activity.description;
+                        listItem.innerHTML = `
+                            <div class="timeline-time mt-n1 text-black flex-shrink-0 text-end" style="min-width:70px">${activity.time}</div>
+                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
+                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                            </div>
+                            <div class="timeline-desc fs-3 text-dark mt-n1">${countDescription}</div>
+                        `;
+                        activityList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        });
+    </script>
 
         {{-- <!-- Grafik Barang Keluar -->
         <div class="col-lg-6 d-flex align-items-strech">
