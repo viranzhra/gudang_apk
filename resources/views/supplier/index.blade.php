@@ -74,6 +74,15 @@
             border: 1px solid #bee5eb;
             height: 80px;
         }
+
+        .table-ellipsis {
+            display: inline-block;
+            max-width: 280px;
+            /* Atur sesuai kebutuhan */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
@@ -561,24 +570,31 @@
                         }
                     },
                     {
-                        data: 'nama'
+                        data: 'nama',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'alamat',
                         render: function(data) {
-                            // Batasi alamat ke 50 karakter, tambahkan ".." jika lebih panjang
-                            var fullAddress = data;
-                            if (data.length > 50) {
-                                return `<span title="${fullAddress}">${data.substr(0, 50)}..</span>`;
-                            }
-                            return `<span title="${fullAddress}">${data}</span>`;
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
                         }
                     },
                     {
-                        data: 'telepon'
+                        data: 'telepon',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
-                        data: 'keterangan'
+                        data: 'keterangan',
+                        render: function(data) {
+                            if (!data) {
+                                return ''; // Tampilkan kosong jika data null atau undefined
+                            }
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'id',

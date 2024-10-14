@@ -61,21 +61,30 @@
             background-color: #d1ecf1;
             color: #0c5460;
         }
+
+        .table-ellipsis {
+            display: inline-block;
+            max-width: 200px;
+            /* Atur sesuai kebutuhan */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 13px; width: 1160px;">
         <h4 class="mt-3" style="color: #8a8a8a;">Outbound Item</h4>
-        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px"></div>
+        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 40px"></div>
 
         <table class="table table-bordered table-striped table-hover" id="outboundTable" width="100%">
             <thead class="thead-dark">
                 <tr>
-                    <th>No</th>
-                    <th>Customer</th>
+                    <th style="width: 20px">No</th>
+                    <th style="width: 220px">Customer</th>
                     <th>Purpose</th>
-                    <th>Quantity</th>
+                    <th style="width: 25px">Quantity</th>
                     <th>Request Date</th>
-                    <th>Aksi</th>
+                    <th style="width: 75px">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -84,21 +93,21 @@
     </div>
 
     <!-- Detail Modal -->
-<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="detailModalLabel">Outbound Item Detail</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="detailList">
-                    <!-- Data will be inserted here -->
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalLabel">Outbound Item Detail</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="detailList">
+                        <!-- Data will be inserted here -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
 
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
@@ -108,19 +117,17 @@
 
     <script>
         $(document).ready(function() {
-            console.log('Tabel ditemukan. Memulai DataTables.');
             var table = $('#outboundTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: 'https://doaibutiri.my.id/gudang/api/barangkeluar',
-                    error: function (xhr, error, thrown) {
+                    error: function(xhr, error, thrown) {
                         console.error('Ajax error:', error);
                         alert('An error occurred while fetching data. Please try again later.');
                     }
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'id',
                         sortable: false,
                         render: function(data, type, row, meta) {
@@ -129,7 +136,10 @@
                     },
                     {
                         data: 'nama_customer',
-                        defaultContent: 'Data tidak tersedia'
+                        defaultContent: 'Data tidak tersedia',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'nama_keperluan',
@@ -141,6 +151,11 @@
                     },
                     {
                         data: 'tanggal',
+                        render: data => data ? new Date(data).toLocaleDateString('id-ID', {
+                            day: '2-digit',
+                            month: 'long',
+                            year: 'numeric'
+                        }) : '-',
                         defaultContent: '-'
                     },
                     {
@@ -160,7 +175,7 @@
                         var id = $(this).data('id');
                         var rowData = table.row($(this).closest('tr')).data();
                         var detailHtml = '';
-                        
+
                         if (rowData && rowData.detail) {
                             rowData.detail.forEach(function(item) {
                                 detailHtml += `<tr>
@@ -171,7 +186,7 @@
                                 </tr>`;
                             });
                         }
-                        
+
                         $('#modalDetailBody').html(detailHtml);
                         $('#detailModal').modal('show');
                     });
@@ -190,8 +205,8 @@
 
             // Fetch details from the server
             $.ajax({
-                url: https://doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId},
-                type: 'GET',
+                url: https: //doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId},
+                    type: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + '{{ session('token') }}',
                 },
