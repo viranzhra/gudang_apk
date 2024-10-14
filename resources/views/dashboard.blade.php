@@ -2,6 +2,30 @@
 
 @section('content')
     <style>
+        /* Scrollbar custom */
+        ::-webkit-scrollbar {
+            -webkit-appearance: none;
+            width: 3px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: rgb(99 91 255 / 50%);
+            border-radius: 10px
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background-color: rgb(99 91 255 / 75%)
+        }
+
+        ::-webkit-scrollbar-thumb:active {
+            background-color: rgb(99 91 255 / 75%)
+        }
+
         .card {
             background-color: #ffffff;
             padding: 20px;
@@ -230,8 +254,8 @@
 
         /* Latar belakang saat hover */
         /* .nav-btn:hover {
-                                    background-color: #e7ebec;
-                                    } */
+                                            background-color: #e7ebec;
+                                            } */
 
         .nav-btn.active {
             color: #007bff;
@@ -356,28 +380,95 @@
     <div class="row">
 
         <!-- Grafik Barang Masuk -->
-        <div class="col-lg-6 d-flex align-items-strech">
+        <div class="col-lg-8 d-flex align-items-strech">
             <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                         <div class="mb-3 mb-sm-0">
-                            <h5 class="card-title fw-semibold">Incoming Item</h5>
+                            <h5 class="card-title fw-semibold">Incoming & Outbound Item</h5>
                         </div>
-                        <div>
+                        {{-- <div>
                             <select class="form-select">
                                 <option value="1">March 2024</option>
                                 <option value="2">April 2024</option>
                                 <option value="3">May 2024</option>
                                 <option value="4">June 2024</option>
                             </select>
-                        </div>
+                        </div> --}}
                     </div>
-                    <div id="revenue-forecast"></div>
+                    <div id="incoming-item"></div>
                 </div>
             </div>
         </div>
 
-        <!-- Grafik Barang Keluar -->
+        <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="card w-100" style="border-radius: 20px !important">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="card-title fw-semibold">Daily activities</h5>
+                    </div>
+                    <div style="max-height: 300px; overflow-y:auto">
+                        <ul class="timeline-widget mb-0 position-relative mb-n5">
+                            <li class="timeline-item d-flex position-relative overflow-hidden">
+                                <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">09:46
+                                </div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge bg-primary flex-shrink-0 mt-2"></span>
+                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n1">Payment received from John
+                                    Doe of $385.90</div>
+                            </li>
+                            <li class="timeline-item d-flex position-relative overflow-hidden">
+                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
+                                </div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge bg-warning flex-shrink-0"></span>
+                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n6 fw-semibold">New sale
+                                    recorded <a href="javascript:void(0)"
+                                        class="text-primary d-block fw-normal ">#ML-3467</a>
+                                </div>
+                            </li>
+                            <li class="timeline-item d-flex position-relative overflow-hidden">
+                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
+                                </div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge bg-warning flex-shrink-0"></span>
+                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n6">Payment was made of $64.95
+                                    to Michael</div>
+                            </li>
+                            <li class="timeline-item d-flex position-relative overflow-hidden">
+                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
+                                </div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge bg-secondary flex-shrink-0"></span>
+                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n6 fw-semibold">New sale
+                                    recorded <a href="javascript:void(0)"
+                                        class="text-primary d-block fw-normal ">#ML-3467</a>
+                                </div>
+                            </li>
+                            <li class="timeline-item d-flex position-relative overflow-hidden">
+                                <div class="timeline-time mt-n6 text-muted flex-shrink-0 text-end">09:46
+                                </div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge bg-primary flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n6">Payment received from John
+                                    Doe of $385.90</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- <!-- Grafik Barang Keluar -->
         <div class="col-lg-6 d-flex align-items-strech">
             <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
@@ -397,7 +488,7 @@
                     <div id="revenue-forecast"></div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 
     <div class="card" style="border-radius: 20px !important">
@@ -716,6 +807,149 @@
                 }
             };
             new ApexCharts(document.querySelector("#total-permintaan"), permintaan).render();
+
+            ////////////////////
+
+            // -----------------------------------------------------------------------
+            // Subscriptions
+            // -----------------------------------------------------------------------
+
+            let months = @json($months);
+            let countsBarangMasuk6Bulan = @json($counts_barang_masuk_6months);
+            let countsBarangKeluar6Bulan = @json($counts_barang_keluar_6months);
+
+            var chart = {
+                series: [{
+                        name: "Masuk",
+                        data: countsBarangMasuk6Bulan.map(count => count === 0 ? Math.floor(Math.random() *
+                            10) + 1 : count),
+                    },
+                    {
+                        name: "Keluar",
+                        data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
+                        .random() * 10) - 1 : -count),
+                    },
+                ],
+                chart: {
+                    toolbar: {
+                        show: false,
+                    },
+                    type: "bar",
+                    fontFamily: "inherit",
+                    foreColor: "#adb0bb",
+                    height: 270,
+                    stacked: true,
+                    offsetX: -15,
+                },
+                colors: ["var(--bs-primary)", "var(--bs-danger)"],
+                plotOptions: {
+                    bar: {
+                        horizontal: false,
+                        barHeight: "60%",
+                        columnWidth: "15%",
+                        borderRadius: [6],
+                        borderRadiusApplication: "end",
+                        borderRadiusWhenStacked: "all",
+                    },
+                },
+                dataLabels: {
+                    enabled: false,
+                },
+                legend: {
+                    show: false,
+                },
+                grid: {
+                    show: true,
+                    padding: {
+                        top: 0,
+                        bottom: 0,
+                        right: 0,
+                    },
+                    borderColor: "rgba(0,0,0,0.05)",
+                    xaxis: {
+                        lines: {
+                            show: true,
+                        },
+                    },
+                    yaxis: {
+                        lines: {
+                            show: true,
+                        },
+                    },
+                },
+                yaxis: {
+                    min: -5,
+                    max: 5,
+                },
+                xaxis: {
+                    axisBorder: {
+                        show: false,
+                    },
+                    axisTicks: {
+                        show: false,
+                    },
+                    categories: months.map(month => {
+                        const date = new Date(month);
+                        return date.toLocaleString('default', {
+                            month: 'short'
+                        });
+                    }),
+                    labels: {
+                        style: {
+                            fontSize: "13px",
+                            colors: "#adb0bb",
+                            fontWeight: "400"
+                        },
+                    },
+                },
+                yaxis: {
+                    tickAmount: 4,
+                },
+                tooltip: {
+                    theme: "dark",
+                },
+            };
+
+            var chart = new ApexCharts(
+                document.querySelector("#incoming-item"),
+                chart
+            );
+            chart.render();
         });
+    </script>
+
+
+    <script>
+        function checkSerialNumber() {
+            fetch('/serialnumber', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        console.log('Serial numbers:', data);
+                        const serialNumbers = [100300, 100400];
+                        const foundSerialNumbers = data.filter(item => serialNumbers.includes(item.serial_number));
+                        if (foundSerialNumbers.length > 0) {
+                            console.log('SN Ditemukan: ' + foundSerialNumbers.map(item => item.serial_number).join(
+                                ', '));
+                        } else {
+                            console.log('No matching serial numbers found.');
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while checking the serial numbers.');
+                });
+        }
+        //setTimeout(() => {checkSerialNumber()}, 1000);
     </script>
 @endsection

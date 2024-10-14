@@ -22,6 +22,7 @@ class DashboardController extends Controller
         // Mengirim data ke Blade view
         return view('dashboard', [
             'dates' => $data['dates'],
+            'months' => $data['months'],
             'counts_barang' => $data['counts_barang'],
             'counts_barang_masuk' => $data['counts_barang_masuk'],
             'counts_barang_keluar' => $data['counts_barang_keluar'],
@@ -31,6 +32,9 @@ class DashboardController extends Controller
             'total_barang_masuk' => $data['total_barang_masuk'],
             'total_barang_keluar' => $data['total_barang_keluar'],
             'total_permintaan' => $data['total_permintaan'],
+
+            'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
+            'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
         ]);
     }
 }
