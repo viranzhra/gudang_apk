@@ -233,21 +233,19 @@
                         </div>
 
                         <div class="mb-3">
-                            <input id="edit-extend" type="checkbox" name="extend" value="0"
+                            <input id="edit-extend" type="checkbox" name="extend" value="1"
                                 class="form-check-input">
                             <label for="edit-extend" class="form-check-label">2 Dates?</label>
                         </div>
 
                         <div id="editExtensionNameField" class="mb-3" style="display: none;">
                             <div class="row">
-                                <!-- Input Nama Tanggal Akhir -->
                                 <div class="col-md-8 mb-3">
                                     <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
                                     <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Tanggal Pengembalian" />
+                                        class="form-control" placeholder="Extension Name" />
                                 </div>
 
-                                <!-- Input Batas Waktu -->
                                 <div class="col-md-4 mb-3">
                                     <label for="edit-batas_hari" class="form-label">Time Limit (Days)</label>
                                     <input type="number" id="edit-batas_hari" name="batas_hari" class="form-control"
@@ -263,7 +261,8 @@
         </div>
     </div>
 
-    <script>
+
+    {{-- <script>
         document.getElementById('edit-extend').addEventListener('change', function() {
             this.value = this.checked ? '1' : '0';
             document.getElementById('editExtensionNameField').style.display = this.checked ? 'block' : 'none';
@@ -292,7 +291,7 @@
             // Inisialisasi tanggal akhir saat halaman dimuat
             updateTanggalAkhir();
         });
-    </script>
+    </script> --}}
 
 
     <!-- Modal Konfirmasi Hapus -->
@@ -579,84 +578,111 @@
             $('#editForm').on('submit', function(e) {
                 e.preventDefault();
 
-                // Ambil ID dari input hidden
-                var id = $('#edit-id').val(); // ID yang akan di-update
-
-                // Konversi form data ke array dan tambahkan nilai extend secara manual
+                // Menyiapkan data untuk dikirim
                 var formData = $(this).serializeArray();
-                formData.push({
-                    name: 'extend',
-                    value: $('#edit-extend').is(':checked') ? '1' : '0'
-                });
+                var isExtendChecked = $('#edit-extend').is(':checked');
+
+                // Jika checkbox extend tidak dicentang, pastikan extend dikirim sebagai "0"
+                if (!isExtendChecked) {
+                    formData.push({
+                        name: 'extend',
+                        value: '0'
+                    });
+                } else {
+                    // Pastikan untuk mengirim nama_tanggal_akhir jika extend dicentang
+                    formData.push({
+                        name: 'nama_tanggal_akhir',
+                        value: $('#edit-nama_tanggal_akhir').val()
+                    });
+                }
 
                 $.ajax({
-                    url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
-                    type: 'PUT', // Metode PUT untuk update data
-                    data: $.param(formData), // Kirim form data
+                    url: '{{ config('app.api_url') }}/keperluan/${id}',
+                    type: 'GET',
+                    data: formData,
                     success: function(response) {
                         if (response.success) {
-                            // Tampilkan notifikasi jika berhasil
-                            showNotification('success', response.message);
-                            $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
+                            $('#editData').modal('hide');
+                            showNotification('success', 'Data berhasil diperbarui!');
+                            $('#KeperluanTable').DataTable().ajax
+                        .reload(); // Refresh tabel setelah pembaruan
                         } else {
-                            // Notifikasi jika gagal
                             showNotification('error', response.message ||
-                                'Gagal memperbarui requirement type.');
+                                'Gagal memperbarui data.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat memperbarui requirement type.';
-                        showNotification('error', message); // Tampilkan notifikasi error
-                    },
-                    complete: function() {
-                        $('#editData').modal('hide'); // Tutup modal setelah proses selesai
+                            'Terjadi kesalahan saat memperbarui data.';
+                        showNotification('error', message);
                     }
                 });
             });
 
             // Menangani perubahan checkbox extend pada form edit data
-            $('#edit-extend').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
-                } else {
-                    $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
-                    $('#edit_extension_name').val(''); // Kosongkan input extension name
-                }
-            });
+            $(document).ready(function() {
+                // Menyimpan nilai input extension name dan batas hari
+                let extensionNameValue = '';
+                let batasHariValue = 1;
 
-            // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
-            $(document).on('click', '.btn-edit', function() {
-                var id = $(this).data('id');
-                var url = `{{ config('app.api_url') }}/keperluan/${id}`;
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-                    success: function(data) {
-                        $('#edit-nama').val(data.nama);
-                        $('#edit-extend').prop('checked', data.extend ==
-                            1); // Sesuaikan checkbox
-                        $('#edit-id').val(id);
-
-                        if (data.extend == 1) {
-                            $('#editExtensionNameField').show();
-                            $('#edit_extension_name').val(data
-                                .extension_name); // Isi extension name jika ada
-                        } else {
-                            $('#editExtensionNameField').hide();
-                            $('#edit_extension_name').val(''); // Kosongkan extension name
-                        }
-
-                        $('#editData').modal('show'); // Tampilkan modal edit
-                    },
-                    error: function(xhr) {
-                        showNotification('error', 'Error fetching type requirement data.');
+                $('#edit-extend').on('change', function() {
+                    if ($(this).is(':checked')) {
+                        // Tampilkan field jika checkbox diaktifkan
+                        $('#editExtensionNameField').show();
+                        $('#edit-nama_tanggal_akhir').val(
+                        extensionNameValue); // Set value yang disimpan
+                        $('#edit-batas_hari').val(batasHariValue); // Set value yang disimpan
+                    } else {
+                        // Sembunyikan field jika checkbox dinonaktifkan
+                        $('#editExtensionNameField').hide();
+                        extensionNameValue = $('#edit-nama_tanggal_akhir')
+                            .val(); // Simpan nilai sebelum menyembunyikan
+                        batasHariValue = $('#edit-batas_hari')
+                            .val(); // Simpan nilai sebelum menyembunyikan
                     }
                 });
+
+                // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
+                $(document).on('click', '.btn-edit', function() {
+                    var id = $(this).data('id');
+                    var url = `{{ config('app.api_url') }}/keperluan/${id}`;
+
+                    $.ajax({
+                        url: url,
+                        type: 'GET',
+                        success: function(data) {
+                            $('#edit-nama').val(data.nama);
+                            $('#edit-extend').prop('checked', data.extend ==
+                                1); // Sesuaikan checkbox
+                            $('#edit-id').val(id);
+
+                            // Set nilai input extension name dan batas hari
+                            $('#edit-nama_tanggal_akhir').val(data.nama_tanggal_akhir ||
+                                '');
+                            $('#edit-batas_hari').val(data.batas_hari || '');
+
+                            // Tampilkan/hide field extension name berdasarkan nilai extend
+                            if (data.extend == 1) {
+                                $('#editExtensionNameField').show();
+                                extensionNameValue = data.nama_tanggal_akhir ||
+                                    ''; // Simpan nilai untuk digunakan saat checkbox dinonaktifkan
+                                batasHariValue = data.batas_hari ||
+                                    1; // Simpan nilai untuk digunakan saat checkbox dinonaktifkan
+                            } else {
+                                $('#editExtensionNameField').hide();
+                                extensionNameValue = ''; // Kosongkan jika tidak extend
+                                batasHariValue = 1; // Reset ke default
+                            }
+
+                            $('#editData').modal('show'); // Tampilkan modal edit
+                        },
+                        error: function(xhr) {
+                            showNotification('error',
+                                'Error fetching type requirement data.');
+                        }
+                    });
+                });
             });
-
-
             // DataTable initialization
             var table = $('#KeperluanTable').DataTable({
                 processing: true,

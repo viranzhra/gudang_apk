@@ -109,7 +109,6 @@
         </div>
     </div>
 
-
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
@@ -172,68 +171,45 @@
                 ],
                 drawCallback: function(settings) {
                     $('.btn-detail').on('click', function() {
-                        var id = $(this).data('id');
-                        var rowData = table.row($(this).closest('tr')).data();
-                        var detailHtml = '';
+                        var permintaanId = $(this).data('id');
+                        $('#detailList').empty(); // Clear existing list content
 
-                        if (rowData && rowData.detail) {
-                            rowData.detail.forEach(function(item) {
-                                detailHtml += `<tr>
-                                    <td>${item.serial_number}</td>
-                                    <td>${item.nama_barang}</td>
-                                    <td>${item.nama_jenis_barang}</td>
-                                    <td>${item.nama_supplier}</td>
-                                </tr>`;
-                            });
-                        }
+                        // Fetch details from the server
+                        $.ajax({
+                            url: `https://doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId}`,
+                            type: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + '{{ session('token') }}',
+                            },
+                            success: function(data) {
+                                if (data.length > 0) {
+                                    // Populate the modal with fetched data as a list
+                                    data.forEach(item => {
+                                        $('#detailList').append(`
+                                            <div class="detail-item">
+                                                <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
+                                                <h6>Item Name: <strong>${item.nama_barang}</strong></h6>
+                                                <h6>Item Type: <strong>${item.nama_jenis_barang}</strong></h6>
+                                                <h6>Supplier Name: <strong>${item.nama_supplier}</strong></h6>
+                                                <hr>
+                                            </div>
+                                        `);
+                                    });
+                                } else {
+                                    $('#detailList').append(
+                                        '<p class="text-center">No details available</p>'
+                                    );
+                                }
 
-                        $('#modalDetailBody').html(detailHtml);
-                        $('#detailModal').modal('show');
-                    });
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // Detail button functionality
-        $(document).on('click', '.detail-btn', function() {
-            const permintaanId = $(this).data('id'); // Get the ID from the button
-
-            // Clear existing list content
-            $('#detailList').empty();
-
-            // Fetch details from the server
-            $.ajax({
-                url: https: //doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId},
-                    type: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + '{{ session('token') }}',
-                },
-                success: function(data) {
-                    if (data.length > 0) {
-                        // Populate the modal with fetched data as a list
-                        data.forEach(item => {
-                            $('#detailList').append(`
-                                <div class="detail-item">
-                                    <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
-                                    <p>Item Name: <strong>${item.nama_barang}</strong></p>
-                                    <p>Item Type: <strong>${item.nama_jenis_barang}</strong></p>
-                                    <p>Supplier Name: <strong>${item.nama_supplier}</strong></p>
-                                    <hr>
-                                </div>
-                            `);
+                                // Show the modal
+                                $('#detailModal').modal('show');
+                            },
+                            error: function(xhr) {
+                                alert('Failed to fetch details. Please try again.');
+                                console.error(xhr.responseText);
+                            }
                         });
-                    } else {
-                        $('#detailList').append('<p class="text-center">No details available</p>');
-                    }
-
-                    // Show the modal
-                    $('#detailModal').modal('show');
-                },
-                error: function(xhr) {
-                    alert('Failed to fetch details. Please try again.');
-                    console.error(xhr.responseText);
+                    });
                 }
             });
         });
