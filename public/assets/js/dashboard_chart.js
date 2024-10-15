@@ -15,57 +15,57 @@ document.addEventListener("DOMContentLoaded", function () {
     // Customers
     // -----------------------------------------------------------------------
   
-    var options = {
-      chart: {
-        id: "customers",
-        type: "area",
-        height: 70,
-        sparkline: {
-          enabled: true,
-        },
-        group: "sparklines",
-        fontFamily: "inherit",
-        foreColor: "#adb0bb",
-      },
-      series: [
-        {
-          name: "customers",
-          color: "var(--bs-secondary)",
-          data: [36, 45, 31, 47, 38, 43],
-        },
-      ],
-      stroke: {
-        curve: "smooth",
-        width: 2,
-      },
-      fill: {
-        type: "gradient",
-        color: "var(--bs-secondary)",
+    // var options = {
+    //   chart: {
+    //     id: "customers",
+    //     type: "area",
+    //     height: 70,
+    //     sparkline: {
+    //       enabled: true,
+    //     },
+    //     group: "sparklines",
+    //     fontFamily: "inherit",
+    //     foreColor: "#adb0bb",
+    //   },
+    //   series: [
+    //     {
+    //       name: "customers",
+    //       color: "var(--bs-secondary)",
+    //       data: [36, 45, 31, 47, 38, 43],
+    //     },
+    //   ],
+    //   stroke: {
+    //     curve: "smooth",
+    //     width: 2,
+    //   },
+    //   fill: {
+    //     type: "gradient",
+    //     color: "var(--bs-secondary)",
   
-        gradient: {
-          shadeIntensity: 0,
-          inverseColors: false,
-          opacityFrom: 0.2,
-          opacityTo: 0.1,
-          stops: [100],
-        },
-      },
+    //     gradient: {
+    //       shadeIntensity: 0,
+    //       inverseColors: false,
+    //       opacityFrom: 0.2,
+    //       opacityTo: 0.1,
+    //       stops: [100],
+    //     },
+    //   },
   
-      markers: {
-        size: 0,
-      },
-      tooltip: {
-        theme: "dark",
-        fixed: {
-          enabled: true,
-          position: "right",
-        },
-        x: {
-          show: false,
-        },
-      },
-    };
-    new ApexCharts(document.querySelector("#customers"), options).render();
+    //   markers: {
+    //     size: 0,
+    //   },
+    //   tooltip: {
+    //     theme: "dark",
+    //     fixed: {
+    //       enabled: true,
+    //       position: "right",
+    //     },
+    //     x: {
+    //       show: false,
+    //     },
+    //   },
+    // };
+    // new ApexCharts(document.querySelector("#customers"), options).render();
   
     // -----------------------------------------------------------------------
     // Projects
