@@ -277,6 +277,16 @@
 
     <link href="https://bootstrapdemos.adminmart.com/matdash/dist/assets/css/styles.css" rel="stylesheet">
 
+    <!-- Toast -->
+    <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-body hstack align-items-start gap-6">
+        <div>
+          <h5 class="text-white fs-3 mb-1">Welcome back <b>{{ Auth::user()->name }}</b>!</h5>
+          <h6 class="text-white fs-2 mb-0">Have a bright day! Remember, you're capable of amazing things.</h6>
+        </div>
+        <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
 
     <div class="row" style="margin-top:-70px">
         <div class="col-lg-5">
@@ -372,7 +382,7 @@
                             </span>
                             <div>
                                 <h5 class="card-title">Overview</h5>
-                                <p class="card-subtitle mb-0">Overview of the last 7 days</p>
+                                <p class="card-subtitle mb-0">Last 7 days</p>
                             </div>
                         </div>
 
@@ -1884,13 +1894,15 @@
             var chart = {
                 series: [{
                         name: "Masuk",
-                        data: countsBarangMasuk6Bulan.map(count => count === 0 ? Math.floor(Math.random() *
-                            10) + 1 : count),
+                        // data: countsBarangMasuk6Bulan.map(count => count === 0 ? Math.floor(Math.random() *
+                        //     10) + 1 : count),
+                        data: countsBarangMasuk6Bulan,
                     },
                     {
                         name: "Keluar",
-                        data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
-                            .random() * 10) - 1 : -count),
+                        // data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
+                        //     .random() * 10) - 1 : -count),
+                        data: countsBarangKeluar6Bulan.map(count => -count),
                     },
                 ],
                 chart: {
@@ -2010,6 +2022,9 @@
                 plotOptions: {},
                 dataLabels: {
                     enabled: false,
+                    formatter: function(val) {
+                        return val > 0 ? val : '';
+                    },
                 },
                 legend: {
                     show: false,
@@ -2122,15 +2137,20 @@
 
                     // Update persentase di HTML
                     const surplusElement = document.querySelector('#stok_surdef');
-                    surplusElement.textContent = stokChangePercent >= 0 ? `+${stokChangePercent}%` : `${stokChangePercent}%`;
+                    if (stokChangePercent != 0) {
+                        surplusElement.textContent = stokChangePercent > 0 ? `+${stokChangePercent}%` : `${stokChangePercent}%`;
 
-                    // Update warna persentase berdasarkan positif atau negatif
-                    if (stokChangePercent >= 0) {
-                        surplusElement.classList.remove('text-danger');
-                        surplusElement.classList.add('text-success');
+                        // Update warna persentase berdasarkan positif atau negatif
+                        if (stokChangePercent > 0) {
+                            surplusElement.classList.remove('text-danger');
+                            surplusElement.classList.add('text-success');
+                        } else {
+                            surplusElement.classList.remove('text-success');
+                            surplusElement.classList.add('text-danger');
+                        }
                     } else {
-                        surplusElement.classList.remove('text-success');
-                        surplusElement.classList.add('text-danger');
+                        surplusElement.textContent = '';
+                        surplusElement.classList.remove('text-success', 'text-danger');
                     }
 
                     // Inisialisasi chart dengan data stok dari API
