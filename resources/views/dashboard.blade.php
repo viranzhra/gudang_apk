@@ -254,8 +254,8 @@
 
         /* Latar belakang saat hover */
         /* .nav-btn:hover {
-                                            background-color: #e7ebec;
-                                            } */
+                                                background-color: #e7ebec;
+                                                } */
 
         .nav-btn.active {
             color: #007bff;
@@ -274,8 +274,773 @@
             color: #5a5c69;
         }
     </style>
+    
+        <link href="https://bootstrapdemos.adminmart.com/matdash/dist/assets/css/styles.css" rel="stylesheet">
+    
+
+<div class="row" style="margin-top:-70px">
+  <div class="col-lg-5">
+    <!-- -------------------------------------------- -->
+    <!-- Welcome Card -->
+    <!-- -------------------------------------------- -->
+    <div class="card text-bg-primary">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-sm-7">
+            <div class="d-flex flex-column h-100">
+              <div class="hstack gap-3">
+                <span class="d-flex align-items-center justify-content-center round-48 bg-white rounded flex-shrink-0">
+                  <iconify-icon icon="solar:course-up-outline" class="fs-7 text-muted"></iconify-icon>
+                </span>
+                <h5 class="text-white fs-6 mb-0 text-nowrap">Welcome Back
+                  <br>{{ Auth::user()->name }}
+                </h5>
+              </div>
+              <div class="mt-4 mt-sm-auto">
+                <div class="row">
+                  <div class="col-6">
+                    <span class="opacity-75">Wealth</span>
+                    <h4 class="mb-0 text-white mt-1 text-nowrap fs-13 fw-bolder">
+                      $100</h4>
+                  </div>
+                  <div class="col-6 border-start border-light" style="--bs-border-opacity: .15;">
+                    <span class="opacity-75">Debt</span>
+                    <h4 class="mb-0 text-white mt-1 text-nowrap fs-13 fw-bolder">
+                      $10</h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-5 text-center text-md-end">
+            <img src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/images/backgrounds/welcome-bg.png" alt="welcome" class="img-fluid mb-n7 mt-2" width="180">
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+    <div class="row">
+      <!-- -------------------------------------------- -->
+      <!-- Customers -->
+      <!-- -------------------------------------------- -->
+      <div class="col-md-6">
+        <div class="card bg-secondary-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
+          <div class="card-body p-4">
+            <span class="text-dark-light">Customers</span>
+            <div class="hstack gap-6">
+              <h5 class="mb-0 fs-7">36,358</h5>
+              <span class="fs-11 text-dark-light fw-semibold">-12%</span>
+            </div>
+          </div>
+          <div id="customers" style="min-height: 70px;"></div>
+        </div>
+      </div>
+      <!-- -------------------------------------------- -->
+      <!-- Projects -->
+      <!-- -------------------------------------------- -->
+      <div class="col-md-6">
+        <div class="card bg-danger-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
+          <div class="card-body p-4">
+            <span class="text-dark-light">Projects</span>
+            <div class="hstack gap-6 mb-4">
+              <h5 class="mb-0 fs-7">78,298</h5>
+              <span class="fs-11 text-dark-light fw-semibold">+31.8%</span>
+            </div>
+            <div class="mx-n1">
+              <div id="projects" style="min-height: 46px;"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <!-- -------------------------------------------- -->
+    <!-- Overview -->
+    <!-- -------------------------------------------- -->
+    <div class="card" style="height:450px">
+      <div class="card-body pb-4">
+        <div class="d-md-flex align-items-center justify-content-between mb-4">
+          <div class="hstack align-items-center gap-3">
+            <span class="d-flex align-items-center justify-content-center round-48 bg-primary-subtle rounded flex-shrink-0">
+              <iconify-icon icon="solar:layers-linear" class="fs-7 text-primary"></iconify-icon>
+            </span>
+            <div>
+              <h5 class="card-title">Overview</h5>
+              <p class="card-subtitle mb-0">Overview of the last 7 days</p>
+            </div>
+          </div>
+
+          <div class="hstack gap-9 mt-4 mt-md-0">
+            <div class="d-flex align-items-center gap-2">
+              <span class="d-block flex-shrink-0 round-8 bg-primary rounded-circle"></span>
+              <span class="text-nowrap text-muted">Masuk</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="d-block flex-shrink-0 round-8 bg-danger rounded-circle"></span>
+              <span class="text-nowrap text-muted">Keluar</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="d-block flex-shrink-0 round-8 bg-secondary rounded-circle"></span>
+              <span class="text-nowrap text-muted">Permintaan</span>
+            </div>
+          </div>
+        </div>
+        <div style="height: 285px;" class="me-n7">
+          <div id="tiga-baris"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <!-- -------------------------------------------- -->
+    <!-- Your Performance -->
+    <!-- -------------------------------------------- -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title fw-semibold">Your Performance</h5>
+        <p class="card-subtitle mb-0 lh-base">Last check on 25 february</p>
+
+        <div class="row mt-4">
+          <div class="col-md-6">
+            <div class="vstack gap-9 mt-2">
+              <div class="hstack align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center round-48 rounded bg-primary-subtle flex-shrink-0">
+                  <iconify-icon icon="solar:shop-2-linear" class="fs-7 text-primary"></iconify-icon>
+                </div>
+                <div>
+                  <h6 class="mb-0 text-nowrap">64 new orders</h6>
+                  <span>Processing</span>
+                </div>
+
+              </div>
+              <div class="hstack align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center round-48 rounded bg-danger-subtle">
+                  <iconify-icon icon="solar:filters-outline" class="fs-7 text-danger"></iconify-icon>
+                </div>
+                <div>
+                  <h6 class="mb-0">4 orders</h6>
+                  <span>On hold</span>
+                </div>
+
+              </div>
+              <div class="hstack align-items-center gap-3">
+                <div class="d-flex align-items-center justify-content-center round-48 rounded bg-secondary-subtle">
+                  <iconify-icon icon="solar:pills-3-linear" class="fs-7 text-secondary"></iconify-icon>
+                </div>
+                <div>
+                  <h6 class="mb-0">12 orders</h6>
+                  <span>Delivered</span>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="text-center mt-sm-n7">
+              <div id="your-preformance" style="min-height: 78.7px;"></div>
+              <h2 class="fs-8">275</h2>
+              <p class="mb-0">
+                Learn insigs how to manage all aspects of your
+                startup.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="row">
+      <div class="col-md-6">
+        <!-- -------------------------------------------- -->
+        <!-- Customers -->
+        <!-- -------------------------------------------- -->
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex align-items-start justify-content-between">
+              <div>
+                <h5 class="card-title fw-semibold">Customers</h5>
+                <p class="card-subtitle mb-0">Last 7 days</p>
+              </div>
+              <span class="fs-11 text-success fw-semibold lh-lg">+26.5%</span>
+            </div>
+            <div class="py-4 my-1">
+              <div id="customers-area" style="min-height: 100px;"></div>
+            </div>
+            <div class="d-flex flex-column align-items-center gap-2 w-100 mt-3">
+              <div class="d-flex align-items-center gap-2 w-100">
+                <span class="d-block flex-shrink-0 round-8 bg-primary rounded-circle"></span>
+                <h6 class="fs-3 fw-normal text-muted mb-0">April 07 - April 14</h6>
+                <h6 class="fs-3 fw-normal mb-0 ms-auto text-muted">6,380</h6>
+              </div>
+              <div class="d-flex align-items-center gap-2 w-100">
+                <span class="d-block flex-shrink-0 round-8 bg-light rounded-circle"></span>
+                <h6 class="fs-3 fw-normal text-muted mb-0">Last Week</h6>
+                <h6 class="fs-3 fw-normal mb-0 ms-auto text-muted">4,298</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <!-- -------------------------------------------- -->
+        <!-- Sales Overview -->
+        <!-- -------------------------------------------- -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title fw-semibold">Sales Overview</h5>
+            <p class="card-subtitle mb-1">Last 7 days</p>
+
+            <div class="position-relative labels-chart">
+              <span class="fs-11 label-1">0%</span>
+              <span class="fs-11 label-2">25%</span>
+              <span class="fs-11 label-3">50%</span>
+              <span class="fs-11 label-4">75%</span>
+              <div id="sales-overview" style="min-height: 210.75px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-lg-8">
+    <!-- -------------------------------------------- -->
+    <!-- Revenue by Product -->
+    <!-- -------------------------------------------- -->
+    <div class="card mb-lg-0">
+      <div class="card-body">
+        <div class="d-flex flex-wrap gap-3 mb-9 justify-content-between align-items-center">
+          <h5 class="card-title fw-semibold mb-0">Revenue by Product</h5>
+          <select class="form-select w-auto fw-semibold">
+            <option value="1">Sep 2024</option>
+            <option value="2">Oct 2024</option>
+            <option value="3">Nov 2024</option>
+          </select>
+        </div>
+
+        <div class="table-responsive">
+          <ul class="nav nav-tabs theme-tab gap-3 flex-nowrap" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" data-bs-toggle="tab" href="#app" role="tab" aria-selected="true">
+                <div class="hstack gap-2">
+                  <iconify-icon icon="solar:widget-linear" class="fs-4"></iconify-icon>
+                  <span>App</span>
+                </div>
+
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#mobile" role="tab" aria-selected="false" tabindex="-1">
+                <div class="hstack gap-2">
+                  <iconify-icon icon="solar:smartphone-line-duotone" class="fs-4"></iconify-icon>
+                  <span>Mobile</span>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#saas" role="tab" aria-selected="false" tabindex="-1">
+                <div class="hstack gap-2">
+                  <iconify-icon icon="solar:calculator-linear" class="fs-4"></iconify-icon>
+                  <span>SaaS</span>
+                </div>
+              </a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" data-bs-toggle="tab" href="#other" role="tab" aria-selected="false" tabindex="-1">
+                <div class="hstack gap-2">
+                  <iconify-icon icon="solar:folder-open-outline" class="fs-4"></iconify-icon>
+                  <span>Others</span>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="tab-content mb-n3">
+          <div class="tab-pane active" id="app" role="tabpanel">
+            <div class="table-responsive" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 0px;">
+              <table class="table text-nowrap align-middle table-custom mb-0 last-items-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col" class="fw-normal ps-0">Assigned
+                    </th>
+                    <th scope="col" class="fw-normal">Progress</th>
+                    <th scope="col" class="fw-normal">Priority</th>
+                    <th scope="col" class="fw-normal">Budget</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-1.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Minecraf App</h6>
+                          <span>Jason Roy</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-success-subtle text-success">Low</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-2.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Web App Project</h6>
+                          <span>Mathew Flintoff</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-warning-subtle text-warning">Medium</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-3.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Modernize Dashboard</h6>
+                          <span>Anil Kumar</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-secondary-subtle text-secondary">Very
+                        High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-4.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Dashboard Co</h6>
+                          <span>George Cruize</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-danger-subtle text-danger">High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div></div></div></div><div class="simplebar-placeholder" style="width: 672px; height: 356px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none; transform: translate3d(0px, 0px, 0px);"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+          </div>
+          <div class="tab-pane" id="mobile" role="tabpanel">
+            <div class="table-responsive" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 0px;">
+              <table class="table text-nowrap align-middle table-custom mb-0 last-items-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col" class="fw-normal ps-0">Assigned
+                    </th>
+                    <th scope="col" class="fw-normal">Progress</th>
+                    <th scope="col" class="fw-normal">Priority</th>
+                    <th scope="col" class="fw-normal">Budget</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-2.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Web App Project</h6>
+                          <span>Mathew Flintoff</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-warning-subtle text-warning">Medium</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-3.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Modernize Dashboard</h6>
+                          <span>Anil Kumar</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-secondary-subtle text-secondary">Very
+                        High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-1.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Minecraf App</h6>
+                          <span>Jason Roy</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-success-subtle text-success">Low</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-4.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Dashboard Co</h6>
+                          <span>George Cruize</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-danger-subtle text-danger">High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div></div></div></div><div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+          </div>
+          <div class="tab-pane" id="saas" role="tabpanel">
+            <div class="table-responsive" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 0px;">
+              <table class="table text-nowrap align-middle table-custom mb-0 last-items-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col" class="fw-normal ps-0">Assigned
+                    </th>
+                    <th scope="col" class="fw-normal">Progress</th>
+                    <th scope="col" class="fw-normal">Priority</th>
+                    <th scope="col" class="fw-normal">Budget</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-2.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Web App Project</h6>
+                          <span>Mathew Flintoff</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-warning-subtle text-warning">Medium</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-1.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Minecraf App</h6>
+                          <span>Jason Roy</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-success-subtle text-success">Low</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-3.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Modernize Dashboard</h6>
+                          <span>Anil Kumar</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-secondary-subtle text-secondary">Very
+                        High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-4.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Dashboard Co</h6>
+                          <span>George Cruize</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-danger-subtle text-danger">High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div></div></div></div><div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+          </div>
+
+          <div class="tab-pane" id="other" role="tabpanel">
+            <div class="table-responsive" data-simplebar="init"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 0px;">
+              <table class="table text-nowrap align-middle table-custom mb-0 last-items-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col" class="fw-normal ps-0">Assigned
+                    </th>
+                    <th scope="col" class="fw-normal">Progress</th>
+                    <th scope="col" class="fw-normal">Priority</th>
+                    <th scope="col" class="fw-normal">Budget</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-1.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Minecraf App</h6>
+                          <span>Jason Roy</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-success-subtle text-success">Low</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-3.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Modernize Dashboard</h6>
+                          <span>Anil Kumar</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-secondary-subtle text-secondary">Very
+                        High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-2.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Web App Project</h6>
+                          <span>Mathew Flintoff</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-warning-subtle text-warning">Medium</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td class="ps-0">
+                      <div class="d-flex align-items-center gap-6">
+                        <img src="../assets/images/products/dash-prd-4.jpg" alt="prd1" width="48" class="rounded">
+                        <div>
+                          <h6 class="mb-0">Dashboard Co</h6>
+                          <span>George Cruize</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <span>73.2%</span>
+                    </td>
+                    <td>
+                      <span class="badge bg-danger-subtle text-danger">High</span>
+                    </td>
+                    <td>
+                      <span class="text-dark-light">$3.5k</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div></div></div></div><div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <!-- -------------------------------------------- -->
+    <!-- Total settlements -->
+    <!-- -------------------------------------------- -->
+    <div class="card bg-primary-subtle mb-0">
+      <div class="card-body">
+        <div class="hstack align-items-center gap-3 mb-4">
+          <span class="d-flex align-items-center justify-content-center round-48 bg-white rounded flex-shrink-0">
+            <iconify-icon icon="solar:box-linear" class="fs-7 text-primary"></iconify-icon>
+          </span>
+          <div>
+            <p class="mb-1 text-dark-light">Total settlements</p>
+            <h4 class="mb-0 fw-bolder">$122,580</h4>
+          </div>
+        </div>
+        <div style="height: 278px;">
+          <div id="settlements" style="min-height: 315px;"></div>
+        </div>
+        <div class="row mt-4 mb-2">
+          <div class="col-md-6 text-center">
+            <p class="mb-1 text-dark-light lh-lg">Total balance</p>
+            <h4 class="mb-0 text-nowrap">$122,580</h4>
+          </div>
+          <div class="col-md-6 text-center mt-3 mt-md-0">
+            <p class="mb-1 text-dark-light lh-lg">Withdrawals</p>
+            <h4 class="mb-0">$31,640</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/simplebar/dist/simplebar.min.js"></script>
+
+<script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
+<script src="{{ asset('assets/js/dashboard_chart.js') }}"></script>
 
     <div class="row" style="margin-top: 20px;margin-bottom:-16px">
+
+      {{-- <div class="card text-bg-primary" style="border-radius: 20px !important">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-7">
+              <div class="d-flex flex-column h-100">
+                <div class="hstack gap-3">
+                  <span class="d-flex align-items-center justify-content-center round-48 bg-white rounded flex-shrink-0">
+                    <iconify-icon icon="solar:course-up-outline" class="fs-7 text-black"></iconify-icon>
+                  </span>
+                  <h5 class="text-white fs-6 mb-0 text-nowrap">Welcome Back
+                    <br>Admin Gudang
+                  </h5>
+                </div>
+                <div class="mt-4 mt-sm-auto">
+                  <div class="row">
+                    <div class="col-6">
+                      <span class="opacity-75">Budget</span>
+                      <h4 class="mb-0 text-white mt-1 text-nowrap fs-13 fw-bolder">
+                        $98,450</h4>
+                    </div>
+                    <div class="col-6 border-start border-light" style="--bs-border-opacity: .15;">
+                      <span class="opacity-75">Expense</span>
+                      <h4 class="mb-0 text-white mt-1 text-nowrap fs-13 fw-bolder">
+                        $2,440</h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-5 text-center text-md-end">
+              <img src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/images/backgrounds/welcome-bg.png" alt="welcome" class="img-fluid mb-n7 mt-2" width="180">
+            </div>
+          </div>
+
+
+        </div>
+      </div> --}}
+
         {{-- <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
             <div class="card-body">
                 <h4 style="color: #5a5c69; font-size: 20px;">Hallo, {{ Auth::user()->name }}!</h4>
@@ -396,79 +1161,61 @@
                             </select>
                         </div> --}}
                     </div>
+                    {{-- <style>.apexcharts-bar-series.apexcharts-plot-series .apexcharts-series path{clip-path: inset(0 0 5% 0 round 20px);}</style> --}}
                     <div id="incoming-item"></div>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-4 d-flex align-items-stretch">
-          <div class="card w-100" style="border-radius: 20px !important">
-              <div class="card-body">
-                  <div class="mb-4">
-                      <h5 class="card-title fw-semibold">Daily Activities</h5>
-                  </div>
-                  <div style="max-height: 300px; overflow-y:auto" id="activityList">
-                      <ul class="timeline-widget mb-0 position-relative mb-n5">
-                          <!-- Aktivitas akan ditambahkan di sini -->
-                      </ul>
-                  </div>
-              </div>
-          </div>
-      </div>
-      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Mengambil data dari API
-            fetch('{{ config('app.api_url') }}/dashboard/daily-activity')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const activityList = document.querySelector('.timeline-widget');
-                    activityList.innerHTML = ''; // Mengosongkan daftar aktivitas yang ada
-                    
-                    // Menggabungkan aktivitas yang sama (dengan time dan description yang sama)
-                    const activityMap = new Map();
-    
-                    data.forEach(activity => {
-                        const key = `${activity.time}-${activity.description}`;
-    
-                        // Jika kombinasi time dan description sudah ada, tambahkan hitungannya
-                        if (activityMap.has(key)) {
-                            const existing = activityMap.get(key);
-                            existing.count += 1; // Tambah count
-                            activityMap.set(key, existing);
-                        } else {
-                            // Jika belum ada, masukkan dengan count 1
-                            activityMap.set(key, { ...activity, count: 1 });
+            <div class="card w-100" style="border-radius: 20px !important">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5 class="card-title fw-semibold">Daily Activities</h5>
+                    </div>
+                    <div style="height: 300px; overflow-y:auto" id="activityList">
+                        <ul class="timeline-widget mb-0 position-relative mb-n5">
+                            <!-- Aktivitas akan ditambahkan di sini -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Mengambil data dari API
+                fetch('{{ config('app.api_url') }}/dashboard/daily-activity')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
                         }
-                    });
-    
-                    // Tampilkan aktivitas setelah penggabungan
-                    activityMap.forEach((activity, key) => {
-                        const listItem = document.createElement('li');
-                        listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
-                        const countDescription = activity.count > 1 
-                            ? `+${activity.count} ${activity.description.replace('+1', '')}` // Menyesuaikan jika lebih dari 1
-                            : activity.description;
-                        listItem.innerHTML = `
-                            <div class="timeline-time mt-n1 text-black flex-shrink-0 text-end" style="min-width:70px">${activity.time}</div>
+                        return response.json();
+                    })
+                    .then(data => {
+                        const activityList = document.querySelector('.timeline-widget');
+                        activityList.innerHTML = '';
+                        
+                        data.forEach(activity => {
+                            const listItem = document.createElement('li');
+                            listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
+
+                            listItem.innerHTML = `
+                            <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
                             <div class="timeline-badge-wrap d-flex flex-column align-items-center">
                                 <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
                                 <span class="timeline-badge-border d-block flex-shrink-0"></span>
                             </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">${countDescription}</div>
+                            <div class="timeline-desc fs-3 text-dark mt-n1">${activity.description}</div>
                         `;
-                        activityList.appendChild(listItem);
+
+                            activityList.appendChild(listItem);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('There has been a problem with your fetch operation:', error);
                     });
-                })
-                .catch(error => {
-                    console.error('There has been a problem with your fetch operation:', error);
-                });
-        });
-    </script>
+            });
+        </script>
 
         {{-- <!-- Grafik Barang Keluar -->
         <div class="col-lg-6 d-flex align-items-strech">
@@ -492,6 +1239,171 @@
             </div>
         </div> --}}
     </div>
+
+    {{-- <section class="py-3 py-md-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-9 col-xl-8">
+        <div class="card widget-card border-light shadow-sm">
+          <div class="card-body p-4">
+            <div class="d-block d-sm-flex align-items-center justify-content-between mb-3">
+              <div class="mb-3 mb-sm-0">
+                <h5 class="card-title widget-card-title">Sales Overview</h5>
+              </div>
+              <div>
+                <select class="form-select text-secondary border-light-subtle">
+                  <option value="1">March 2023</option>
+                  <option value="2">April 2023</option>
+                  <option value="3">May 2023</option>
+                  <option value="4">June 2023</option>
+                </select>
+              </div>
+            </div>
+            <div id="bsb-chart-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  !function() {
+    var a = {
+        533: function() {
+            !function() {
+                const a = {
+                    init() {
+                        new ApexCharts(document.querySelector("#bsb-chart-1"), {
+                            series: [{
+                                name: "Sales ($)",
+                                data: [
+                                    { x: "Jan", y: 1965 },
+                                    { x: "Feb", y: 1895 },
+                                    { x: "Mar", y: 2187 },
+                                    { x: "Apr", y: 2365 },
+                                    { x: "May", y: 1943 },
+                                    { x: "Jun", y: 2265 },
+                                    { x: "Jul", y: 2489 },
+                                    { x: "Aug", y: 2561 },
+                                    { x: "Sep", y: 3587 },
+                                    { x: "Oct", y: 3354 },
+                                    { x: "Nov", y: 3865 },
+                                    { x: "Dec", y: 4321 }
+                                ]
+                            }],
+                            xaxis: {
+                                type: "category"
+                            },
+                            chart: {
+                                type: "area",
+                                toolbar: {
+                                    tools: {
+                                        download: true,
+                                        selection: false,
+                                        zoom: false,
+                                        zoomin: false,
+                                        zoomout: false,
+                                        pan: false,
+                                        reset: false
+                                    }
+                                }
+                            },
+                            dataLabels: {
+                                enabled: false
+                            },
+                            grid: {
+                                borderColor: "transparent"
+                            },
+                            colors: ["var(--bs-primary)"],
+                            markers: {
+                                size: 0
+                            },
+                            fill: {
+                                type: "gradient",
+                                gradient: {
+                                    shadeIntensity: 1,
+                                    inverseColors: false,
+                                    opacityFrom: 0.12,
+                                    opacityTo: 0,
+                                    stops: [0, 90, 100]
+                                }
+                            },
+                            xaxis: {
+                                labels: {
+                                    style: {
+                                        colors: Array(12).fill("#a1aab2")
+                                    }
+                                }
+                            },
+                            yaxis: {
+                                labels: {
+                                    style: {
+                                        colors: Array(12).fill("#a1aab2")
+                                    }
+                                }
+                            }
+                        }).render();
+                    }
+                };
+
+                function e() {
+                    a.init();
+                }
+
+                if (document.readyState === "loading") {
+                    document.addEventListener("DOMContentLoaded", e);
+                } else {
+                    e();
+                }
+
+                window.addEventListener("load", function() {}, false);
+            }();
+        }
+    };
+
+    var e = {};
+
+    function t(o) {
+        var n = e[o];
+        if (n !== undefined) return n.exports;
+        var r = e[o] = {
+            exports: {}
+        };
+        return a[o](r, r.exports, t), r.exports;
+    }
+
+    t.n = function(a) {
+        var e = a && a.__esModule ? function() {
+            return a.default;
+        } : function() {
+            return a;
+        };
+        return t.d(e, {
+            a: e
+        }), e;
+    };
+
+    t.d = function(a, e) {
+        for (var o in e) {
+            if (t.o(e, o) && !t.o(a, o)) {
+                Object.defineProperty(a, o, {
+                    enumerable: true,
+                    get: e[o]
+                });
+            }
+        }
+    };
+
+    t.o = function(a, e) {
+        return Object.prototype.hasOwnProperty.call(a, e);
+    };
+
+    (function() {
+        "use strict";
+        t(533);
+    })();
+}();
+</script> --}}
 
     <div class="card" style="border-radius: 20px !important">
         <div class="card-body">
@@ -829,7 +1741,7 @@
                     {
                         name: "Keluar",
                         data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
-                        .random() * 10) - 1 : -count),
+                            .random() * 10) - 1 : -count),
                     },
                 ],
                 chart: {
@@ -917,6 +1829,112 @@
                 chart
             );
             chart.render();
+
+            // Overview
+            var chart = {
+              series: [
+                {
+                  name: "Masuk",
+                  data: countsBarangMasuk,
+                },
+                {
+                  name: "Keluar",
+                  data: countsBarangKeluar,
+                },
+                {
+                  name: "Permintaan",
+                  data: countsPermintaan,
+                },
+              ],
+              chart: {
+                toolbar: {
+                  show: false,
+                },
+                type: "area",
+                fontFamily: "inherit",
+                foreColor: "#adb0bb",
+                height: 300,
+                width: "100%",
+                stacked: false,
+                offsetX: -10,
+              },
+              colors: ["var(--bs-primary)", "var(--bs-danger)", "var(--bs-secondary)"],
+              plotOptions: {},
+              dataLabels: {
+                enabled: false,
+              },
+              legend: {
+                show: false,
+              },
+              stroke: {
+                width: 2,
+                curve: "monotoneCubic",
+              },
+              grid: {
+                show: true,
+                padding: {
+                  top: 0,
+                  bottom: 0,
+                },
+                borderColor: "rgba(0,0,0,0.05)",
+                xaxis: {
+                  lines: {
+                    show: true,
+                  },
+                },
+                yaxis: {
+                  lines: {
+                    show: true,
+                  },
+                },
+              },
+              fill: {
+                type: "gradient",
+                gradient: {
+                  shadeIntensity: 0,
+                  inverseColors: false,
+                  opacityFrom: 0.1,
+                  opacityTo: 0.01,
+                  stops: [0, 100],
+                },
+              },
+              xaxis: {
+                axisBorder: {
+                  show: false,
+                },
+                axisTicks: {
+                  show: false,
+                },
+                categories: dates.map(date => {
+                    const parsedDate = new Date(date);
+                    return parsedDate.getDate();
+                }),
+              },
+              markers: {
+                strokeColor: [
+                  "var(--bs-primary)",
+                  "var(--bs-secondary)",
+                  "var(--bs-danger)",
+                ],
+                strokeWidth: 2,
+              },
+              tooltip: {
+                theme: "dark",
+                x: {
+                        formatter: function(val, opts) {
+                            // Menampilkan tanggal pada tooltip
+                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
+                        }
+                    },
+              },
+            };
+          
+            var chart = new ApexCharts(
+              document.querySelector("#tiga-baris"),
+              chart
+            );
+            chart.render();
+          
         });
     </script>
 
