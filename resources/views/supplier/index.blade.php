@@ -77,7 +77,7 @@
 
         .table-ellipsis {
             display: inline-block;
-            max-width: 280px;
+            max-width: 330px;
             /* Atur sesuai kebutuhan */
             white-space: nowrap;
             overflow: hidden;
