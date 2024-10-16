@@ -254,8 +254,8 @@
 
         /* Latar belakang saat hover */
         /* .nav-btn:hover {
-                                                            background-color: #e7ebec;
-                                                            } */
+                                                                background-color: #e7ebec;
+                                                                } */
 
         .nav-btn.active {
             color: #007bff;
@@ -278,14 +278,16 @@
     <link href="https://bootstrapdemos.adminmart.com/matdash/dist/assets/css/styles.css" rel="stylesheet">
 
     <!-- Toast -->
-    <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="toast-body hstack align-items-start gap-6">
-        <div>
-          <h5 class="text-white fs-3 mb-1">Welcome back <b>{{ Auth::user()->name }}</b>!</h5>
-          <h6 class="text-white fs-2 mb-0">Have a bright day! Remember, you're capable of amazing things.</h6>
+    <div class="toast toast-onload align-items-center text-bg-primary border-0" role="alert" aria-live="assertive"
+        aria-atomic="true">
+        <div class="toast-body hstack align-items-start gap-6">
+            <div>
+                <h5 class="text-white fs-3 mb-1">Welcome back <b>{{ Auth::user()->name }}</b>!</h5>
+                <h6 class="text-white fs-2 mb-0">Have a bright day! Remember, you're capable of amazing things.</h6>
+            </div>
+            <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast"
+                aria-label="Close"></button>
         </div>
-        <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
     </div>
 
     <div class="row" style="margin-top:-70px">
@@ -408,10 +410,17 @@
             </div>
         </div>
         <div class="col-lg-5">
+            {{-- Keseluruhan Stok Barang --}}
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Most Stock Items</h4>
+                    <div id="jumlah-barang" style="min-height: 235px"></div>
+                </div>
+            </div>
             <!-- -------------------------------------------- -->
             <!-- Your Performance -->
             <!-- -------------------------------------------- -->
-            <div class="card">
+            {{-- <div class="card">
                 <div class="card-body">
                     <h5 class="card-title fw-semibold">Your Performance</h5>
                     <p class="card-subtitle mb-0 lh-base">Last check on 25 february</p>
@@ -468,7 +477,7 @@
                     </div>
 
                 </div>
-            </div>
+            </div> --}}
         </div>
         <div class="col-lg-7">
             <div class="row">
@@ -504,20 +513,15 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <!-- -------------------------------------------- -->
-                    <!-- Sales Overview -->
-                    <!-- -------------------------------------------- -->
-                    <div class="card">
+                    <div class="card w-100" style="border-radius: 20px !important">
                         <div class="card-body">
-                            <h5 class="card-title fw-semibold">Sales Overview</h5>
-                            <p class="card-subtitle mb-1">Last 7 days</p>
-
-                            <div class="position-relative labels-chart">
-                                <span class="fs-11 label-1">0%</span>
-                                <span class="fs-11 label-2">25%</span>
-                                <span class="fs-11 label-3">50%</span>
-                                <span class="fs-11 label-4">75%</span>
-                                <div id="sales-overview" style="min-height: 210.75px;"></div>
+                            <div class="mb-4">
+                                <h5 class="card-title fw-semibold">Daily Activities</h5>
+                            </div>
+                            <div style="height: 219px; overflow-y:auto" id="activityList">
+                                <ul class="timeline-widget mb-0 position-relative mb-n5">
+                                    <!-- Aktivitas akan ditambahkan di sini -->
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -1328,16 +1332,21 @@
 
         <div class="col-lg-4 d-flex align-items-stretch">
             <div class="card w-100" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="mb-4">
-                        <h5 class="card-title fw-semibold">Daily Activities</h5>
-                    </div>
-                    <div style="height: 300px; overflow-y:auto" id="activityList">
-                        <ul class="timeline-widget mb-0 position-relative mb-n5">
-                            <!-- Aktivitas akan ditambahkan di sini -->
-                        </ul>
-                    </div>
-                </div>
+                <!-- -------------------------------------------- -->
+                    <!-- Sales Overview -->
+                    <!-- -------------------------------------------- -->
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">Sales Overview</h5>
+                            <p class="card-subtitle mb-1">Last 7 days</p>
+
+                            <div class="position-relative labels-chart">
+                                <span class="fs-11 label-1">0%</span>
+                                <span class="fs-11 label-2">25%</span>
+                                <span class="fs-11 label-3">50%</span>
+                                <span class="fs-11 label-4">75%</span>
+                                <div id="sales-overview" style="min-height: 210.75px;"></div>
+                            </div>
+                        </div>
             </div>
         </div>
         <script>
@@ -2133,12 +2142,14 @@
                     // Hitung surplus/defisit dari stok kemarin
                     const stokYesterday = stokPerhari[stokPerhari.length - 2]?.jumlah || 0;
                     const stokToday = stokPerhari[stokPerhari.length - 1]?.jumlah || 0;
-                    const stokChangePercent = stokYesterday ? (((stokToday - stokYesterday) / stokYesterday) * 100).toFixed(2) : 0;
+                    const stokChangePercent = stokYesterday ? (((stokToday - stokYesterday) / stokYesterday) *
+                        100).toFixed(2) : 0;
 
                     // Update persentase di HTML
                     const surplusElement = document.querySelector('#stok_surdef');
                     if (stokChangePercent != 0) {
-                        surplusElement.textContent = stokChangePercent > 0 ? `+${stokChangePercent}%` : `${stokChangePercent}%`;
+                        surplusElement.textContent = stokChangePercent > 0 ? `+${stokChangePercent}%` :
+                            `${stokChangePercent}%`;
 
                         // Update warna persentase berdasarkan positif atau negatif
                         if (stokChangePercent > 0) {
@@ -2211,6 +2222,96 @@
                 .catch(error => {
                     console.error('Error fetching stok data:', error);
                 });
+
+
+            // Keseluruhan Stok Barang
+            // Basic Bar Chart -------> BAR CHART
+            // Fetch data from API
+            fetch(`{{ config('app.api_url') }}/laporan/stok`)
+                .then(response => response.json())
+                .then(data => {
+                    // Extracting the required data from the API response
+                    const barangData = data.data;
+
+                    // Sort the data based on 'jumlah' in descending order
+                    const sortedBarangData = barangData.sort((a, b) => parseInt(b.jumlah) - parseInt(a.jumlah));
+
+                    // Slice the first 6 items to display only 6 data points
+                    const top6BarangData = sortedBarangData.slice(0, 6);
+
+                    // Prepare data for the chart
+                    const jumlahBarang = top6BarangData.map(item => parseInt(item.jumlah)); // array of 'jumlah'
+                    const namaBarang = top6BarangData.map(item => item.nama_barang); // array of 'nama_barang'
+
+                    // Basic Bar Chart with sorted data
+                    var options_basic = {
+                        series: [{
+                            name: 'Jumlah Barang',
+                            data: jumlahBarang, // Sorted data from the API
+                        }],
+                        chart: {
+                            fontFamily: "inherit",
+                            type: "bar",
+                            height: 220,
+                            toolbar: {
+                                show: false,
+                            },
+                        },
+                        grid: {
+                            borderColor: "transparent",
+                        },
+                        colors: ['var(--bs-primary)', 'var(--bs-secondary)', 'var(--bs-success)', 'var(--bs-danger)', 'var(--bs-warning)', 'var(--bs-dark)'],
+                        plotOptions: {
+                            bar: {
+                                horizontal: true,
+                                distributed: true,
+                            },
+                        },
+                        legend: {
+                            show: false,
+                        },
+                        dataLabels: {
+                            enabled: false,
+                        },
+                        xaxis: {
+                            categories: namaBarang,
+                            labels: {
+                                style: {
+                                    colors: "#a1aab2",
+                                },
+                                formatter: function (value) {
+                                    return Math.floor(value);
+                                }
+                            },
+                            tickAmount: 6,
+                        },
+                        yaxis: {
+                            labels: {
+                                style: {
+                                    colors: "#a1aab2",
+                                },
+                            },
+                        },
+                        tooltip: {
+                            theme: "dark",
+                            y: {
+                                title: {
+                                    formatter: function (seriesName, opts) {
+                                        return opts.w.globals.labels[opts.dataPointIndex];
+                                    }
+                                }
+                            }
+                        },
+                    };
+
+                    // Render the chart
+                    var chart_bar_basic = new ApexCharts(
+                        document.querySelector("#jumlah-barang"),
+                        options_basic
+                    );
+                    chart_bar_basic.render();
+                })
+                .catch(error => console.error('Error fetching data:', error));
 
         });
     </script>

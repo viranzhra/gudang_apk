@@ -336,7 +336,7 @@ document.addEventListener("DOMContentLoaded", function () {
       labels: ["36%", "10%", "36%"],
       chart: {
         type: "radialBar",
-        height: 230,
+        height: 300,
         fontFamily: "inherit",
         foreColor: "#c6d1e9",
       },
