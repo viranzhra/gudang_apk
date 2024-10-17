@@ -501,10 +501,69 @@
         <div class="col-lg-7">
             <div class="row">
                 <div class="col-md-6">
+                    {{-- Permintaan --}}
+                    <div class="card" style="border-radius: 20px !important;height:calc(100% - 30px)">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">Item Requests</h5>
+                            {{-- <p class="card-subtitle mb-0 lh-base">Last updated just now</p> --}}
+        
+                            <div class="row mt-4">
+                                <div class="col"> {{-- col-md-6 --}}
+                                    <div class="vstack gap-9 mt-2">
+                                        <div class="hstack align-items-center gap-3">
+                                            <div
+                                                class="d-flex align-items-center justify-content-center round-48 rounded bg-success-subtle flex-shrink-0">
+                                                <iconify-icon icon="solar:recive-twice-square-linear" class="fs-7 text-success"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0 text-nowrap">{{ $permintaan_diterima }} orders</h6>
+                                                <span>Approved</span>
+                                            </div>
+        
+                                        </div>
+                                        <div class="hstack align-items-center gap-3">
+                                            <div
+                                                class="d-flex align-items-center justify-content-center round-48 bg-warning-subtle rounded">
+                                                <iconify-icon icon="solar:filters-outline"
+                                                    class="fs-7 text-warning"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ $permintaan_pending }} orders</h6>
+                                                <span>Pending</span>
+                                            </div>
+        
+                                        </div>
+                                        <div class="hstack align-items-center gap-3">
+                                            <div
+                                                class="d-flex align-items-center justify-content-center round-48 rounded bg-danger-subtle">
+                                                <iconify-icon icon="solar:notification-lines-remove-broken" class="fs-7 text-danger"></iconify-icon>
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-0">{{ $permintaan_ditolak }} orders</h6>
+                                                <span>Rejected</span>
+                                            </div>
+        
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-6">
+                                    <div class="text-center mt-sm-n7">
+                                        <div id="your-preformance" style="min-height: 78.7px;"></div>
+                                        <h2 class="fs-8">275</h2>
+                                        <p class="mb-0">
+                                            Learn insigs how to manage all aspects of your
+                                            startup.
+                                        </p>
+                                    </div>
+                                </div> --}}
+                            </div>
+        
+                        </div>
+                    </div>
                     <!-- -------------------------------------------- -->
                     <!-- Customers -->
                     <!-- -------------------------------------------- -->
-                    <div class="card" style="border-radius: 20px !important">
+                    {{-- <div class="card" style="border-radius: 20px !important">
                         <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div>
@@ -529,7 +588,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="col-md-6">
                     <div class="card w-100" style="border-radius: 20px !important">
@@ -1403,12 +1462,13 @@
     <div class="row">
 
         <!-- Grafik Barang Masuk -->
-        <div class="col-lg-8 d-flex align-items-strech">
+        <div class="col d-flex align-items-strech"> {{-- col-lg-8 --}}
             <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
                     <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
                         <div class="mb-3 mb-sm-0">
                             <h5 class="card-title fw-semibold">Incoming & Outbound Item</h5>
+                            <p class="card-subtitle mb-0 lh-base">Based on the last 6 months</p>
                         </div>
                         {{-- <div>
                             <select class="form-select">
@@ -1420,12 +1480,12 @@
                         </div> --}}
                     </div>
                     {{-- <style>.apexcharts-bar-series.apexcharts-plot-series .apexcharts-series path{clip-path: inset(0 0 5% 0 round 20px);}</style> --}}
-                    <div id="incoming-item"></div>
+                    <div id="coming-out"></div>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-4 d-flex align-items-stretch">
+        {{-- <div class="col-lg-4 d-flex align-items-stretch">
             <div class="card w-100" style="border-radius: 20px !important">
                 <!-- -------------------------------------------- -->
                     <!-- Sales Overview -->
@@ -1443,7 +1503,7 @@
                             </div>
                         </div>
             </div>
-        </div>
+        </div> --}}
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Mengambil data dari API
@@ -2120,7 +2180,7 @@
             };
 
             var chart = new ApexCharts(
-                document.querySelector("#incoming-item"),
+                document.querySelector("#coming-out"),
                 chart
             );
             chart.render();

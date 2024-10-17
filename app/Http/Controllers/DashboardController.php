@@ -24,6 +24,7 @@ class DashboardController extends Controller
             return view('dashboard', [
                 'dates' => $data['dates'],
                 'months' => $data['months'],
+
                 'counts_barang' => $data['counts_barang'],
                 'counts_barang_masuk' => $data['counts_barang_masuk'],
                 'counts_barang_keluar' => $data['counts_barang_keluar'],
@@ -36,6 +37,10 @@ class DashboardController extends Controller
 
                 'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
                 'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
+
+                'permintaan_ditolak' => $data['permintaan_ditolak'],
+                'permintaan_diterima' => $data['permintaan_diterima'],
+                'permintaan_pending' => $data['permintaan_pending'],
             ]);
         } catch (\Exception $e) {
             abort(403, 'API tidak dapat diakses.');
