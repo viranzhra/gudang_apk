@@ -16,26 +16,28 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
-        // Mengambil data dari API
-        $response = Http::get(config('app.api_url') . '/dashboard');
-        $data = $response->json();
+        try {
+            $response = Http::get(config('app.api_url') . '/dashboard');
+            $response->throw();
+            $data = $response->json();
 
-        // Mengirim data ke Blade view
-        return view('dashboard', [
-            'dates' => $data['dates'],
-            'months' => $data['months'],
-            'counts_barang' => $data['counts_barang'],
-            'counts_barang_masuk' => $data['counts_barang_masuk'],
-            'counts_barang_keluar' => $data['counts_barang_keluar'],
-            'counts_permintaan' => $data['counts_permintaan'],
+            return view('dashboard', [
+                'dates' => $data['dates'],
+                'months' => $data['months'],
+                'counts_barang' => $data['counts_barang'],
+                'counts_barang_masuk' => $data['counts_barang_masuk'],
+                'counts_barang_keluar' => $data['counts_barang_keluar'],
+                'counts_permintaan' => $data['counts_permintaan'],
 
-            'total_barang' => $data['total_barang'],
-            'total_barang_masuk' => $data['total_barang_masuk'],
-            'total_barang_keluar' => $data['total_barang_keluar'],
-            'total_permintaan' => $data['total_permintaan'],
+                'total_barang' => $data['total_barang'],
+                'total_barang_masuk' => $data['total_barang_masuk'],
+                'total_barang_keluar' => $data['total_barang_keluar'],
+                'total_permintaan' => $data['total_permintaan'],
 
-            'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
-            'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
-        ]);
-    }
-}
+                'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
+                'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
+            ]);
+        } catch (\Exception $e) {
+            abort(403, 'API tidak dapat diakses.');
+        }
+    }}
