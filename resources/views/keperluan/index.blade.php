@@ -86,6 +86,7 @@
                 <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                 Add
             </a>
+
             <button id="deleteSelected" class="btn btn-danger d-none"
                 style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
                 <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
@@ -101,7 +102,7 @@
                     <th>Requirement Type</th>
                     <th>2 Dates?</th>
                     <th>Time Limit (Days)</th>
-                    <th style="width: 110px">Action</th>
+                    <th style="width: 50px">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -134,22 +135,16 @@
                         @endif
 
                         <div class="mb-3">
-                            <label for="nama" class="form-label">Requirement Type</label>
-                            <input type="text" id="nama" name="nama" class="form-control"
-                                placeholder="Untuk Dipinjam" required />
-                        </div>
-
-                        {{-- <div class="mb-3">
                             <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
                                 Keperluan</label>
                             <input type="text" id="nama" name="nama"
                                 class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg"
                                 placeholder="Untuk Dipinjam" required />
-                        </div> --}}
+                        </div>
 
                         <div class="form-check mb-3">
                             <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                            <label for="extend" class="form-check-label ms-1">2 Dates?</label>
+                            <label for="extend" class="form-check-label ms-2">Terapkan dua tanggal</label>
                         </div>
 
                         <script>
@@ -163,15 +158,16 @@
                         <div id="tanggalInputs" style="display: none;">
                             <div class="row">
                                 <!-- Input Nama Tanggal Akhir -->
-                                <div class="col-md-8 mb-3">
-                                    <label for="nama_tanggal_akhir" class="form-label">Extension Name</label>
+                                <div class="col-md-6 mb-3">
+                                    <label for="nama_tanggal_akhir" class="form-label">Nama Tanggal Akhir</label>
                                     <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Tanggal Pengembalian" />
+                                        class="form-control" placeholder="Tanggal Pengembalian"
+                                        value="Tanggal Pengembalian" />
                                 </div>
 
                                 <!-- Input Batas Waktu -->
-                                <div class="col-md-4 mb-3">
-                                    <label for="batas_hari" class="form-label">Time Limit (Days)</label>
+                                <div class="col-md-6 mb-3">
+                                    <label for="batas_hari" class="form-label">Batas Waktu (Hari)</label>
                                     <input type="number" id="batas_hari" name="batas_hari" class="form-control"
                                         min="1" max="90" value="1" required />
                                 </div>
@@ -192,7 +188,7 @@
                                         const tanggalAkhir = new Date(tanggalPermintaan);
                                         tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu); // Menambahkan batas waktu
                                         tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[
-                                            0]; // Mengatur nilai untuk tanggal akhir
+                                        0]; // Mengatur nilai untuk tanggal akhir
                                     }
 
                                     // Event listener jika batas waktu diubah
@@ -233,66 +229,35 @@
                         </div>
 
                         <div class="mb-3">
-                            <input id="edit-extend" type="checkbox" name="extend" value="1"
+                            <input id="edit-extend" type="checkbox" name="extend" value="0"
                                 class="form-check-input">
-                            <label for="edit-extend" class="form-check-label">2 Dates?</label>
+                            <label for="edit-extend" class="form-check-label">Extend</label>
                         </div>
 
                         <div id="editExtensionNameField" class="mb-3" style="display: none;">
+                            <div class="relative z-0 w-full mb-3 group md:col-span-2">
+                                <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
+                                <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir"
+                                    class="form-control" placeholder="Tanggal Pengembalian" />
+                            </div>
                             <div class="row">
-                                <div class="col-md-8 mb-3">
-                                    <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
-                                    <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Extension Name" />
+                                <div class="col-md-6">
+                                    <label for="start_date" class="form-label">Start Date</label>
+                                    <input type="date" id="start_date" name="start_date" class="form-control"
+                                        value="{{ date('Y-m-d') }}" disabled />
                                 </div>
-
-                                <div class="col-md-4 mb-3">
-                                    <label for="edit-batas_hari" class="form-label">Time Limit (Days)</label>
-                                    <input type="number" id="edit-batas_hari" name="batas_hari" class="form-control"
-                                        min="1" max="90" value="1" required />
+                                <div class="col-md-6">
+                                    <label for="end_date" class="form-label">End Date</label>
+                                    <input type="date" id="end_date" name="end_date" class="form-control" />
                                 </div>
                             </div>
                         </div>
-
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-
-    {{-- <script>
-        document.getElementById('edit-extend').addEventListener('change', function() {
-            this.value = this.checked ? '1' : '0';
-            document.getElementById('editExtensionNameField').style.display = this.checked ? 'block' : 'none';
-            document.getElementById('edit-nama_tanggal_akhir').required = this.checked;
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const batasWaktuInput = document.getElementById('edit-batas_hari');
-            const tanggalAkhirInput = document.getElementById('edit-nama_tanggal_akhir');
-
-            // Fungsi untuk memperbarui tanggal pengembalian berdasarkan batas waktu
-            function updateTanggalAkhir() {
-                const batasWaktu = parseInt(batasWaktuInput.value) || 1;
-
-                // Mengambil tanggal permintaan dari server
-                const tanggalPermintaan = new Date("{{ date('Y-m-d') }}");
-
-                const tanggalAkhir = new Date(tanggalPermintaan);
-                tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu);
-                tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[0];
-            }
-
-            // Event listener jika batas waktu diubah
-            batasWaktuInput.addEventListener('input', updateTanggalAkhir);
-
-            // Inisialisasi tanggal akhir saat halaman dimuat
-            updateTanggalAkhir();
-        });
-    </script> --}}
-
 
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
@@ -456,6 +421,7 @@
         }
     </script>
 
+    <!-- Script untuk inisialisasi DataTables -->
     <script>
         $(document).ready(function() {
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
@@ -578,111 +544,84 @@
             $('#editForm').on('submit', function(e) {
                 e.preventDefault();
 
-                // Menyiapkan data untuk dikirim
-                var formData = $(this).serializeArray();
-                var isExtendChecked = $('#edit-extend').is(':checked');
+                // Ambil ID dari input hidden
+                var id = $('#edit-id').val(); // ID yang akan di-update
 
-                // Jika checkbox extend tidak dicentang, pastikan extend dikirim sebagai "0"
-                if (!isExtendChecked) {
-                    formData.push({
-                        name: 'extend',
-                        value: '0'
-                    });
-                } else {
-                    // Pastikan untuk mengirim nama_tanggal_akhir jika extend dicentang
-                    formData.push({
-                        name: 'nama_tanggal_akhir',
-                        value: $('#edit-nama_tanggal_akhir').val()
-                    });
-                }
+                // Konversi form data ke array dan tambahkan nilai extend secara manual
+                var formData = $(this).serializeArray();
+                formData.push({
+                    name: 'extend',
+                    value: $('#edit-extend').is(':checked') ? '1' : '0'
+                });
 
                 $.ajax({
-                    url: '{{ config('app.api_url') }}/keperluan/${id}',
-                    type: 'GET',
-                    data: formData,
+                    url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
+                    type: 'PUT', // Metode PUT untuk update data
+                    data: $.param(formData), // Kirim form data
                     success: function(response) {
                         if (response.success) {
-                            $('#editData').modal('hide');
-                            showNotification('success', 'Data berhasil diperbarui!');
-                            $('#KeperluanTable').DataTable().ajax
-                        .reload(); // Refresh tabel setelah pembaruan
+                            // Tampilkan notifikasi jika berhasil
+                            showNotification('success', response.message);
+                            $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
                         } else {
+                            // Notifikasi jika gagal
                             showNotification('error', response.message ||
-                                'Gagal memperbarui data.');
+                                'Gagal memperbarui requirement type.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat memperbarui data.';
-                        showNotification('error', message);
+                            'Terjadi kesalahan saat memperbarui requirement type.';
+                        showNotification('error', message); // Tampilkan notifikasi error
+                    },
+                    complete: function() {
+                        $('#editData').modal('hide'); // Tutup modal setelah proses selesai
                     }
                 });
             });
 
             // Menangani perubahan checkbox extend pada form edit data
-            $(document).ready(function() {
-                // Menyimpan nilai input extension name dan batas hari
-                let extensionNameValue = '';
-                let batasHariValue = 1;
+            $('#edit-extend').change(function() {
+                if ($(this).is(':checked')) {
+                    $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
+                } else {
+                    $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
+                    $('#edit_extension_name').val(''); // Kosongkan input extension name
+                }
+            });
 
-                $('#edit-extend').on('change', function() {
-                    if ($(this).is(':checked')) {
-                        // Tampilkan field jika checkbox diaktifkan
-                        $('#editExtensionNameField').show();
-                        $('#edit-nama_tanggal_akhir').val(
-                        extensionNameValue); // Set value yang disimpan
-                        $('#edit-batas_hari').val(batasHariValue); // Set value yang disimpan
-                    } else {
-                        // Sembunyikan field jika checkbox dinonaktifkan
-                        $('#editExtensionNameField').hide();
-                        extensionNameValue = $('#edit-nama_tanggal_akhir')
-                            .val(); // Simpan nilai sebelum menyembunyikan
-                        batasHariValue = $('#edit-batas_hari')
-                            .val(); // Simpan nilai sebelum menyembunyikan
+            // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
+            $(document).on('click', '.btn-edit', function() {
+                var id = $(this).data('id');
+                var url = `{{ config('app.api_url') }}/keperluan/${id}`;
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        $('#edit-nama').val(data.nama);
+                        $('#edit-extend').prop('checked', data.extend ==
+                            1); // Sesuaikan checkbox
+                        $('#edit-id').val(id);
+
+                        if (data.extend == 1) {
+                            $('#editExtensionNameField').show();
+                            $('#edit_extension_name').val(data
+                                .extension_name); // Isi extension name jika ada
+                        } else {
+                            $('#editExtensionNameField').hide();
+                            $('#edit_extension_name').val(''); // Kosongkan extension name
+                        }
+
+                        $('#editData').modal('show'); // Tampilkan modal edit
+                    },
+                    error: function(xhr) {
+                        showNotification('error', 'Error fetching type requirement data.');
                     }
                 });
-
-                // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
-                $(document).on('click', '.btn-edit', function() {
-                    var id = $(this).data('id');
-                    var url = `{{ config('app.api_url') }}/keperluan/${id}`;
-
-                    $.ajax({
-                        url: url,
-                        type: 'GET',
-                        success: function(data) {
-                            $('#edit-nama').val(data.nama);
-                            $('#edit-extend').prop('checked', data.extend ==
-                                1); // Sesuaikan checkbox
-                            $('#edit-id').val(id);
-
-                            // Set nilai input extension name dan batas hari
-                            $('#edit-nama_tanggal_akhir').val(data.nama_tanggal_akhir ||
-                                '');
-                            $('#edit-batas_hari').val(data.batas_hari || '');
-
-                            // Tampilkan/hide field extension name berdasarkan nilai extend
-                            if (data.extend == 1) {
-                                $('#editExtensionNameField').show();
-                                extensionNameValue = data.nama_tanggal_akhir ||
-                                    ''; // Simpan nilai untuk digunakan saat checkbox dinonaktifkan
-                                batasHariValue = data.batas_hari ||
-                                    1; // Simpan nilai untuk digunakan saat checkbox dinonaktifkan
-                            } else {
-                                $('#editExtensionNameField').hide();
-                                extensionNameValue = ''; // Kosongkan jika tidak extend
-                                batasHariValue = 1; // Reset ke default
-                            }
-
-                            $('#editData').modal('show'); // Tampilkan modal edit
-                        },
-                        error: function(xhr) {
-                            showNotification('error',
-                                'Error fetching type requirement data.');
-                        }
-                    });
-                });
             });
+
+
             // DataTable initialization
             var table = $('#KeperluanTable').DataTable({
                 processing: true,
@@ -716,6 +655,13 @@
                             return data == 1 ? 'Iya' : 'Tidak';
                         }
                     },
+                    // {
+                    //     data: 'created_at', // Tanggal Awal Dibuat (Start Date)
+                    //     render: function(data) {
+                    //         return data ? new Date(data).toLocaleDateString('id-ID') :
+                    //             '-'; // Format tanggal
+                    //     }
+                    // },
                     {
                         data: 'batas_hari',
                         name: 'batas_hari',
@@ -751,15 +697,10 @@
                 toggleDeleteButton();
             });
 
-            // Fungsi untuk mengaktifkan atau menonaktifkan tombol hapus berdasarkan item yang dipilih
+            // Enable/disable the delete selected button
             function toggleDeleteButton() {
-                const selected = $('.select-item:checked').length;
-                const deleteButton = $('#deleteSelected');
-                if (selected > 0) {
-                    deleteButton.removeClass('d-none');
-                } else {
-                    deleteButton.addClass('d-none');
-                }
+                const anyChecked = $('.select-item:checked').length > 0;
+                $('#deleteSelected').prop('disabled', !anyChecked);
             }
         });
     </script>
