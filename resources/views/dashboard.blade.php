@@ -334,7 +334,7 @@
             </div>
             {{-- Welcome Card 2 --}}
             <style>.card:hover .card-body::before{opacity:0 !important}</style>
-            <div class="card text-white bg-primary-gt overflow-hidden" style="height:225px">
+            <div class="card text-white bg-primary-gt overflow-hidden" style="height:225px;border-radius: 20px !important">
                 <div class="card-body position-relative z-1">
                   <span class="badge badge-custom-dark d-inline-flex align-items-center gap-2 fs-3">
                     <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
@@ -351,7 +351,7 @@
                 <!-- Stok -->
                 <!-- -------------------------------------------- -->
                 <div class="col"> <!-- default col-md-6 -->
-                    <div class="card bg-primary-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
+                    <div class="card bg-primary-subtle overflow-hidden shadow-none" style="height:195px;padding:0;border-radius: 20px !important">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center justify-content-between mb-9">
                                 <div>
@@ -393,7 +393,7 @@
             <!-- -------------------------------------------- -->
             <!-- Overview -->
             <!-- -------------------------------------------- -->
-            <div class="card" style="height:450px">
+            <div class="card" style="height:450px;border-radius: 20px !important">
                 <div class="card-body pb-4">
                     <div class="d-md-flex align-items-center justify-content-between mb-4">
                         <div class="hstack align-items-center gap-3">
@@ -430,7 +430,7 @@
         </div>
         <div class="col-lg-5">
             {{-- Keseluruhan Stok Barang --}}
-            <div class="card">
+            <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <h4 class="card-title">Most Stock Items</h4>
                     <div id="jumlah-barang" style="min-height: 235px"></div>
@@ -504,7 +504,7 @@
                     <!-- -------------------------------------------- -->
                     <!-- Customers -->
                     <!-- -------------------------------------------- -->
-                    <div class="card">
+                    <div class="card" style="border-radius: 20px !important">
                         <div class="card-body">
                             <div class="d-flex align-items-start justify-content-between">
                                 <div>
@@ -1185,7 +1185,7 @@
 
     {{-- Total Data --}}
     <div class="col-12">
-        <div class="card">
+        <div class="card" style="border-radius: 20px !important">
           <div class="card-body p-4 pb-0 simplebar-mouse-entered" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px -24px 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 24px 24px 0px;">
             <div class="row flex-nowrap">
               <div class="col">
