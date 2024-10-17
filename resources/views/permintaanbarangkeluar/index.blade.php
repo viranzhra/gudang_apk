@@ -276,7 +276,7 @@ document.addEventListener('DOMContentLoaded', function() {
             {
                 data: 'nama_keperluan',
                 name: 'keperluan.nama',
-                defaultContent: '0'
+                defaultContent: '-'
             },
             {
                 data: 'jumlah_permintaan',
