@@ -279,54 +279,54 @@ document.addEventListener("DOMContentLoaded", function () {
     // -----------------------------------------------------------------------
     // Customers Area
     // -----------------------------------------------------------------------
-    var chart_users = {
-      series: [
-        {
-          name: "April 07 ",
-          data: [0, 20, 15, 19, 14, 25, 30],
-        },
-        {
-          name: "Last Week",
-          data: [0, 8, 19, 13, 26, 16, 25],
-        },
-      ],
-      chart: {
-        fontFamily: "inherit",
-        height: 100,
-        type: "line",
-        toolbar: {
-          show: false,
-        },
-        sparkline: {
-          enabled: true,
-        },
-      },
-      colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-      grid: {
-        show: false,
-      },
-      stroke: {
-        curve: "smooth",
-        colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-        width: 2,
-      },
-      markers: {
-        colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-        strokeColors: "transparent",
-      },
-      tooltip: {
-        theme: "dark",
-        x: {
-          show: false,
-        },
-        followCursor: true,
-      },
-    };
-    var chart_line_basic = new ApexCharts(
-      document.querySelector("#customers-area"),
-      chart_users
-    );
-    chart_line_basic.render();
+    // var chart_users = {
+    //   series: [
+    //     {
+    //       name: "April 07 ",
+    //       data: [0, 20, 15, 19, 14, 25, 30],
+    //     },
+    //     {
+    //       name: "Last Week",
+    //       data: [0, 8, 19, 13, 26, 16, 25],
+    //     },
+    //   ],
+    //   chart: {
+    //     fontFamily: "inherit",
+    //     height: 100,
+    //     type: "line",
+    //     toolbar: {
+    //       show: false,
+    //     },
+    //     sparkline: {
+    //       enabled: true,
+    //     },
+    //   },
+    //   colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+    //   grid: {
+    //     show: false,
+    //   },
+    //   stroke: {
+    //     curve: "smooth",
+    //     colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+    //     width: 2,
+    //   },
+    //   markers: {
+    //     colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+    //     strokeColors: "transparent",
+    //   },
+    //   tooltip: {
+    //     theme: "dark",
+    //     x: {
+    //       show: false,
+    //     },
+    //     followCursor: true,
+    //   },
+    // };
+    // var chart_line_basic = new ApexCharts(
+    //   document.querySelector("#customers-area"),
+    //   chart_users
+    // );
+    // chart_line_basic.render();
   
     // -----------------------------------------------------------------------
     // Sales Overview

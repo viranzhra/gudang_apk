@@ -295,7 +295,7 @@
             <!-- -------------------------------------------- -->
             <!-- Welcome Card -->
             <!-- -------------------------------------------- -->
-            <div class="card text-bg-primary">
+            <div class="card text-bg-primary d-none">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-7">
@@ -330,30 +330,49 @@
                                 alt="welcome" class="img-fluid mb-n7 mt-2" width="180">
                         </div>
                     </div>
-
-
                 </div>
             </div>
+            {{-- Welcome Card 2 --}}
+            <style>.card:hover .card-body::before{opacity:0 !important}</style>
+            <div class="card text-white bg-primary-gt overflow-hidden" style="height:225px">
+                <div class="card-body position-relative z-1">
+                  <span class="badge badge-custom-dark d-inline-flex align-items-center gap-2 fs-3">
+                    <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
+                    <span class="fw-normal">Online</span>
+                  </span>
+                  <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span class="fw-bolder"><br>{{ Auth::user()->name }}</span>!
+                  </h4>
+                  <h6 class="opacity-75 fw-normal text-white mb-0 d-none"></h6>
+                </div>
+              </div>
+            
             <div class="row">
                 <!-- -------------------------------------------- -->
                 <!-- Stok -->
                 <!-- -------------------------------------------- -->
-                <div class="col-md-6">
-                    <div class="card bg-secondary-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
+                <div class="col"> <!-- default col-md-6 -->
+                    <div class="card bg-primary-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
                         <div class="card-body p-4">
-                            <span class="text-dark-light">Stok Barang</span>
-                            <div class="hstack gap-6">
-                                <h5 class="mb-0 fs-7">0</h5>
-                                <span id="stok_surdef" class="fs-11 text-dark-light fw-semibold"></span>
-                            </div>
+                            <div class="d-flex align-items-center justify-content-between mb-9">
+                                <div>
+                                <h5 class="card-title">Stok Barang</h5>
+                                  <div class="hstack gap-2">
+                                    <h5 id="stok_seluruh" class="card-title fw-semibold mb-0 fs-7">0</h5>
+                                    <span id="stok_surdef" class="fs-11 text-dark-light fw-semibold"></span>
+                                  </div>
+                                </div>
+                                <span class="round-48 d-flex align-items-center justify-content-center bg-white rounded">
+                                  <iconify-icon icon="solar:pie-chart-3-line-duotone" class="text-primary fs-6"></iconify-icon>
+                                </span>
+                              </div>
                         </div>
-                        <div id="stok" style="min-height: 70px;"></div>
+                        <div id="stok" style="min-height: 70px;position:relative;bottom:8px"></div>
                     </div>
                 </div>
                 <!-- -------------------------------------------- -->
                 <!-- Projects -->
                 <!-- -------------------------------------------- -->
-                <div class="col-md-6">
+                {{-- <div class="col-md-6">
                     <div class="card bg-danger-subtle overflow-hidden shadow-none" style="height:195px;padding:0">
                         <div class="card-body p-4">
                             <span class="text-dark-light">Projects</span>
@@ -367,7 +386,7 @@
                         </div>
 
                     </div>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="col-lg-7">
@@ -495,7 +514,7 @@
                                 <span class="fs-11 text-success fw-semibold lh-lg">+26.5%</span>
                             </div>
                             <div class="py-4 my-1">
-                                <div id="customers-area" style="min-height: 100px;"></div>
+                                <div id="activity-area" style="min-height: 100px;"></div>
                             </div>
                             <div class="d-flex flex-column align-items-center gap-2 w-100 mt-3">
                                 <div class="d-flex align-items-center gap-2 w-100">
@@ -530,7 +549,7 @@
 
         </div>
 
-        <div class="col-lg-8">
+        {{-- <div class="col-lg-8">
             <!-- -------------------------------------------- -->
             <!-- Revenue by Product -->
             <!-- -------------------------------------------- -->
@@ -1157,14 +1176,14 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
     <script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/simplebar/dist/simplebar.min.js"></script>
 
     <script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="{{ asset('assets/js/dashboard_chart.js') }}"></script>
 
-    <div class="row" style="margin-top: 20px;margin-bottom:-16px">
+    <div class="row" style="margin-bottom:-16px">
 
         {{-- <div class="card text-bg-primary" style="border-radius: 20px !important">
         <div class="card-body">
@@ -1367,22 +1386,52 @@
                             const listItem = document.createElement('li');
                             listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
 
+                            const truncatedDescription = truncateText(activity.description, 20);
+                            const fullDescription = activity.description;
+
                             listItem.innerHTML = `
                             <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
                             <div class="timeline-badge-wrap d-flex flex-column align-items-center">
                                 <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
                                 <span class="timeline-badge-border d-block flex-shrink-0"></span>
                             </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">${activity.description}</div>
+                            <div class="timeline-desc fs-3 text-dark mt-n1">
+                                <span class="truncated-text">${truncatedDescription}</span>
+                                <span class="full-text" style="display: none;">${fullDescription}</span>
+                                ${truncatedDescription !== fullDescription ? '<span class="expand-btn" style="cursor: pointer;">...</span>' : ''}
+                            </div>
                         `;
 
                             activityList.appendChild(listItem);
+
+                            if (truncatedDescription !== fullDescription) {
+                                const expandBtn = listItem.querySelector('.expand-btn');
+                                const truncatedText = listItem.querySelector('.truncated-text');
+                                const fullText = listItem.querySelector('.full-text');
+
+                                expandBtn.addEventListener('click', function() {
+                                    if (truncatedText.style.display !== 'none') {
+                                        truncatedText.style.display = 'none';
+                                        fullText.style.display = 'inline';
+                                        expandBtn.innerHTML = '<b>Show less</b>';
+                                    } else {
+                                        truncatedText.style.display = 'inline';
+                                        fullText.style.display = 'none';
+                                        expandBtn.innerHTML = '...';
+                                    }
+                                });
+                            }
                         });
                     })
                     .catch(error => {
                         console.error('There has been a problem with your fetch operation:', error);
                     });
             });
+
+            function truncateText(text, maxLength) {
+                if (text.length <= maxLength) return text;
+                return text.substr(0, maxLength) + '';
+            }
         </script>
 
         {{-- <!-- Grafik Barang Keluar -->
@@ -1573,7 +1622,8 @@
 }();
 </script> --}}
 
-    <div class="card" style="border-radius: 20px !important">
+    {{-- Item History --}}
+    {{-- <div class="card" style="border-radius: 20px !important">
         <div class="card-body">
             <h4 class="mb-4" style="color: #8a8a8a;">Item History</h4>
             <div class="search-container">
@@ -1645,29 +1695,28 @@
                 </table>
             </div>
         </div>
-    </div>
-
+    </div> --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const btnMasuk = document.getElementById('btn-masuk');
-            const btnKeluar = document.getElementById('btn-keluar');
-            const riwayatMasuk = document.getElementById('riwayat-masuk');
-            const riwayatKeluar = document.getElementById('riwayat-keluar');
+            // const btnMasuk = document.getElementById('btn-masuk');
+            // const btnKeluar = document.getElementById('btn-keluar');
+            // const riwayatMasuk = document.getElementById('riwayat-masuk');
+            // const riwayatKeluar = document.getElementById('riwayat-keluar');
 
-            btnMasuk.addEventListener('click', function() {
-                riwayatMasuk.style.display = 'block';
-                riwayatKeluar.style.display = 'none';
-                btnMasuk.classList.add('active');
-                btnKeluar.classList.remove('active');
-            });
+            // btnMasuk.addEventListener('click', function() {
+            //     riwayatMasuk.style.display = 'block';
+            //     riwayatKeluar.style.display = 'none';
+            //     btnMasuk.classList.add('active');
+            //     btnKeluar.classList.remove('active');
+            // });
 
-            btnKeluar.addEventListener('click', function() {
-                riwayatMasuk.style.display = 'none';
-                riwayatKeluar.style.display = 'block';
-                btnKeluar.classList.add('active');
-                btnMasuk.classList.remove('active');
-            });
+            // btnKeluar.addEventListener('click', function() {
+            //     riwayatMasuk.style.display = 'none';
+            //     riwayatKeluar.style.display = 'block';
+            //     btnKeluar.classList.add('active');
+            //     btnMasuk.classList.remove('active');
+            // });
 
             ////////
 
@@ -2137,7 +2186,7 @@
                     });
 
                     // Update stok keseluruhan di HTML
-                    document.querySelector('h5.mb-0.fs-7').textContent = stokKeseluruhan.toLocaleString();
+                    document.querySelector('#stok_seluruh').textContent = stokKeseluruhan.toLocaleString();
 
                     // Hitung surplus/defisit dari stok kemarin
                     const stokYesterday = stokPerhari[stokPerhari.length - 2]?.jumlah || 0;
@@ -2179,7 +2228,7 @@
                         },
                         series: [{
                             name: "stok",
-                            color: "var(--bs-secondary)",
+                            color: "var(--bs-primary)",
                             data: stokData,
                         }],
                         stroke: {
@@ -2188,7 +2237,7 @@
                         },
                         fill: {
                             type: "gradient",
-                            color: "var(--bs-secondary)",
+                            color: "var(--bs-primary)",
                             gradient: {
                                 shadeIntensity: 0,
                                 inverseColors: false,
@@ -2313,11 +2362,64 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
 
+                // -----------------------------------------------------------------------
+                // Customers Area
+                // -----------------------------------------------------------------------
+                var chart_users = {
+                series: [
+                    {
+                    name: "April 07 ",
+                    data: [0, 20, 15, 19, 14, 25, 30],
+                    },
+                    {
+                    name: "Last Week",
+                    data: [0, 8, 19, 13, 26, 16, 25],
+                    },
+                ],
+                chart: {
+                    fontFamily: "inherit",
+                    height: 100,
+                    type: "line",
+                    toolbar: {
+                    show: false,
+                    },
+                    sparkline: {
+                    enabled: true,
+                    },
+                },
+                colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+                grid: {
+                    show: false,
+                },
+                stroke: {
+                    curve: "smooth",
+                    colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+                    width: 2,
+                },
+                markers: {
+                    colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+                    strokeColors: "transparent",
+                },
+                tooltip: {
+                    theme: "dark",
+                    x: {
+                    show: false,
+                    },
+                    followCursor: true,
+                },
+                };
+                var chart_line_basic = new ApexCharts(
+                document.querySelector("#activity-area"),
+                chart_users
+                );
+                chart_line_basic.render();
+
+
         });
     </script>
 
 
-    <script>
+    {{-- <script>
         function checkSerialNumber() {
             fetch('/serialnumber', {
                     method: 'GET',
@@ -2349,5 +2451,5 @@
                 });
         }
         //setTimeout(() => {checkSerialNumber()}, 1000);
-    </script>
+    </script> --}}
 @endsection
