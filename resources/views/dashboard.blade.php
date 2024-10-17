@@ -1183,7 +1183,83 @@
     <script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="{{ asset('assets/js/dashboard_chart.js') }}"></script>
 
-    <div class="row" style="margin-bottom:-16px">
+    {{-- Total Data --}}
+    <div class="col-12">
+        <div class="card">
+          <div class="card-body p-4 pb-0 simplebar-mouse-entered" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px -24px 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 24px 24px 0px;">
+            <div class="row flex-nowrap">
+              <div class="col">
+                <div class="card primary-gradient">
+                  <div class="card-body text-center px-9 pb-4">
+                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-primary flex-shrink-0 mb-3 mx-auto">
+                      <iconify-icon icon="solar:box-linear" class="fs-7 text-white"></iconify-icon>
+                    </div>
+                    <h6 class="fw-normal fs-3 mb-1">Total Barang</h6>
+                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang }}</h4>
+                    <a href="{{ route('barang.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                      Details</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card warning-gradient">
+                  <div class="card-body text-center px-9 pb-4">
+                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-warning flex-shrink-0 mb-3 mx-auto">
+                      <iconify-icon icon="solar:inbox-in-linear" class="fs-7 text-white"></iconify-icon>
+                    </div>
+                    <h6 class="fw-normal fs-3 mb-1">Barang Masuk</h6>
+                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_masuk }}</h4>
+                    <a href="{{ route('barangmasuk.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                      Details</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card secondary-gradient">
+                  <div class="card-body text-center px-9 pb-4">
+                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-secondary flex-shrink-0 mb-3 mx-auto">
+                      <iconify-icon icon="solar:inbox-out-linear" class="fs-7 text-white"></iconify-icon>
+                    </div>
+                    <h6 class="fw-normal fs-3 mb-1">Barang Keluar</h6>
+                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_keluar }}</h4>
+                    <a href="{{ route('barangkeluar.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                      Details</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="card danger-gradient">
+                  <div class="card-body text-center px-9 pb-4">
+                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-danger flex-shrink-0 mb-3 mx-auto">
+                      <iconify-icon icon="solar:notification-unread-lines-broken" class="fs-7 text-white"></iconify-icon>
+                    </div>
+                    <h6 class="fw-normal fs-3 mb-1">Total Permintaan</h6>
+                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_permintaan }}</h4>
+                    <a href="{{ route('permintaanbarangkeluar.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                      Details</a>
+                  </div>
+                </div>
+              </div>
+              {{-- <div class="col">
+                <div class="card success-gradient">
+                  <div class="card-body text-center px-9 pb-4">
+                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-success flex-shrink-0 mb-3 mx-auto">
+                      <iconify-icon icon="ic:outline-forest" class="fs-7 text-white"></iconify-icon>
+                    </div>
+                    <h6 class="fw-normal fs-3 mb-1">Total Income</h6>
+                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">
+                      $36,715</h4>
+                    <a href="javascript:void(0)" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                      Details</a>
+                  </div>
+                </div>
+              </div> --}}
+            </div>
+          </div></div></div></div><div class="simplebar-placeholder" style="width: 1140px; height: 278px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+        </div>
+      </div>
+
+    <div class="row d-none" style="margin-bottom:-16px">
 
         {{-- <div class="card text-bg-primary" style="border-radius: 20px !important">
         <div class="card-body">
