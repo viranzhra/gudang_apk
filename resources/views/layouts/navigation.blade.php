@@ -14,7 +14,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
         .container {
             width: 80%;
@@ -206,10 +206,12 @@
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
                     <a href="#" class="text-nowrap logo-img">
-                        <img src="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}" style="width: 100px;
+                        <img src="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}"
+                            style="width: 100px;
                             border-radius: 7px;
                             margin-left: 50px;
-                            margin-top: 15px;" alt="" />
+                            margin-top: 15px;"
+                            alt="" />
                     </a>
                     <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                         <i class="ti ti-x fs-8"></i>
@@ -241,10 +243,19 @@
                                 <span class="hide-menu">Supplier</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        <li class="sidebar-item" style="margin-left: -1.8px;">
                             <a class="sidebar-link" href="/customer" aria-expanded="false">
-                                <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Customer</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="21.7" height="21.7"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-user-square-rounded">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 13a3 3 0 1 0 0 -6a3 3 0 0 0 0 6z" />
+                                    <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
+                                    <path d="M6 20.05v-.05a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v.05" />
+                                </svg>
+                                {{-- <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon> --}}
+                                <span class="hide-menu" style="margin-left: -2px;">Customer</span>
                             </a>
                         </li>
                         <li
@@ -292,7 +303,8 @@
                             <span class="sidebar-divider lg"></span>
                         </li>
                         <li class="nav-small-cap">
-                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <iconify-icon icon="solar:menu-dots-linear"
+                                class="nav-small-cap-icon fs-4"></iconify-icon>
                             <span class="hide-menu">TRANSACTION</span>
                         </li>
                         <li
@@ -324,7 +336,7 @@
                                         </span>
                                     </a>
                                 </li>
-                                
+
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">
@@ -336,7 +348,8 @@
                             </ul>
                         </li>
                         <li class="sidebar-item">
-                            <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}" href="/permintaanbarangkeluar" aria-expanded="false">
+                            <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
+                                href="/permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
@@ -344,11 +357,25 @@
                         <li
                             class="sidebar-item {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}">
                             <a class="sidebar-link has-arrow {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}"
-                                href="#"
+                                href="#" style="margin-left: -4.5px;"
                                 aria-expanded="{{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'true' : 'false' }}"
                                 data-bs-toggle="collapse" data-bs-target="#reportSubmenu">
-                                <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
-                                <span class="hide-menu">Report</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="29" height="23"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1."
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-report">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.697" />
+                                    <path d="M18 14v4h4" />
+                                    <path d="M18 11v-4a2 2 0 0 0 -2 -2h-2" />
+                                    <path
+                                        d="M8 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                    <path d="M8 11h4" />
+                                    <path d="M8 15h3" />
+                                </svg>
+                                {{-- <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon> --}}
+                                <span class="hide-menu" style="margin-left: -6px;">Report</span>
                             </a>
                             <ul id="reportSubmenu"
                                 class="collapse {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'show' : '' }}"

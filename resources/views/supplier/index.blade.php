@@ -392,10 +392,10 @@
                     selectedIds.push($(this).val());
                 });
 
-                if (selectedIds.length === 0) {
-                    showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
-                    return;
-                }
+                // if (selectedIds.length === 0) {
+                //     showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
+                //     return;
+                // }
 
                 $('#confirmDelete').modal('show'); // Tampilkan modal konfirmasi
                 $('#confirmDeleteButton').off('click').on('click', function() {
@@ -412,18 +412,25 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Selected data was successfully delected!');
+                                    'Selected data was successfully deleted!');
                                 $('#confirmDelete').modal('hide');
                                 $('#supplier-table').DataTable().ajax.reload();
+
+                                // Uncheck all checkboxes
+                                $('.select-item').prop('checked', false);
+                                $('#select-all').prop('checked', false);
+
+                                // Hide the delete button after the operation
+                                toggleDeleteButton();
                             } else {
                                 showNotification('error',
-                                    'Gagal menghapus supplier terpilih.');
+                                    'Failed to delete selected supplier!');
                             }
                         },
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'Terjadi kesalahan saat menghapus supplier terpilih.';
+                                'An error occurred while deleting selected type requirement.';
                             showNotification('error', message);
                         }
                     });
@@ -517,13 +524,13 @@
                         } else {
                             // If not successful, show error message
                             showNotification('error', response.message ||
-                                'Gagal menambahkan supplier.');
+                                'Failed to add supplier.');
                         }
                     },
                     error: function(xhr) {
                         // Handle AJAX errors
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menambahkan supplier.';
+                            'An error occurred while deleting selected supplier.';
                         showNotification('error', message); // Show error message
                     },
                     complete: function() {

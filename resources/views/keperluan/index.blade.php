@@ -135,16 +135,14 @@
                         @endif
 
                         <div class="mb-3">
-                            <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama
-                                Keperluan</label>
-                            <input type="text" id="nama" name="nama"
-                                class="form-control bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg"
+                            <label for="nama" class="form-label">Requirement Type</label>
+                            <input type="text" id="nama" name="nama" class="form-control"
                                 placeholder="Untuk Dipinjam" required />
                         </div>
 
                         <div class="form-check mb-3">
                             <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                            <label for="extend" class="form-check-label ms-2">Terapkan dua tanggal</label>
+                            <label for="extend" class="form-check-label ms-2">Apply two dates?</label>
                         </div>
 
                         <script>
@@ -159,7 +157,7 @@
                             <div class="row">
                                 <!-- Input Nama Tanggal Akhir -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="nama_tanggal_akhir" class="form-label">Nama Tanggal Akhir</label>
+                                    <label for="nama_tanggal_akhir" class="form-label">Extension Name</label>
                                     <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
                                         class="form-control" placeholder="Tanggal Pengembalian"
                                         value="Tanggal Pengembalian" />
@@ -167,7 +165,7 @@
 
                                 <!-- Input Batas Waktu -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="batas_hari" class="form-label">Batas Waktu (Hari)</label>
+                                    <label for="batas_hari" class="form-label">Time Limit (Days)</label>
                                     <input type="number" id="batas_hari" name="batas_hari" class="form-control"
                                         min="1" max="90" value="1" required />
                                 </div>
@@ -188,7 +186,7 @@
                                         const tanggalAkhir = new Date(tanggalPermintaan);
                                         tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu); // Menambahkan batas waktu
                                         tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[
-                                        0]; // Mengatur nilai untuk tanggal akhir
+                                            0]; // Mengatur nilai untuk tanggal akhir
                                     }
 
                                     // Event listener jika batas waktu diubah
@@ -502,10 +500,10 @@
                     selectedIds.push($(this).val());
                 });
 
-                if (selectedIds.length === 0) {
-                    showNotification('error', 'Pilih setidaknya satu type requirement untuk dihapus.');
-                    return;
-                }
+                // if (selectedIds.length === 0) {
+                //     showNotification('error', 'Select at least one type requirement to delete.');
+                //     return;
+                // }
 
                 $('#confirmDelete').modal('show'); // Show confirmation modal
                 $('#confirmDeleteButton').off('click').on('click', function() {
@@ -522,18 +520,22 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Data yang dipilih berhasil dihapus!');
+                                    'Selected data was successfully delected!');
                                 $('#confirmDelete').modal('hide');
-                                $('#KeperluanTable').DataTable().ajax.reload();
+                                $('#KeperluanTable').DataTable().ajax.reload(
+                                    function() {
+                                        // Setelah reload, sembunyikan tombol delete
+                                        toggleDeleteButton();
+                                    });
                             } else {
                                 showNotification('error',
-                                    'Gagal menghapus type requirement terpilih.');
+                                    'Failed to delete selected type requirement!');
                             }
                         },
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'Terjadi kesalahan saat menghapus type requirement terpilih.';
+                                'An error occurred while deleting selected type requirement.';
                             showNotification('error', message);
                         }
                     });
@@ -665,11 +667,12 @@
                     {
                         data: 'batas_hari',
                         name: 'batas_hari',
-                        render: function(data) {
-                            // Cek apakah data null atau undefined, jika ya tampilkan "- hari"
-                            return data ? data + ' hari' : 'Tidak ada batas hari';
+                        render: function(data, type, row) {
+                            // Jika extend bernilai 0 atau tidak ada batas hari, tampilkan "Tidak ada batas hari"
+                            return row.extend == 0 ? 'Tidak ada batas hari' : (data ? data +
+                                ' hari' : 'Tidak ada batas hari');
                         },
-                        defaultContent: '- hari' // Jika datanya kosong dari awal, tampilkan "- hari"
+                        defaultContent: 'Tidak ada batas hari' // Tampilkan "Tidak ada batas hari" jika datanya kosong dari awal
                     },
                     {
                         data: 'id',
@@ -699,8 +702,13 @@
 
             // Enable/disable the delete selected button
             function toggleDeleteButton() {
-                const anyChecked = $('.select-item:checked').length > 0;
-                $('#deleteSelected').prop('disabled', !anyChecked);
+                const selected = $('.select-item:checked').length;
+                const deleteButton = $('#deleteSelected');
+                if (selected > 0) {
+                    deleteButton.removeClass('d-none');
+                } else {
+                    deleteButton.addClass('d-none');
+                }
             }
         });
     </script>
