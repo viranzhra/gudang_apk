@@ -433,7 +433,7 @@
             <div class="card" style="border-radius: 20px !important">
                 <div class="card-body">
                     <h4 class="card-title">Most Stock Items</h4>
-                    <div id="jumlah-barang" style="min-height: 235px"></div>
+                    <div id="stok-terbanyak" style="min-height: 235px"></div>
                 </div>
             </div>
             <!-- -------------------------------------------- -->
@@ -1518,46 +1518,57 @@
                         const activityList = document.querySelector('.timeline-widget');
                         activityList.innerHTML = '';
 
-                        data.forEach(activity => {
-                            const listItem = document.createElement('li');
-                            listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
+                        if (data.length === 0) {
+                            const emptyMessage = document.createElement('li');
+                            emptyMessage.className = 'timeline-item d-flex position-relative overflow-hidden';
+                            emptyMessage.innerHTML = `
+                                <div class="timeline-desc fs-3 text-dark mt-n1">
+                                    No activities found today.
+                                </div>
+                            `;
+                            activityList.appendChild(emptyMessage);
+                        } else {
+                            data.forEach(activity => {
+                                const listItem = document.createElement('li');
+                                listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
 
-                            const truncatedDescription = truncateText(activity.description, 20);
-                            const fullDescription = activity.description;
+                                const truncatedDescription = truncateText(activity.description, 20);
+                                const fullDescription = activity.description;
 
-                            listItem.innerHTML = `
-                            <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
-                            <div class="timeline-badge-wrap d-flex flex-column align-items-center">
-                                <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
-                                <span class="timeline-badge-border d-block flex-shrink-0"></span>
-                            </div>
-                            <div class="timeline-desc fs-3 text-dark mt-n1">
-                                <span class="truncated-text">${truncatedDescription}</span>
-                                <span class="full-text" style="display: none;">${fullDescription}</span>
-                                ${truncatedDescription !== fullDescription ? '<span class="expand-btn" style="cursor: pointer;">...</span>' : ''}
-                            </div>
-                        `;
+                                listItem.innerHTML = `
+                                <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
+                                <div class="timeline-badge-wrap d-flex flex-column align-items-center">
+                                    <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
+                                    <span class="timeline-badge-border d-block flex-shrink-0"></span>
+                                </div>
+                                <div class="timeline-desc fs-3 text-dark mt-n1">
+                                    <span class="truncated-text">${truncatedDescription}</span>
+                                    <span class="full-text" style="display: none;">${fullDescription}</span>
+                                    ${truncatedDescription !== fullDescription ? '<span class="expand-btn" style="cursor: pointer;">...</span>' : ''}
+                                </div>
+                            `;
 
-                            activityList.appendChild(listItem);
+                                activityList.appendChild(listItem);
 
-                            if (truncatedDescription !== fullDescription) {
-                                const expandBtn = listItem.querySelector('.expand-btn');
-                                const truncatedText = listItem.querySelector('.truncated-text');
-                                const fullText = listItem.querySelector('.full-text');
+                                if (truncatedDescription !== fullDescription) {
+                                    const expandBtn = listItem.querySelector('.expand-btn');
+                                    const truncatedText = listItem.querySelector('.truncated-text');
+                                    const fullText = listItem.querySelector('.full-text');
 
-                                expandBtn.addEventListener('click', function() {
-                                    if (truncatedText.style.display !== 'none') {
-                                        truncatedText.style.display = 'none';
-                                        fullText.style.display = 'inline';
-                                        expandBtn.innerHTML = '<b>Show less</b>';
-                                    } else {
-                                        truncatedText.style.display = 'inline';
-                                        fullText.style.display = 'none';
-                                        expandBtn.innerHTML = '...';
-                                    }
-                                });
-                            }
-                        });
+                                    expandBtn.addEventListener('click', function() {
+                                        if (truncatedText.style.display !== 'none') {
+                                            truncatedText.style.display = 'none';
+                                            fullText.style.display = 'inline';
+                                            expandBtn.innerHTML = '<b>Show less</b>';
+                                        } else {
+                                            truncatedText.style.display = 'inline';
+                                            fullText.style.display = 'none';
+                                            expandBtn.innerHTML = '...';
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     })
                     .catch(error => {
                         console.error('There has been a problem with your fetch operation:', error);
@@ -2418,14 +2429,25 @@
                     // Extracting the required data from the API response
                     const barangData = data.data;
 
+                    // Combine quantities for items with the same barang_id
+                    const combinedBarangData = barangData.reduce((acc, item) => {
+                        const existingItem = acc.find(i => i.barang_id === item.barang_id);
+                        if (existingItem) {
+                            existingItem.jumlah = parseInt(existingItem.jumlah) + parseInt(item.jumlah);
+                        } else {
+                            acc.push({...item, jumlah: parseInt(item.jumlah)});
+                        }
+                        return acc;
+                    }, []);
+
                     // Sort the data based on 'jumlah' in descending order
-                    const sortedBarangData = barangData.sort((a, b) => parseInt(b.jumlah) - parseInt(a.jumlah));
+                    const sortedBarangData = combinedBarangData.sort((a, b) => b.jumlah - a.jumlah);
 
                     // Slice the first 6 items to display only 6 data points
                     const top6BarangData = sortedBarangData.slice(0, 6);
 
                     // Prepare data for the chart
-                    const jumlahBarang = top6BarangData.map(item => parseInt(item.jumlah)); // array of 'jumlah'
+                    const jumlahBarang = top6BarangData.map(item => item.jumlah); // array of 'jumlah'
                     const namaBarang = top6BarangData.map(item => item.nama_barang); // array of 'nama_barang'
 
                     // Basic Bar Chart with sorted data
@@ -2445,7 +2467,7 @@
                         grid: {
                             borderColor: "transparent",
                         },
-                        colors: ['var(--bs-primary)', 'var(--bs-secondary)', 'var(--bs-success)', 'var(--bs-danger)', 'var(--bs-warning)', 'var(--bs-dark)'],
+                        colors: ['#635bff', '#7b6fff', '#9486ff', '#ac9dff', '#c5b4ff', '#ddcbff'],
                         plotOptions: {
                             bar: {
                                 horizontal: true,
@@ -2491,7 +2513,7 @@
 
                     // Render the chart
                     var chart_bar_basic = new ApexCharts(
-                        document.querySelector("#jumlah-barang"),
+                        document.querySelector("#stok-terbanyak"),
                         options_basic
                     );
                     chart_bar_basic.render();
