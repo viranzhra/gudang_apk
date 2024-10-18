@@ -1532,8 +1532,12 @@
                                 const listItem = document.createElement('li');
                                 listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
 
-                                const truncatedDescription = truncateText(activity.description, 20);
-                                const fullDescription = activity.description;
+                                let formattedDescription = activity.description;
+                                if (activity.badge_color === "bg-success" || activity.badge_color === "bg-danger") {
+                                    formattedDescription = activity.description.replace(/\n/g, '<br>');
+                                }
+                                const truncatedDescription = truncateText(formattedDescription, 20);
+                                const fullDescription = formattedDescription;
 
                                 listItem.innerHTML = `
                                 <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
