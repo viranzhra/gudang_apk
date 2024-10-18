@@ -132,7 +132,7 @@
                         <h5 class="heading-with-icon">
                             <a href="/barangmasuk"><img src="{{ asset('assets/images/icon/back-arrow2.png') }}"
                                     class="back-icon" onclick="history.back()" alt="Back"></a>
-                            <span style="margin-left: 38%;">Tambah Barang</span>
+                            <span style="margin-left: 38%;">Add Item</span>
                         </h5>
 
                         <!-- Notifikasi flash message -->
@@ -149,9 +149,9 @@
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="jenis_barang" class="form-label">Jenis Barang</label>
+                                <label for="jenis_barang" class="form-label">Item Type</label>
                                 <select id="jenis_barang" name="jenis_barang_id" class="form-select select2" required>
-                                    <option value="" @disabled(true) selected>Pilih jenis barang</option>
+                                    <option value="" @disabled(true) selected>Select type</option>
                                     @foreach ($jenis_barang as $d)
                                         <option value="{{ $d->id }}"
                                             {{ $d->id == $jenis_barang_id ? 'selected' : '' }}>{{ $d->nama }}</option>
@@ -161,14 +161,14 @@
 
                             <div class="col-md-6">
                                 <label for="barang" class="form-label d-flex align-items-center">
-                                    Barang
+                                    Item Data
                                     <div id="loading-icon" class="ms-2" style="display: none;">
                                         <i class="fas fa-spinner fa-spin fa-lg"></i>
                                     </div>
                                 </label>
                                 <select id="barang" name="barang_id" class="form-select select2" required>
-                                    <option value="" @disabled(true) selected>Pilih barang</option>
-                                    <option value="" disabled id="no-data-option">Pilih jenis barang</option>
+                                    <option value="" @disabled(true) selected>Select item</option>
+                                    <option value="" disabled id="no-data-option">Select item type</option>
                                     @if (isset($barangbyjenis))
                                         @foreach ($barangbyjenis as $d)
                                             <option value="{{ $d->id }}"
@@ -177,25 +177,24 @@
                                         @endforeach
                                     @endif
                                 </select>
-                                <div id="no-data-message" class="text-danger mt-2" style="display: none;">Pilih jenis barang
-                                    dulu</div>
+                                <div id="no-data-message" class="text-danger mt-2" style="display: none;">Select Item Type First!</div>
                             </div>
                         </div>
 
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="keterangan" class="form-label">Keterangan</label>
+                                <label for="keterangan" class="form-label">Description</label>
                                 <input type="text" id="keterangan" name="keterangan" class="form-control">
                             </div>
                             <div class="col-md-6">
-                                <label for="tanggal" class="form-label">Tanggal Masuk</label>
+                                <label for="tanggal" class="form-label">Entry Date</label>
                                 <input type="date" id="tanggal" name="tanggal" class="form-control"
                                     value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" required>
                             </div>
                         </div>
 
                         <div class="mb-4">
-                            <label for="quantity-input" class="form-label">Jumlah Barang:</label>
+                            <label for="quantity-input" class="form-label">Quantity:</label>
                             <div class="quantity-control-wrapper">
 
                                 <div class="quantity-control">
@@ -210,8 +209,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div id="helper-text-explanation" class="form-text">Input jumlah barang dengan minimal 1 dan
-                                maksimal 100.</div>
+                            <div id="helper-text-explanation" class="form-text">Input quantity with min. 1 and max. 100</div>
                         </div>
 
                         <div id="barang-container">
@@ -220,7 +218,7 @@
                                 {{-- <span style="color: black; font-weight: bold; text-align: center;" class="d-block mb-3">Barang 1</span> --}}
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="mx-auto"
-                                        style="color: black; font-weight: bold; text-align: center;">Barang 1</span>
+                                        style="color: black; font-weight: bold; text-align: center;">Item 1</span>
                                     <button type="button" class="btn btn-danger btn-sm remove-barang-button"
                                         style="background-color: #910a0a; border: none;">
                                         <i class="fas fa-trash"></i>
@@ -234,17 +232,17 @@
                                             class="form-control" required>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="status_barang_1" class="form-label">Kondisi Barang</label>
+                                        <label for="status_barang_1" class="form-label">Status</label>
                                         <select id="status_barang_1" name="status_barangs[]" class="form-select select2"
                                             required>
-                                            <option value="" disabled selected>Pilih kondisi barang</option>
+                                            <option value="" disabled selected>Select status</option>
                                             @foreach ($status_barang as $d)
                                                 <option value="{{ $d->id }}">{{ $d->nama }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="kelengkapan_1" class="form-label">Kelengkapan (Opsional)</label>
+                                        <label for="kelengkapan_1" class="form-label">Completeness (Optional)</label>
                                         <input type="text" id="kelengkapan_1" name="kelengkapans[]"
                                             class="form-control">
                                     </div>
@@ -254,7 +252,7 @@
 
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary w-100" id="submitButton">
-                                <span id="buttonText">Simpan</span>
+                                <span id="buttonText">Save</span>
                                 <i id="loadingSpinner" class="fas fa-spinner fa-spin" style="display: none;"></i>
                             </button>
                         </div>
@@ -349,7 +347,7 @@
                     newItem.innerHTML = `
         <hr class="mb-4">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="mx-auto" style="color: black; font-weight: bold;">Barang ${index}</span>
+                <span class="mx-auto" style="color: black; font-weight: bold;">Item ${index}</span>
                 <button type="button" class="btn btn-danger btn-sm remove-barang-button" style="background-color: #910a0a; border: none;">
                     <i class="fas fa-trash"></i>
                 </button>
@@ -361,16 +359,16 @@
                     <input type="text" id="serial_number_${index}" name="serial_numbers[]" class="form-control" required />
                 </div>
                 <div class="col-md-4">
-                    <label for="status_barang_${index}" class="form-label">Kondisi Barang</label>
+                    <label for="status_barang_${index}" class="form-label">Status</label>
                     <select id="status_barang_${index}" name="status_barangs[]" class="form-select select2">
-                        <option selected>Pilih kondisi barang</option>
+                        <option selected>Select status</option>
                         @foreach ($status_barang as $d)
                             <option value="{{ $d->id }}">{{ $d->nama }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label for="kelengkapan_${index}" class="form-label">Kelengkapan (Opsional)</label>
+                    <label for="kelengkapan_${index}" class="form-label">Completeness (Optional)</label>
                     <input type="text" id="kelengkapan_${index}" name="kelengkapans[]" class="form-control" />
                 </div>
             </div>
@@ -453,7 +451,7 @@
                                 return response.json();
                             })
                             .then(data => {
-                                barangSelect.innerHTML = '<option value="" selected>Pilih barang</option>';
+                                barangSelect.innerHTML = '<option value="" selected>Select item</option>';
                                 noDataMessage.classList.add('d-none'); // Hide the no data message
 
                                 if (data.length > 0) {
@@ -464,7 +462,7 @@
                                 } else {
                                     noDataMessage.classList.remove('d-none');
                                     barangSelect.innerHTML +=
-                                        '<option disabled>Data barang tidak ada</option>';
+                                        '<option disabled>No item data</option>';
                                 }
                             })
                             .catch(error => {
@@ -472,7 +470,7 @@
                                 console.error('Error fetching barang:', error);
                             });
                     } else {
-                        barangSelect.innerHTML = '<option value="" disabled selected>Pilih barang</option>';
+                        barangSelect.innerHTML = '<option value="" disabled selected>Select item</option>';
                         noDataMessage.classList.add('d-none');
                     }
                 });

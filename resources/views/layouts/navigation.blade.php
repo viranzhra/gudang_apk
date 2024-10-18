@@ -455,8 +455,13 @@
                                             <i class="ti ti-list-check fs-6"></i>
                                             <p class="mb-0 fs-3">My Task</p>
                                         </a>
-                                        <a href="./authentication-login.html"
-                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                        <!-- Logout Button -->
+                                        <a href="#" class="btn btn-outline-primary mx-3 mt-2 d-block"
+                                            data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                            Logout
+                                        </a>
+                                        {{-- <a href="./authentication-login.html"
+                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a> --}}
                                     </div>
                                 </div>
                             </li>
@@ -475,6 +480,36 @@
     </div>
     </div>
     </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document" style="max-width: 400px;">
+            <div class="modal-content rounded-3 shadow">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <p class="mb-0">Apakah Anda yakin ingin keluar?</p>
+                        <p class="text-muted">Semua sesi yang sedang aktif akan dihentikan.</p>
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end border-top-0">
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        @csrf
+                    </form>
+                    <button style="background-color: #c70000; color: white;" type="button" class="btn"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {

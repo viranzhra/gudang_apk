@@ -514,7 +514,7 @@
                         <th style="background-color:#cdcece;">Item</th>
                         <th style="background-color:#cdcece;">Description</th>
                         <th style="background-color:#cdcece;">Serial Number</th>
-                        <th style="background-color:#cdcece;">Status Item</th>
+                        <th style="background-color:#cdcece;">Status</th>
                         <th style="background-color:#cdcece;">Requirement</th>
                         <th style="background-color:#cdcece;">Kesalahan</th>
                     </tr>
@@ -534,7 +534,7 @@
                     <th>Item</th>
                     <th>Quantity</th>
                     <th>Description</th>
-                    <th>Date of Entry</th>
+                    <th>Entry Date</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -628,62 +628,58 @@
                     searchable: false,
                 }]
             });
-
+    
             // Mengatur event listener untuk input file
             document.getElementById('file').addEventListener('change', function() {
-                // Memanggil fungsi previewData ketika file dipilih
                 if (this.files.length > 0) {
-                    previewData(); // Panggil fungsi previewData ketika file dipilih
+                    const file = this.files[0];
+                    // Memeriksa ekstensi file
+                    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                        previewData(); // Panggil fungsi previewData ketika file dipilih
+                    } else {
+                        alert('Silakan pilih file Excel (.xlsx atau .xls)!');
+                    }
                 }
             });
-
+    
             // Fungsi untuk melakukan preview data dari file yang diunggah
             window.previewData = async function() {
                 const fileInput = document.getElementById('file');
                 const file = fileInput.files[0];
-
-                // Memastikan ada file yang dipilih
+    
                 if (!file) {
                     alert('Silakan pilih file terlebih dahulu!');
                     return;
                 }
-
+    
                 // Tampilkan indikator loading
                 const loadingIndicator = document.getElementById('loadingIndicator');
                 loadingIndicator.style.display = 'block';
-
+    
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     const data = e.target.result;
-                    const workbook = XLSX.read(data, {
-                        type: 'binary'
-                    });
+                    const workbook = XLSX.read(data, { type: 'binary' });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                        header: 1
-                    });
-
-                    console.log('Data dari Excel:', jsonData); // Log data dari Excel
-
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+    
+                    console.log('Data dari Excel:', jsonData);
+    
                     // Mengosongkan tabel preview
                     table.clear();
-
-                    // Panggil fungsi untuk validasi serial number menggunakan API
-                    const rowErrors = await checkExistingSerialNumbers(jsonData.slice(
-                        1)); // Validasi kesalahan
-
-                    console.log('Row Errors:', rowErrors); // Log kesalahan yang ditemukan
-
-                    // Menyimpan baris dengan dan tanpa kesalahan
-                    const rowsWithErrors = []; // Menyimpan baris dengan kesalahan
-                    const rowsWithoutErrors = []; // Menyimpan baris tanpa kesalahan
-
-                    // Mengolah data untuk ditambahkan ke tabel
+    
+                    // Validasi kesalahan
+                    const rowErrors = await checkExistingSerialNumbers(jsonData.slice(1));
+    
+                    console.log('Row Errors:', rowErrors);
+    
+                    const rowsWithErrors = [];
+                    const rowsWithoutErrors = [];
+    
                     jsonData.slice(1).forEach((row, index) => {
-                        const errorMessage = rowErrors[index] ||
-                            ''; // Ambil pesan kesalahan untuk baris ini
+                        const errorMessage = rowErrors[index] || '';
                         const rowData = [
-                            '', // Placeholder untuk nomor urut (akan diupdate nanti)
+                            '', // Placeholder untuk nomor urut
                             row[0] || '', // Barang ID
                             row[1] || '', // Keterangan
                             row[2] || '', // Serial Number
@@ -691,137 +687,97 @@
                             row[4] || '', // Kelengkapan
                             errorMessage // Kesalahan
                         ];
-
+    
                         if (errorMessage) {
-                            rowsWithErrors.push(
-                                rowData
-                                ); // Jika ada kesalahan, masukkan ke array rowsWithErrors
+                            rowsWithErrors.push(rowData);
                         } else {
-                            rowsWithoutErrors.push(
-                                rowData
-                                ); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
+                            rowsWithoutErrors.push(rowData);
                         }
                     });
-
-                    // Gabungkan kedua array, rowsWithErrors di atas
+    
                     const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
-
-                    // Menambahkan data ke DataTable dengan pewarnaan
+    
                     combinedRows.forEach((row) => {
-                        const rowNode = table.row.add(row).draw(false)
-                            .node(); // Tambahkan baris ke DataTable
-                        if (row[6]) { // Cek jika ada kesalahan
-                            // Menggunakan atribut style untuk mengatur warna teks kolom kesalahan
-                            $(rowNode).find('td').last().css('color',
-                                '#f00'); // Ganti dengan warna yang Anda inginkan
+                        const rowNode = table.row.add(row).draw(false).node();
+                        if (row[6]) {
+                            $(rowNode).find('td').last().css('color', '#f00'); // Mengatur warna teks kolom kesalahan
                         }
                     });
-
-                    // Mengupdate nomor urut setelah data ditambahkan
+    
                     updateRowNumbers();
-
-                    // Tampilkan/ sembunyikan tombol upload berdasarkan hasil validasi
+    
                     toggleUploadButton(rowErrors);
-
-                    // Menampilkan kontainer pratinjau
+    
                     document.getElementById('previewContainer').style.display = 'block';
-
-                    // Sembunyikan indikator loading
+    
                     loadingIndicator.style.display = 'none';
                 };
-
+    
                 reader.onerror = function(error) {
                     console.error('Error reading file:', error);
                     alert('Error reading file. Please try again.');
-                    loadingIndicator.style.display = 'none'; // Sembunyikan loading indicator
+                    loadingIndicator.style.display = 'none';
                 };
-
+    
                 reader.readAsBinaryString(file);
             };
-
+    
             async function checkExistingSerialNumbers(dataRows) {
                 try {
-                    // Panggil API untuk mendapatkan serial number
-                    const serialNumberResponse = await fetch(
-                        'https://doaibutiri.my.id/gudang/api/serialnumber', {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            }
-                        });
-
+                    const serialNumberResponse = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber');
                     if (!serialNumberResponse.ok) {
-                        const errorData = await serialNumberResponse.text();
-                        console.error('Error Response for Serial Numbers:', errorData);
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
-
                     const serialNumberData = await serialNumberResponse.json();
-                    console.log('Serial Number Data:', serialNumberData);
-
-                    // Mengambil existingNumbers dari serialNumberData
-                    const existingNumbers = serialNumberData.map(item => item
-                        .serial_number); // Mengambil serial number dari data
-                    console.log('Existing Serial Numbers:', existingNumbers);
-
-                    // Panggil API untuk mendapatkan data barang
-                    const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang', {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-
+                    const existingNumbers = serialNumberData.map(item => item.serial_number);
+    
+                    const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
                     if (!barangResponse.ok) {
-                        const errorData = await barangResponse.text();
-                        console.error('Error Response for Barang:', errorData);
                         throw new Error(`HTTP error! status: ${barangResponse.status}`);
                     }
-
                     const barangData = await barangResponse.json();
-                    console.log('Barang Data:', barangData);
-
                     const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang) : [];
-                    console.log('Existing Barang Names:', existingBarang);
-
-                    // Inisialisasi array errors dengan elemen kosong sebanyak jumlah baris data
+    
+                    const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
+                    if (!kondisiResponse.ok) {
+                        throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
+                    }
+                    const kondisiData = await kondisiResponse.json();
+                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama) : [];
+    
                     const errors = new Array(dataRows.length).fill(null);
-
-                    // Proses setiap baris dalam dataRows
+    
                     dataRows.forEach((row, index) => {
-                        const serialNumber = row[2]; // Ambil serial number dari baris saat ini
-                        const barangName = row[0]; // Ambil nama barang dari baris saat ini
-
+                        const serialNumber = row[2];
+                        const barangName = row[0];
+                        const kondisiBarang = row[3];
+    
                         let errorMessages = [];
-
-                        // Cek apakah nama barang ada di database
+    
                         if (barangName && !existingBarang.includes(barangName.toString())) {
-                            errorMessages.push(
-                                `Item not available`); // Jika barang tidak ada di database
+                            errorMessages.push(`Item not available`);
                         }
-
-                        // Cek apakah serial number sudah terpakai
+    
                         if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
-                            errorMessages.push(
-                                `Serial Number already used`); // Ubah pesan kesalahan
+                            errorMessages.push(`Serial Number already used`);
                         }
-
-                        // Jika ada pesan kesalahan, tambahkan ke elemen errors yang sesuai dengan baris tersebut
+    
+                        if (kondisiBarang && !existingKondisi.includes(kondisiBarang.toString())) {
+                            errorMessages.push(`Status not available`);
+                        }
+    
                         if (errorMessages.length > 0) {
-                            errors[index] = errorMessages.join(
-                                ' and '); // Gabungkan semua pesan kesalahan
+                            errors[index] = errorMessages.join(' and ');
                         }
                     });
-
-                    return errors; // Kembalikan array pesan kesalahan yang sudah disesuaikan dengan baris data
+    
+                    return errors;
                 } catch (error) {
                     console.error('Error in checking serial numbers or barang data:', error.message);
-                    return dataRows.map(() =>
-                        `Error checking data: ${error.message}`); // Kembalikan error jika terjadi masalah
+                    return dataRows.map(() => `Error checking data: ${error.message}`);
                 }
             }
-
-
+    
             // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
             function toggleUploadButton(rowErrors) {
                 const uploadButton = document.getElementById('uploadButton');
@@ -849,7 +805,7 @@
             }
         });
     </script>
-
+    
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -970,11 +926,11 @@
                         const detailContent = data.map((detail, index) => `
                             <hr class="col-span-10 my-3">
                             <div class="row">
-                                <div class="col-3"><strong>Barang ${index + 1}</strong></div>
+                                <div class="col-3"><strong>Item ${index + 1}</strong></div>
                                 :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
                             </div>
                             <div class="row">
-                                <div class="col-3"><strong>Kelengkapan</strong></div>
+                                <div class="col-3"><strong>Completeness</strong></div>
                                 :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
                             </div>
                         `).join('');
@@ -984,17 +940,17 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
+                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Incoming Item Detail</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <div class="grid grid-cols-10 gap-2">
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Nama Barang</strong></div>:
+                                                    <div class="col-3"><strong>Item</strong></div>:
                                                     <div class="col-8">${namaBarang || '—'}</div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Jenis Barang</strong></div>:
+                                                    <div class="col-3"><strong>Type</strong></div>:
                                                     <div class="col-8">
                                                         ${namaJenisBarang !== null && namaJenisBarang !== '' && namaJenisBarang !== 'null' ? namaJenisBarang : '—'}
                                                     </div>
@@ -1004,17 +960,17 @@
                                                     <div class="col-8">${namaSupplier || '—'}</div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Tanggal Masuk</strong></div>:
+                                                    <div class="col-3"><strong>Entry Date</strong></div>:
                                                     <div class="col-8">${tanggalBarang || '—'}</div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Keterangan</strong></div>:
+                                                    <div class="col-3"><strong>Completeness</strong></div>:
                                                     <div class="col-8">
                                                         ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
                                                     </div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Jumlah</strong></div>:
+                                                    <div class="col-3"><strong>Quantity</strong></div>:
                                                     <div class="col-8">${jumlah || 0}</div>
                                                 </div>
                                                 ${detailContent}
@@ -1170,7 +1126,7 @@
                         // Reload halaman sebelum menampilkan notifikasi
                         setTimeout(() => {
                             // Tampilkan notifikasi sukses
-                            showNotification('Data berhasil dihapus.', 'success');
+                            showNotification('Selected data was successfully delected!', 'success');
                             location.reload(); // Reload halaman
                         }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
                     },
