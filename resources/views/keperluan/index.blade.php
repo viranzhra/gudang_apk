@@ -204,7 +204,7 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Modal Edit Data -->
     <div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -255,6 +255,68 @@
             </div>
         </div>
     </div>
+
+    <!-- Script JavaScript -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const batasWaktuInput = document.getElementById('editbatas_hari');
+        const tanggalAkhirInput = document.getElementById('edit-nama_tanggal_akhir');
+        const extendCheckbox = document.getElementById('edit-extend');
+        const editExtensionNameField = document.getElementById('editExtensionNameField');
+
+        // Store previous values for the extension fields
+        let previousExtensionName = '';
+        let previousBatasWaktu = '';
+
+        // Function to update the end date based on the time limit
+        function updateTanggalAkhir() {
+            const batasWaktu = parseInt(batasWaktuInput.value) || 1;
+
+            // Get the request date from the server or use a default date
+            const tanggalPermintaan = new Date("{{ date('Y-m-d') }}");
+            const tanggalAkhir = new Date(tanggalPermintaan);
+            tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu);
+
+            // Only update the end date if the extend is checked
+            if (extendCheckbox.checked) {
+                tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[0];
+            }
+        }
+
+        // Event listener for changing time limit
+        batasWaktuInput.addEventListener('input', updateTanggalAkhir);
+
+        // Toggle display of the extension fields based on checkbox
+        extendCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                editExtensionNameField.style.display = 'block';
+                tanggalAkhirInput.required = true;
+                batasWaktuInput.required = true;
+                this.value = '1'; // Set the value to 1 when checked
+
+                // Restore previous values if checkbox is checked
+                tanggalAkhirInput.value = previousExtensionName; // Restore previous extension name
+                batasWaktuInput.value = previousBatasWaktu; // Restore previous batas waktu
+            } else {
+                editExtensionNameField.style.display = 'none';
+                tanggalAkhirInput.required = false;
+                batasWaktuInput.required = false;
+                this.value = '0'; // Set the value to 0 when unchecked
+
+                // Save current values before resetting
+                previousExtensionName = tanggalAkhirInput.value;
+                previousBatasWaktu = batasWaktuInput.value;
+
+                // Clear the extension name when checkbox is unchecked
+                tanggalAkhirInput.value = ''; // Clear the extension name
+                batasWaktuInput.value = ''; // Reset batas waktu (optional)
+            }
+        });
+
+        // Initialize end date when the modal opens
+        updateTanggalAkhir();
+    });
+</script>
 
 
 
@@ -310,8 +372,8 @@
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        // Menghandle pengiriman form
-        $('#addForm').on('submit', function(e) {
+         // Menghandle pengiriman form
+         $('#addForm').on('submit', function(e) {
             e.preventDefault(); // Mencegah reload halaman
 
             // Menyiapkan data untuk dikirim
@@ -609,13 +671,13 @@
 
                         $('#edit-nama').val(data.nama);
                         $('#edit-extend').prop('checked', data.extend ==
-                        1); // Sesuaikan checkbox
+                            1); // Sesuaikan checkbox
                         $('#edit-id').val(id);
 
                         if (data.extend == 1) {
                             $('#editExtensionNameField').show();
                             $('#edit-nama_tanggal_akhir').val(data
-                            .nama_tanggal_akhir); // Isi extension name
+                                .nama_tanggal_akhir); // Isi extension name
                             $('#editbatas_hari').val(data.batas_hari); // Isi batas hari
                         } else {
                             $('#editExtensionNameField').hide();
@@ -629,7 +691,7 @@
                         let message = xhr.responseJSON?.message ||
                             'Error fetching type requirement data.';
                         showNotification('error',
-                        message); // Tampilkan pesan error yang lebih informatif
+                            message); // Tampilkan pesan error yang lebih informatif
                     }
                 });
             });
