@@ -3,7 +3,7 @@
 @section('content')
     <style>
         #previewContainer {
-            background-color: #8a8a8a1c;
+            background-color: #f2f2f2;
             padding-left: 12px;
             padding-right: 12px;
             border-radius: 16px;
@@ -477,6 +477,7 @@
                     </button> --}}
 
                 </div>
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
                 <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
                     title="Click to Upload" style="height: 40px; width: 193px;">
                     <iconify-icon id="uploadIcon" icon="mdi:upload"
@@ -499,15 +500,13 @@
             </button>
         </div>
 
-        <div id="loadingIndicator" style="display: none;">Loading...</div>
-
         <!-- Container for preview table -->
         <div id="previewContainer" style="display: none;">
-            <hr class="col-span-10 my-3">
+            {{-- <hr class="col-span-10 my-3"> --}}
             {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                 <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
             </button> --}}
-            <h5 class="mt-3" style="color: #26116b; text-align: center;">Preview Data</h5>
+            <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
             <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
                 <thead>
                     <tr>
@@ -524,7 +523,7 @@
             </table>
             <!-- Pagination controls -->
             <div id="pagination" class="mt-3"></div>
-            <hr class="col-span-10 my-3">
+            {{-- <hr class="col-span-10 my-3"> --}}
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
@@ -696,11 +695,11 @@
                         if (errorMessage) {
                             rowsWithErrors.push(
                                 rowData
-                            ); // Jika ada kesalahan, masukkan ke array rowsWithErrors
+                                ); // Jika ada kesalahan, masukkan ke array rowsWithErrors
                         } else {
                             rowsWithoutErrors.push(
                                 rowData
-                            ); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
+                                ); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
                         }
                     });
 
@@ -740,60 +739,105 @@
                 reader.readAsBinaryString(file);
             };
 
-            // Fungsi untuk mengecek serial number yang ada di database melalui API
             async function checkExistingSerialNumbers(dataRows) {
                 try {
-                    // Panggil API untuk mendapatkan serial number yang sudah ada
-                    const response = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber', {
-                        method: 'GET', // Gunakan GET untuk mendapatkan data
+                    // Panggil API untuk mendapatkan serial number
+                    const serialNumberResponse = await fetch(
+                        'https://doaibutiri.my.id/gudang/api/serialnumber', {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+
+                    if (!serialNumberResponse.ok) {
+                        const errorData = await serialNumberResponse.text();
+                        console.error('Error Response for Serial Numbers:', errorData);
+                        throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
+                    }
+
+                    const serialNumberData = await serialNumberResponse.json();
+                    console.log('Serial Number Data:', serialNumberData);
+
+                    // Mengambil existingNumbers dari serialNumberData
+                    const existingNumbers = serialNumberData.map(item => item
+                        .serial_number); // Mengambil serial number dari data
+                    console.log('Existing Serial Numbers:', existingNumbers);
+
+                    // Panggil API untuk mendapatkan data barang
+                    const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang', {
+                        method: 'GET',
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     });
 
-                    if (!response.ok) {
-                        const errorData = await response.text(); // Menangkap data kesalahan sebagai teks
-                        console.error('Error Response:', errorData); // Log error response
-                        throw new Error(
-                            `HTTP error! status: ${response.status}`); // Tangkap kesalahan jika tidak OK
+                    if (!barangResponse.ok) {
+                        const errorData = await barangResponse.text();
+                        console.error('Error Response for Barang:', errorData);
+                        throw new Error(`HTTP error! status: ${barangResponse.status}`);
                     }
 
-                    const existingData = await response.json(); // Ambil respons sebagai JSON
-                    const existingNumbers = existingData.map(item => item
-                        .serial_number); // Ambil hanya serial number
-                    console.log('Existing Serial Numbers:', existingNumbers); // Log serial numbers yang ada
+                    const barangData = await barangResponse.json();
+                    console.log('Barang Data:', barangData);
 
-                    const errors = [];
+                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang) : [];
+                    console.log('Existing Barang Names:', existingBarang);
 
-                    dataRows.forEach(row => {
-                        // Cek apakah serial number ada dan bukan undefined atau null
+                    // Inisialisasi array errors dengan elemen kosong sebanyak jumlah baris data
+                    const errors = new Array(dataRows.length).fill(null);
+
+                    // Proses setiap baris dalam dataRows
+                    dataRows.forEach((row, index) => {
                         const serialNumber = row[2]; // Ambil serial number dari baris saat ini
+                        const barangName = row[0]; // Ambil nama barang dari baris saat ini
 
+                        let errorMessages = [];
+
+                        // Cek apakah nama barang ada di database
+                        if (barangName && !existingBarang.includes(barangName.toString())) {
+                            errorMessages.push(
+                                `Item not available`); // Jika barang tidak ada di database
+                        }
+
+                        // Cek apakah serial number sudah terpakai
                         if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
-                            errors.push(`Serial number sudah terpakai`); // Simpan pesan kesalahan
-                        } else {
-                            errors.push(''); // Jika tidak ada kesalahan, tambahkan string kosong
+                            errorMessages.push(
+                                `Serial Number already used`); // Ubah pesan kesalahan
+                        }
+
+                        // Jika ada pesan kesalahan, tambahkan ke elemen errors yang sesuai dengan baris tersebut
+                        if (errorMessages.length > 0) {
+                            errors[index] = errorMessages.join(
+                                ' and '); // Gabungkan semua pesan kesalahan
                         }
                     });
 
-                    return errors; // Kembalikan array pesan kesalahan
+                    return errors; // Kembalikan array pesan kesalahan yang sudah disesuaikan dengan baris data
                 } catch (error) {
-                    console.error('Error fetching serial numbers:', error);
+                    console.error('Error in checking serial numbers or barang data:', error.message);
                     return dataRows.map(() =>
-                        'Error checking serial numbers'); // Kembalikan error jika terjadi masalah
+                        `Error checking data: ${error.message}`); // Kembalikan error jika terjadi masalah
                 }
             }
 
-            // Fungsi untuk menampilkan/ menyembunyikan tombol upload berdasarkan hasil validasi
+
+            // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
             function toggleUploadButton(rowErrors) {
                 const uploadButton = document.getElementById('uploadButton');
-                const hasErrors = rowErrors.some(error => error !== ''); // Cek apakah ada error
+
+                // Periksa apakah ada kesalahan; jika semua adalah null, berarti tidak ada kesalahan
+                const hasErrors = rowErrors.some(error => error !== null && error !==
+                    ''); // Cek jika ada kesalahan yang tidak null atau string kosong
+
+                // Jika tidak ada kesalahan, tampilkan tombol, jika ada kesalahan sembunyikan
                 if (hasErrors) {
                     uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
                 } else {
                     uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
                 }
             }
+
 
             // Fungsi untuk mengupdate nomor urut
             function updateRowNumbers() {
@@ -805,6 +849,7 @@
             }
         });
     </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -2,6 +2,13 @@
 
 @section('content')
     <style>
+        #previewContainer {
+            background-color: #8a8a8a1c;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 16px;
+        }
+
         .card {
             background-color: #ffffff;
             padding: 20px;
@@ -468,7 +475,14 @@
                     {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                         <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
                     </button> --}}
+
                 </div>
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
+                <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
+                    title="Click to Upload" style="height: 40px; width: 193px;">
+                    <iconify-icon id="uploadIcon" icon="mdi:upload"
+                        style="font-size: 20px; margin-right: 8px;"></iconify-icon>Import Data
+                </button>
             </form>
 
 
@@ -486,28 +500,23 @@
             </button>
         </div>
 
-        <div id="loadingIndicator" style="display: none;">Loading...</div>
-
         <!-- Container for preview table -->
         <div id="previewContainer" style="display: none;">
             <hr class="col-span-10 my-3">
-            <div class="d-flex align-items-center justify-content-between" style="position: relative;">
-                <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload" style="position: absolute; top: 0; left: 0;">
-                    <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon> Import Data
-                </button>
-                <h5 class="mt-3" style="color: #26116b; text-align: center; flex-grow: 1;">Imported Data</h5>
-            </div>
-            
-            <table id="previewTable" class="table table-bordered table-striped table-hover" style="width: 100%;">
+            {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+            </button> --}}
+            <h5 class="mt-3" style="color: #26116b; text-align: center;">Preview Data</h5>
+            <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th style="width: 5px;">No</th>
-                        <th>Item</th>
-                        <th>Description</th>
-                        <th>Serial Number</th>
-                        <th>Status Item</th>
-                        <th>Requirement</th>
-                        <th>Kesalahan</th>
+                        <th style="width: 5px; background-color:#cdcece;">No</th>
+                        <th style="background-color:#cdcece;">Item</th>
+                        <th style="background-color:#cdcece;">Description</th>
+                        <th style="background-color:#cdcece;">Serial Number</th>
+                        <th style="background-color:#cdcece;">Status Item</th>
+                        <th style="background-color:#cdcece;">Requirement</th>
+                        <th style="background-color:#cdcece;">Kesalahan</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -605,224 +614,195 @@
 
     <script>
         $(document).ready(function() {
-    // Inisialisasi DataTable
-    const table = $('#previewTable').DataTable({
-        paging: true,
-        pageLength: 5,
-        lengthMenu: [5, 10, 25, 50],
-        language: {
-            error: ''
-        },
-        columnDefs: [{
-            targets: 0,
-            orderable: false,
-            searchable: false,
-        }]
-    });
-
-    // Mengatur event listener untuk input file
-    document.getElementById('file').addEventListener('change', function() {
-        // Memanggil fungsi previewData ketika file dipilih
-        if (this.files.length > 0) {
-            previewData(); // Panggil fungsi previewData ketika file dipilih
-        }
-    });
-
-    // Fungsi untuk melakukan preview data dari file yang diunggah
-    window.previewData = async function() {
-        const fileInput = document.getElementById('file');
-        const file = fileInput.files[0];
-
-        // Memastikan ada file yang dipilih
-        if (!file) {
-            alert('Silakan pilih file terlebih dahulu!');
-            return;
-        }
-
-        // Tampilkan indikator loading
-        const loadingIndicator = document.getElementById('loadingIndicator');
-        loadingIndicator.style.display = 'block';
-
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const data = e.target.result;
-            const workbook = XLSX.read(data, {
-                type: 'binary'
-            });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-                header: 1
-            });
-
-            console.log('Data dari Excel:', jsonData); // Log data dari Excel
-
-            // Mengosongkan tabel preview
-            table.clear();
-
-            // Panggil fungsi untuk validasi serial number menggunakan API
-            const rowErrors = await checkExistingSerialNumbers(jsonData.slice(1)); // Validasi kesalahan
-
-            console.log('Row Errors:', rowErrors); // Log kesalahan yang ditemukan
-
-            // Menyimpan baris dengan dan tanpa kesalahan
-            const rowsWithErrors = []; // Menyimpan baris dengan kesalahan
-            const rowsWithoutErrors = []; // Menyimpan baris tanpa kesalahan
-
-            // Mengolah data untuk ditambahkan ke tabel
-            jsonData.slice(1).forEach((row, index) => {
-                const errorMessage = rowErrors[index] || ''; // Ambil pesan kesalahan untuk baris ini
-                const rowData = [
-                    '', // Placeholder untuk nomor urut (akan diupdate nanti)
-                    row[0] || '', // Barang ID
-                    row[1] || '', // Keterangan
-                    row[2] || '', // Serial Number
-                    row[3] || '', // Kondisi Barang
-                    row[4] || '', // Kelengkapan
-                    errorMessage // Kesalahan
-                ];
-
-                if (errorMessage) {
-                    rowsWithErrors.push(rowData); // Jika ada kesalahan, masukkan ke array rowsWithErrors
-                } else {
-                    rowsWithoutErrors.push(rowData); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
-                }
-            });
-
-            // Gabungkan kedua array, rowsWithErrors di atas
-            const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
-
-            // Menambahkan data ke DataTable dengan pewarnaan
-            combinedRows.forEach((row) => {
-                const rowNode = table.row.add(row).draw(false).node(); // Tambahkan baris ke DataTable
-                if (row[6]) { // Cek jika ada kesalahan
-                    // Menggunakan atribut style untuk mengatur warna teks kolom kesalahan
-                    $(rowNode).find('td').last().css('color', '#f00'); // Ganti dengan warna yang Anda inginkan
-                }
-            });
-
-            // Mengupdate nomor urut setelah data ditambahkan
-            updateRowNumbers();
-
-            // Tampilkan/ sembunyikan tombol upload berdasarkan hasil validasi
-            toggleUploadButton(rowErrors);
-
-            // Menampilkan kontainer pratinjau
-            document.getElementById('previewContainer').style.display = 'block';
-
-            // Sembunyikan indikator loading
-            loadingIndicator.style.display = 'none';
-        };
-
-        reader.onerror = function(error) {
-            console.error('Error reading file:', error);
-            alert('Error reading file. Please try again.');
-            loadingIndicator.style.display = 'none'; // Sembunyikan loading indicator
-        };
-
-        reader.readAsBinaryString(file);
-    };
-
-    // Fungsi untuk mengecek serial number yang ada di database melalui API
-    async function checkExistingSerialNumbers(dataRows) {
-        try {
-            // Panggil API untuk mendapatkan serial number yang sudah ada
-            const response = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber', {
-                method: 'GET', // Gunakan GET untuk mendapatkan data
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                const errorData = await response.text(); // Menangkap data kesalahan sebagai teks
-                console.error('Error Response:', errorData); // Log error response
-                throw new Error(`HTTP error! status: ${response.status}`); // Tangkap kesalahan jika tidak OK
-            }
-
-            const existingData = await response.json(); // Ambil respons sebagai JSON
-            const existingNumbers = existingData.map(item => item.serial_number); // Ambil hanya serial number
-            console.log('Existing Serial Numbers:', existingNumbers); // Log serial numbers yang ada
-
-            const errors = [];
-
-            dataRows.forEach(row => {
-                // Cek apakah serial number ada dan bukan undefined atau null
-                const serialNumber = row[2]; // Ambil serial number dari baris saat ini
-
-                if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
-                    errors.push(`Serial number sudah terpakai`); // Simpan pesan kesalahan
-                } else {
-                    errors.push(''); // Jika tidak ada kesalahan, tambahkan string kosong
-                }
-            });
-
-            return errors; // Kembalikan array pesan kesalahan
-        } catch (error) {
-            console.error('Error fetching serial numbers:', error);
-            return dataRows.map(() => 'Error checking serial numbers'); // Kembalikan error jika terjadi masalah
-        }
-    }
-
-    // Fungsi untuk menampilkan/ menyembunyikan tombol upload berdasarkan hasil validasi
-    function toggleUploadButton(rowErrors) {
-        const uploadButton = document.getElementById('uploadButton');
-        const hasErrors = rowErrors.some(error => error !== ''); // Cek apakah ada error
-        if (hasErrors) {
-            uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
-        } else {
-            uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
-        }
-    }
-
-    // Fungsi untuk mengupdate nomor urut
-    function updateRowNumbers() {
-        table.rows().every(function(rowIdx) {
-            this.data()[0] = rowIdx + 1;
-            this.invalidate();
-        });
-        table.draw();
-    }
-
-    // Event listener untuk tombol upload
-    document.getElementById('uploadButton').addEventListener('click', async function(event) {
-        event.preventDefault(); // Mencegah default form submission
-
-        // Ambil data dari tabel
-        const rows = table.rows().data().toArray();
-        const payload = rows.map(row => ({
-            barangId: row[1],
-            keterangan: row[2],
-            serialNumber: row[3],
-            kondisiBarang: row[4],
-            kelengkapan: row[5]
-        }));
-
-        // Kirim data ke server menggunakan fetch
-        try {
-            const response = await fetch('YOUR_API_ENDPOINT_HERE', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
+            // Inisialisasi DataTable
+            const table = $('#previewTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    error: ''
                 },
-                body: JSON.stringify(payload),
+                columnDefs: [{
+                    targets: 0,
+                    orderable: false,
+                    searchable: false,
+                }]
             });
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            // Mengatur event listener untuk input file
+            document.getElementById('file').addEventListener('change', function() {
+                // Memanggil fungsi previewData ketika file dipilih
+                if (this.files.length > 0) {
+                    previewData(); // Panggil fungsi previewData ketika file dipilih
+                }
+            });
+
+            // Fungsi untuk melakukan preview data dari file yang diunggah
+            window.previewData = async function() {
+                const fileInput = document.getElementById('file');
+                const file = fileInput.files[0];
+
+                // Memastikan ada file yang dipilih
+                if (!file) {
+                    alert('Silakan pilih file terlebih dahulu!');
+                    return;
+                }
+
+                // Tampilkan indikator loading
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                loadingIndicator.style.display = 'block';
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const data = e.target.result;
+                    const workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                        header: 1
+                    });
+
+                    console.log('Data dari Excel:', jsonData); // Log data dari Excel
+
+                    // Mengosongkan tabel preview
+                    table.clear();
+
+                    // Panggil fungsi untuk validasi serial number menggunakan API
+                    const rowErrors = await checkExistingSerialNumbers(jsonData.slice(
+                        1)); // Validasi kesalahan
+
+                    console.log('Row Errors:', rowErrors); // Log kesalahan yang ditemukan
+
+                    // Menyimpan baris dengan dan tanpa kesalahan
+                    const rowsWithErrors = []; // Menyimpan baris dengan kesalahan
+                    const rowsWithoutErrors = []; // Menyimpan baris tanpa kesalahan
+
+                    // Mengolah data untuk ditambahkan ke tabel
+                    jsonData.slice(1).forEach((row, index) => {
+                        const errorMessage = rowErrors[index] ||
+                            ''; // Ambil pesan kesalahan untuk baris ini
+                        const rowData = [
+                            '', // Placeholder untuk nomor urut (akan diupdate nanti)
+                            row[0] || '', // Barang ID
+                            row[1] || '', // Keterangan
+                            row[2] || '', // Serial Number
+                            row[3] || '', // Kondisi Barang
+                            row[4] || '', // Kelengkapan
+                            errorMessage // Kesalahan
+                        ];
+
+                        if (errorMessage) {
+                            rowsWithErrors.push(
+                                rowData
+                            ); // Jika ada kesalahan, masukkan ke array rowsWithErrors
+                        } else {
+                            rowsWithoutErrors.push(
+                                rowData
+                            ); // Jika tidak ada kesalahan, masukkan ke array rowsWithoutErrors
+                        }
+                    });
+
+                    // Gabungkan kedua array, rowsWithErrors di atas
+                    const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
+
+                    // Menambahkan data ke DataTable dengan pewarnaan
+                    combinedRows.forEach((row) => {
+                        const rowNode = table.row.add(row).draw(false)
+                            .node(); // Tambahkan baris ke DataTable
+                        if (row[6]) { // Cek jika ada kesalahan
+                            // Menggunakan atribut style untuk mengatur warna teks kolom kesalahan
+                            $(rowNode).find('td').last().css('color',
+                                '#f00'); // Ganti dengan warna yang Anda inginkan
+                        }
+                    });
+
+                    // Mengupdate nomor urut setelah data ditambahkan
+                    updateRowNumbers();
+
+                    // Tampilkan/ sembunyikan tombol upload berdasarkan hasil validasi
+                    toggleUploadButton(rowErrors);
+
+                    // Menampilkan kontainer pratinjau
+                    document.getElementById('previewContainer').style.display = 'block';
+
+                    // Sembunyikan indikator loading
+                    loadingIndicator.style.display = 'none';
+                };
+
+                reader.onerror = function(error) {
+                    console.error('Error reading file:', error);
+                    alert('Error reading file. Please try again.');
+                    loadingIndicator.style.display = 'none'; // Sembunyikan loading indicator
+                };
+
+                reader.readAsBinaryString(file);
+            };
+
+            // Fungsi untuk mengecek serial number yang ada di database melalui API
+            async function checkExistingSerialNumbers(dataRows) {
+                try {
+                    // Panggil API untuk mendapatkan serial number yang sudah ada
+                    const response = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber', {
+                        method: 'GET', // Gunakan GET untuk mendapatkan data
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.text(); // Menangkap data kesalahan sebagai teks
+                        console.error('Error Response:', errorData); // Log error response
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`); // Tangkap kesalahan jika tidak OK
+                    }
+
+                    const existingData = await response.json(); // Ambil respons sebagai JSON
+                    const existingNumbers = existingData.map(item => item
+                        .serial_number); // Ambil hanya serial number
+                    console.log('Existing Serial Numbers:', existingNumbers); // Log serial numbers yang ada
+
+                    const errors = [];
+
+                    dataRows.forEach(row => {
+                        // Cek apakah serial number ada dan bukan undefined atau null
+                        const serialNumber = row[2]; // Ambil serial number dari baris saat ini
+
+                        if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
+                            errors.push(`Serial number sudah terpakai`); // Simpan pesan kesalahan
+                        } else {
+                            errors.push(''); // Jika tidak ada kesalahan, tambahkan string kosong
+                        }
+                    });
+
+                    return errors; // Kembalikan array pesan kesalahan
+                } catch (error) {
+                    console.error('Error fetching serial numbers:', error);
+                    return dataRows.map(() =>
+                        'Error checking serial numbers'); // Kembalikan error jika terjadi masalah
+                }
             }
 
-            const result = await response.json();
-            console.log('Upload Result:', result);
-            alert('Data berhasil diupload!'); // Notifikasi keberhasilan upload
-            table.clear().draw(); // Kosongkan tabel setelah upload
-            document.getElementById('file').value = ''; // Reset input file
-        } catch (error) {
-            console.error('Error uploading data:', error);
-            alert('Terjadi kesalahan saat mengupload data. Silakan coba lagi.'); // Notifikasi error
-        }
-    });
-});
+            // Fungsi untuk menampilkan/ menyembunyikan tombol upload berdasarkan hasil validasi
+            function toggleUploadButton(rowErrors) {
+                const uploadButton = document.getElementById('uploadButton');
+                const hasErrors = rowErrors.some(error => error !== ''); // Cek apakah ada error
+                if (hasErrors) {
+                    uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
+                } else {
+                    uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
+                }
+            }
 
+            // Fungsi untuk mengupdate nomor urut
+            function updateRowNumbers() {
+                table.rows().every(function(rowIdx) {
+                    this.data()[0] = rowIdx + 1;
+                    this.invalidate();
+                });
+                table.draw();
+            }
+        });
     </script>
 
     <script>

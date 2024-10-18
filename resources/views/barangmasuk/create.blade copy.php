@@ -1,6 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.navigation')
 
+@section('content')
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,20 +10,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- FontAwesome CDN -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css">
+    
     <style>
-        body {
-            background-color: #f4f7fb;
-        }
-
-        .card {
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Bayangan lembut untuk card */
-            border-radius: 8px;
-            background-color: #ffffff; /* Latar belakang putih untuk card */
-            margin: auto; /* Pusatkan card secara horizontal */
-            width: 90%; /* Lebar card untuk layar besar */
-            max-width: 600px; /* Lebar maksimum untuk card */
-        }
-
         .form-label {
             font-weight: bold; /* Menebalkan teks label form */
         }
@@ -105,9 +93,9 @@
 </head>
 
 <body>
-    <div class="py-12 d-flex justify-content-center align-items-center min-vh-100">
-        <div class="container" style="padding: 30px; max-width: 690px;">
-            <div class="card p-4">
+    <div class="py-12 d-flex justify-content-center">
+        <div style="padding: 20px; width: 870px; margin-top: 5px;">
+            <div class="card p-5">
                 <form id="formBarangmasuk" method="post" action="{{ route('barangmasuk.store') }}" enctype="multipart/form-data">
                     @csrf
                     <!-- Notifikasi -->
@@ -115,12 +103,26 @@
                         <strong id="notificationTitle"></strong>
                         <span id="notificationMessage"></span>
                     </div>
+        
                     <h5 class="heading-with-icon">
-                        <img src="{{ asset('assets/images/icon/back-arrow2.png') }}" class="back-icon" onclick="history.back()" alt="Back">
-                        Tambah Barang
+                        <a href="/barangmasuk"><img src="{{ asset('assets/images/icon/back-arrow2.png') }}" class="back-icon" onclick="history.back()" alt="Back"></a>
+                        <span style="margin-left: 38%;">Tambah Barang</span>
                     </h5>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+        
+                    <!-- Notifikasi flash message -->
+                    @if ($errors->any())
+                        <div id="error-notification" class="alert alert-danger">
+                            <strong>Ups!</strong> Terjadi kesalahan:
+                            <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                            </ul>
+                        </div>
+                    @endif
+        
+                    <div class="row mb-3">
+                        <div class="col-md-6">
                             <label for="jenis_barang" class="form-label">Jenis Barang</label>
                             <select id="jenis_barang" name="jenis_barang_id" class="form-select select2" required>
                                 <option value="" @disabled(true) selected>Pilih jenis barang</option>
@@ -130,7 +132,7 @@
                             </select>
                         </div>
                         
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label for="barang" class="form-label d-flex align-items-center">
                                 Barang
                                 <div id="loading-icon" class="ms-2" style="display: none;">
@@ -139,7 +141,7 @@
                             </label>
                             <select id="barang" name="barang_id" class="form-select select2" required>
                                 <option value="" @disabled(true) selected>Pilih barang</option>
-                                <option value="" disabled id="no-data-option">Pilih jenis barang </option>
+                                <option value="" disabled id="no-data-option">Pilih jenis barang</option>
                                 @if (isset($barangbyjenis))
                                     @foreach ($barangbyjenis as $d)
                                         <option value="{{ $d->id }}" {{ $d->id == ($barangMasuk->barang_id ?? '') ? 'selected' : '' }}>{{ $d->nama }}</option>
@@ -147,18 +149,20 @@
                                 @endif
                             </select>
                             <div id="no-data-message" class="text-danger mt-2" style="display: none;">Pilih jenis barang dulu</div>
-                        </div>                       
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        </div>
+                    </div>
+        
+                    <div class="row mb-3">
+                        <div class="col-md-6">
                             <label for="keterangan" class="form-label">Keterangan</label>
                             <input type="text" id="keterangan" name="keterangan" class="form-control">
                         </div>
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
                             <label for="tanggal" class="form-label">Tanggal Masuk</label>
                             <input type="date" id="tanggal" name="tanggal" class="form-control" value="{{ date('Y-m-d') }}" max="{{ date('Y-m-d') }}" required>
                         </div>
                     </div>
-
+        
                     <div class="mb-4">
                         <label for="quantity-input" class="form-label">Jumlah Barang:</label>
                         <div class="quantity-control-wrapper">
@@ -175,41 +179,71 @@
                         </div>
                         <div id="helper-text-explanation" class="form-text">Input jumlah barang dengan minimal 1 dan maksimal 100.</div>
                     </div>
-
+        
                     <div id="barang-container">
                         <hr class="mb-4">
                         <div class="barang-input-item" data-index="1">
-                            <span style="color: black; font-weight: bold; text-align: center;" class="d-block mb-3">Barang 1</span>
-                            <div class="mb-3">
-                                <label for="serial_number_1" class="form-label">Serial Number</label>
-                                <input type="text" id="serial_number_1" name="serial_numbers[]" class="form-control" required>
+                            {{-- <span style="color: black; font-weight: bold; text-align: center;" class="d-block mb-3">Barang 1</span> --}}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="mx-auto" style="color: black; font-weight: bold; text-align: center;">Barang 1</span>
+                                <button type="button" class="btn btn-danger btn-sm remove-barang-button" style="background-color: #910a0a; border: none;">
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
-                            <div class="mb-3">
-                                <label for="status_barang_1" class="form-label">Kondisi Barang</label>
-                                <select id="status_barang_1" name="status_barangs[]" class="form-select select2" required>
-                                    <option value="" disabled selected>Pilih kondisi barang</option>
-                                    @foreach ($status_barang as $d)
-                                        <option value="{{ $d->id }}">{{ $d->nama }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="kelengkapan_1" class="form-label">Kelengkapan (Opsional)</label>
-                                <input type="text" id="kelengkapan_1" name="kelengkapans[]" class="form-control">
+                            
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-4">
+                                    <label for="serial_number_1" class="form-label">Serial Number</label>
+                                    <input type="text" id="serial_number_1" name="serial_numbers[]" class="form-control" required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="status_barang_1" class="form-label">Kondisi Barang</label>
+                                    <select id="status_barang_1" name="status_barangs[]" class="form-select select2" required>
+                                        <option value="" disabled selected>Pilih kondisi barang</option>
+                                        @foreach ($status_barang as $d)
+                                            <option value="{{ $d->id }}">{{ $d->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="kelengkapan_1" class="form-label">Kelengkapan (Opsional)</label>
+                                    <input type="text" id="kelengkapan_1" name="kelengkapans[]" class="form-control">
+                                </div>
                             </div>
                         </div>
                     </div>
-
+        
                     <div class="mt-4">
                         <button type="submit" class="btn btn-primary w-100" id="submitButton">
                             <span id="buttonText">Simpan</span>
                             <i id="loadingSpinner" class="fas fa-spinner fa-spin" style="display: none;"></i>
                         </button>
-                    </div>                                        
+                    </div>
                 </form>
             </div>
-        </div>
+        </div>        
     </div>
+
+    <script>
+        document.getElementById('keterangan').addEventListener('input', function (event) {
+            let input = event.target.value;
+            // Hanya ambil huruf pertama dan ubah ke kapital, sisanya jadi huruf kecil
+            event.target.value = input.charAt(0).toUpperCase() + input.slice(1).toLowerCase();
+        });
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            const errorNotification = $('#error-notification');
+            
+            if (errorNotification.length) {
+                setTimeout(function() {
+                    errorNotification.fadeOut(); // Menggunakan fadeOut untuk efek yang lebih halus
+                }, 4000);
+            }
+        });
+    </script>       
 
     <script>
         document.getElementById('jenis_barang').addEventListener('change', function () {
@@ -275,25 +309,35 @@
                 newItem.setAttribute('data-index', index);
                 newItem.innerHTML = `
                 <hr class="mb-4">
-                    <span style="color: black; font-weight: bold; text-align: center;" class="d-block mb-3">Barang ${index}</span>
-                    <div class="mb-3">
-                        <label for="serial_number_${index}" class="form-label">Serial Number</label>
-                        <input type="text" id="serial_number_${index}" name="serial_numbers[]" class="form-control" required />
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="mx-auto" style="color: black; font-weight: bold;">Barang ${index}</span>
+                        <button type="button" class="btn btn-danger btn-sm remove-barang-button" style="background-color: #910a0a; border: none;">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
-                    <div class="mb-3">
-                        <label for="status_barang_${index}" class="form-label">Kondisi Barang</label>
-                        <select id="status_barang_${index}" name="status_barangs[]" class="form-select select2">
-                            <option selected>Pilih kondisi barang</option>
-                            @foreach ($status_barang as $d)
-                                <option value="{{ $d->id }}">{{ $d->nama }}</option>
-                            @endforeach
-                        </select>
+
+                    <div class="row g-3 align-items-center">
+                        <!-- Serial Number -->
+                        <div class="col-md-4">
+                            <label for="serial_number_${index}" class="form-label">Serial Number</label>
+                            <input type="text" id="serial_number_${index}" name="serial_numbers[]" class="form-control" required />
+                        </div>
+                        <!-- Kondisi Barang -->
+                        <div class="col-md-4">
+                            <label for="status_barang_${index}" class="form-label">Kondisi Barang</label>
+                            <select id="status_barang_${index}" name="status_barangs[]" class="form-select select2">
+                                <option selected>Pilih kondisi barang</option>
+                                @foreach ($status_barang as $d)
+                                    <option value="{{ $d->id }}">{{ $d->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <!-- Kelengkapan (Opsional) -->
+                        <div class="col-md-4">
+                            <label for="kelengkapan_${index}" class="form-label">Kelengkapan (Opsional)</label>
+                            <input type="text" id="kelengkapan_${index}" name="kelengkapans[]" class="form-control" />
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="kelengkapan_${index}" class="form-label">Kelengkapan (Opsional)</label>
-                        <input type="text" id="kelengkapan_${index}" name="kelengkapans[]" class="form-control" />
-                    </div>
-                    <button type="button" class="btn btn-danger remove-barang-button d-none">Hapus Barang</button>
                 `;
                 return newItem;
             }
@@ -402,4 +446,4 @@
     </script>
 </body>
 
-</html>
+@endsection

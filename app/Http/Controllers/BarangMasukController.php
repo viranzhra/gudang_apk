@@ -34,17 +34,17 @@ class BarangMasukController extends Controller
     }
 
 	public function preview(Request $request)
-{
-    $request->validate([
-        'file' => 'required|mimes:xlsx,xls,csv',
-    ]);
+	{
+		$request->validate([
+			'file' => 'required|mimes:xlsx,xls,csv',
+		]);
 
-    $file = $request->file('file');
-    $data = Excel::toArray(new BarangMasukImport, $file);
-    $data = $data[0]; // Ambil sheet pertama
+		$file = $request->file('file');
+		$data = Excel::toArray(new BarangMasukImport, $file);
+		$data = $data[0]; // Ambil sheet pertama
 
-    return view('barangmasuk.index', compact('data', 'file'));
-}
+		return view('barangmasuk.index', compact('data', 'file'));
+	}
 
 	public function uploadExcel(Request $request)
 	{
@@ -61,31 +61,9 @@ class BarangMasukController extends Controller
 			return redirect()->back()->withErrors('File Excel tidak memiliki data yang valid.');
 		}
 
-		// Mengumpulkan semua serial number dari data Excel
-		$serialNumbers = [];
-		foreach ($data[0] as $row) {
-			if (!empty($row['serial_number'])) {
-				$serialNumbers[] = $row['serial_number'];
-			}
-		}
-
-		// Jika tidak ada serial number yang valid, hentikan proses
-		if (empty($serialNumbers)) {
-			return redirect()->back()->withErrors('Tidak ada serial number yang valid di file Excel.');
-		}
-
-		// Cek serial number yang sudah ada di database
-		$existingSerialNumbers = SerialNumber::whereIn('serial_number', $serialNumbers)->pluck('serial_number')->toArray();
-
-		// Jika ditemukan serial number yang sudah digunakan
-		if (!empty($existingSerialNumbers)) {
-			return redirect()->back()->withErrors('Serial number sudah terpakai: ' . implode(', ', $existingSerialNumbers));
-		}
-
 		// Inisialisasi variabel untuk menyimpan pesan
 		$successCount = 0;
 		$errorCount = 0;
-		$notificationMessages = [];
 
 		// Proses data dari Excel
 		foreach ($data[0] as $row) {
@@ -98,7 +76,6 @@ class BarangMasukController extends Controller
 			// Ambil data dari setiap baris
 			$nama_barang = $row['barang_id'];
 			$keterangan = $row['keterangan'] ?? null;
-			// $jumlah = $row['jumlah'];
 			$serial_number = $row['serial_number'];
 			$kondisi_barang = $row['kondisi_barang'];
 			$kelengkapan = $row['kelengkapan'] ?? null;
@@ -119,32 +96,17 @@ class BarangMasukController extends Controller
 			// Cek apakah respons API sukses
 			if ($response->successful()) {
 				$successCount++;
-				// Tampilkan pesan sukses umum
-				$notificationMessages[] = "Success: Data berhasil diimpor."; // Tampilkan "Success"
 			} else {
 				$errorCount++;
-				$responseData = $response->json();
-				// Menyusun pesan kesalahan berdasarkan respons API
-				$errorMessage = $responseData['message'] ?? 'Terjadi kesalahan saat mengimpor data.';
-				// Tampilkan pesan kesalahan
-				$notificationMessages[] = "Error: {$errorMessage}"; // Tampilkan error
+				// Jika terjadi kesalahan, tidak perlu menangkap detailnya
 			}
 		}
-		
-		// Menampilkan notifikasi berdasarkan jumlah keberhasilan dan kesalahan
-		if ($successCount > 0) {
-			session()->flash('success', "$successCount data berhasil diimpor.");
-		}
 
+		// Menampilkan notifikasi jika ada kesalahan
 		if ($errorCount > 0) {
-			session()->flash('notifications', $notificationMessages);
-		}
-
-		// Jika ada kesalahan, tampilkan semua pesan kesalahan
-		if ($errorCount > 0) {
+			// Tampilkan pesan kesalahan umum
 			$finalMessage = "Data gagal diimpor, silakan periksa kembali data Anda.";
-			$notificationMessages[] = $finalMessage;
-			session()->flash('notifications', $notificationMessages);
+			session()->flash('notifications', [$finalMessage]); // Simpan pesan kesalahan
 		} else {
 			$finalMessage = "$successCount data berhasil diimpor.";
 			session()->flash('success', $finalMessage);
