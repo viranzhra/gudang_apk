@@ -511,12 +511,12 @@
                 <thead>
                     <tr>
                         <th style="width: 5px; background-color:#cdcece;">No</th>
-                        <th style="background-color:#cdcece;">Item</th>
+                        <th style="width: 60px; background-color:#cdcece;">Item</th>
                         <th style="background-color:#cdcece;">Description</th>
                         <th style="background-color:#cdcece;">Serial Number</th>
                         <th style="background-color:#cdcece;">Status</th>
                         <th style="background-color:#cdcece;">Requirement</th>
-                        <th style="background-color:#cdcece;">Kesalahan</th>
+                        <th style="background-color:#cdcece; width: 100px;">Error</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
