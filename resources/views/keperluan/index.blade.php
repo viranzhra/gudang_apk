@@ -140,18 +140,11 @@
                                 placeholder="Untuk Dipinjam" required />
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
+                        <div class="form-check form-switch mb-3">
+                            <input id="extend" type="checkbox" role="switch" name="extend" value="0"
+                                class="form-check-input">
                             <label for="extend" class="form-check-label">Apply two dates?</label>
                         </div>
-
-                        <script>
-                            document.getElementById('extend').addEventListener('change', function() {
-                                this.value = this.checked ? '1' : '0';
-                                document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
-                                document.getElementById('nama_tanggal_akhir').required = this.checked;
-                            });
-                        </script>
 
                         <div id="tanggalInputs" style="display: none;">
                             <div class="row">
@@ -170,6 +163,13 @@
                                 </div>
                             </div>
 
+                            <script>
+                                document.getElementById('extend').addEventListener('change', function() {
+                                    this.value = this.checked ? '1' : '0';
+                                    document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
+                                    document.getElementById('nama_tanggal_akhir').required = this.checked;
+                                });
+                            </script>
                             <script>
                                 document.addEventListener('DOMContentLoaded', function() {
                                     const batasWaktuInput = document.getElementById('batas_hari');
@@ -219,13 +219,25 @@
                         @method('PUT')
                         <input type="hidden" id="edit-id" name="id" value="">
 
+                        @if ($errors->any())
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Ups!</strong> Terjadi kesalahan:
+                                <ul class="mt-3">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
                         <div class="mb-3">
                             <label for="edit-nama" class="form-label">Requirement Type</label>
-                            <input type="text" id="edit-nama" name="nama" class="form-control" required />
+                            <input type="text" id="edit-nama" name="nama" class="form-control"
+                                placeholder="Nama Keperluan" required />
                         </div>
 
-                        <div class="form-check mb-3">
-                            <input id="edit-extend" type="checkbox" name="extend" value="1"
+                        <div class="form-check form-switch mb-3">
+                            <input id="edit-extend" type="checkbox" role="switch" name="extend"
                                 class="form-check-input">
                             <label for="edit-extend" class="form-check-label">Apply two dates?</label>
                         </div>
@@ -243,20 +255,47 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="editbatas_hari" class="form-label">Time Limit (Days)</label>
                                     <input type="number" id="editbatas_hari" name="batas_hari" class="form-control"
-                                        min="1" max="90" value="1" placeholder="max. 90 days"
+                                        min="1" max="90" placeholder="max. 90 days"
                                         required />
                                 </div>
                             </div>
                         </div>
 
                         <button type="submit" class="btn btn-primary">Save</button>
+
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <script>
+        // Fungsi untuk mengatur tampilan berdasarkan status checkbox
+        function updateExtensionFieldVisibility() {
+            var checkbox = document.getElementById('edit-extend');
+            var extensionNameField = document.getElementById('editExtensionNameField');
+            var namaTanggalAkhir = document.getElementById('edit-nama_tanggal_akhir');
 
+            // Tampilkan atau sembunyikan field berdasarkan status checkbox
+            if (checkbox.checked) {
+                extensionNameField.style.display = 'block'; // Tampilkan field
+                namaTanggalAkhir.required = true; // Set field sebagai required
+            } else {
+                extensionNameField.style.display = 'none'; // Sembunyikan field
+                namaTanggalAkhir.required = false; // Set field tidak perlu diisi
+                namaTanggalAkhir.value = ''; // Kosongkan input ketika checkbox tidak dicentang
+            }
+        }
+
+        // Inisialisasi event listener setelah DOM siap
+        document.addEventListener('DOMContentLoaded', function() {
+            var extendCheckbox = document.getElementById('edit-extend');
+            if (extendCheckbox) {
+                extendCheckbox.addEventListener('change', updateExtensionFieldVisibility);
+                updateExtensionFieldVisibility(); // Panggil fungsi untuk mengatur tampilan awal
+            }
+        });
+    </script>
 
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
@@ -501,11 +540,6 @@
                     selectedIds.push($(this).val());
                 });
 
-                // if (selectedIds.length === 0) {
-                //     showNotification('error', 'Select at least one type requirement to delete.');
-                //     return;
-                // }
-
                 $('#confirmDelete').modal('show'); // Show confirmation modal
                 $('#confirmDeleteButton').off('click').on('click', function() {
                     $.ajax({
@@ -557,6 +591,14 @@
                     value: $('#edit-extend').is(':checked') ? '1' : '0' // Nilai extend
                 });
 
+                // Jika extend tidak dicentang, set nama_tanggal_akhir menjadi 'tidak ada batas hari'
+                if (!$('#edit-extend').is(':checked')) {
+                    formData.push({
+                        name: 'nama_tanggal_akhir',
+                        value: 'tidak ada batas hari' // Set nilai ketika extend tidak dicentang
+                    });
+                }
+
                 $.ajax({
                     url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
                     type: 'PUT', // Metode PUT untuk update data
@@ -588,7 +630,6 @@
                 } else {
                     $('#editExtensionNameField').hide(); // Sembunyikan input jika checkbox tidak dicentang
                     $('#edit-nama_tanggal_akhir').val(''); // Kosongkan input extension name
-                    $('#editbatas_hari').val(1); // Reset batas hari ke default
                 }
             });
 
@@ -616,11 +657,9 @@
                             $('#editExtensionNameField').show();
                             $('#edit-nama_tanggal_akhir').val(data
                                 .nama_tanggal_akhir); // Isi extension name
-                            $('#editbatas_hari').val(data.batas_hari); // Isi batas hari
                         } else {
                             $('#editExtensionNameField').hide();
                             $('#edit-nama_tanggal_akhir').val(''); // Kosongkan extension name
-                            $('#editbatas_hari').val(1); // Reset batas hari ke default
                         }
 
                         $('#editData').modal('show'); // Tampilkan modal edit
@@ -633,7 +672,6 @@
                     }
                 });
             });
-
 
             // DataTable initialization
             var table = $('#KeperluanTable').DataTable({
