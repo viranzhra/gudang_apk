@@ -370,16 +370,16 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Supplier berhasil dihapus!');
+                            showNotification('success', 'Supplier was successfully deleted!');
                             deleteModal.hide();
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus supplier.');
+                            showNotification('error', 'Failed to delete supplier.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menghapus supplier.';
+                            'An error occurred when deleting supplier.';
                         showNotification('error', message);
                     }
                 });
@@ -430,7 +430,7 @@
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'An error occurred while deleting selected type requirement.';
+                                'An error occurred when deleting selected supplier.';
                             showNotification('error', message);
                         }
                     });
@@ -476,16 +476,16 @@
                     data: form.serialize(),
                     success: function(response) {
                         if (response.success) {
-                            showNotification('success', 'Supplier berhasil diperbarui!');
+                            showNotification('success', 'Supplier was updated successfully!');
                             $('#editData').modal('hide');
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal memperbarui supplier.');
+                            showNotification('error', 'Failed to update supplier.');
                         }
                     },
                     error: function() {
                         showNotification('error',
-                            'Terjadi kesalahan saat memperbarui supplier.');
+                            'An error occurred when updating the supplier.');
                     }
                 });
             });
@@ -530,7 +530,7 @@
                     error: function(xhr) {
                         // Handle AJAX errors
                         let message = xhr.responseJSON?.message ||
-                            'An error occurred while deleting selected supplier.';
+                            'An error occurred when deleting selected supplier.';
                         showNotification('error', message); // Show error message
                     },
                     complete: function() {

@@ -70,9 +70,6 @@
         }
     </style>
 
-    {{-- <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"> --}}
-
-
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
@@ -119,8 +116,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}"
-                        enctype="multipart/form-data">
+                    <form class="" method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
@@ -255,8 +251,7 @@
                                 <div class="col-md-6 mb-3">
                                     <label for="editbatas_hari" class="form-label">Time Limit (Days)</label>
                                     <input type="number" id="editbatas_hari" name="batas_hari" class="form-control"
-                                        min="1" max="90" placeholder="max. 90 days"
-                                        required />
+                                        min="1" max="90" placeholder="max. 90 days" />
                                 </div>
                             </div>
                         </div>
@@ -275,15 +270,19 @@
             var checkbox = document.getElementById('edit-extend');
             var extensionNameField = document.getElementById('editExtensionNameField');
             var namaTanggalAkhir = document.getElementById('edit-nama_tanggal_akhir');
+            var batasHari = document.getElementById('editbatas_hari');
 
             // Tampilkan atau sembunyikan field berdasarkan status checkbox
             if (checkbox.checked) {
                 extensionNameField.style.display = 'block'; // Tampilkan field
                 namaTanggalAkhir.required = true; // Set field sebagai required
+                // Menyamakan nilai batas_hari dengan input form jika checkbox diaktifkan
+                batasHari.value = batasHari.value || 1; // Atur nilai default jika belum ada
             } else {
                 extensionNameField.style.display = 'none'; // Sembunyikan field
                 namaTanggalAkhir.required = false; // Set field tidak perlu diisi
                 namaTanggalAkhir.value = ''; // Kosongkan input ketika checkbox tidak dicentang
+                batasHari.value = ''; // Kosongkan batas_hari ketika checkbox dimatikan
             }
         }
 
@@ -364,18 +363,6 @@
 
             console.log("Data yang dikirim:", formData); // Debug: cek data yang dikirim
 
-            // Validasi: Pastikan nama tidak kosong
-            if (!formData.nama) {
-                showNotification('error', 'Nama jenis barang harus diisi.');
-                return; // Hentikan pengiriman jika nama kosong
-            }
-
-            // Validasi: Pastikan nama_tanggal_akhir diisi jika extend true
-            if (formData.extend && !formData.nama_tanggal_akhir) {
-                showNotification('error', 'Nama tanggal akhir harus diisi saat extend dicentang.');
-                return; // Hentikan pengiriman jika tidak ada nama_tanggal_akhir
-            }
-
             // AJAX request untuk mengirim data
             $.ajax({
                 url: 'https://doaibutiri.my.id/gudang/api/keperluan', // Pastikan URL API yang benar
@@ -388,13 +375,13 @@
 
                     // Tampilkan notifikasi jika sukses
                     if (response.success) {
-                        showNotification('success', 'Data berhasil ditambahkan.');
+                        showNotification('success', 'Successfully add data.');
                         $('#tambahData').modal('hide'); // Tutup modal
                         $('#addForm')[0].reset(); // Reset form setelah pengiriman
                         $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
                     } else {
                         showNotification('error', response.message ||
-                            'Gagal menambahkan type requirement.');
+                            'Failed to add requirement type.');
                     }
                 },
                 error: function(xhr) {
@@ -406,10 +393,10 @@
                         // Tampilkan pesan error spesifik dari server
                         let errors = xhr.responseJSON.errors;
                         let message = errors.extend ? errors.extend[0] :
-                            'Terjadi kesalahan saat menambahkan data.';
+                            'An error occurred when adding data.';
                         showNotification('error', message);
                     } else {
-                        showNotification('error', 'Terjadi kesalahan pada jaringan atau server.');
+                        showNotification('error', 'Network or server error.');
                     }
                 }
             });
@@ -518,16 +505,16 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Type requirement berhasil dihapus!');
+                            showNotification('success', 'Requirement type successfully deleted!');
                             deleteModal.hide();
                             $('#KeperluanTable').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus type requirement.');
+                            showNotification('error', 'Failed to delete requirement type.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menghapus type requirement.';
+                            'An error occurred when deleting requirement type.';
                         showNotification('error', message);
                     }
                 });
@@ -564,13 +551,13 @@
                                     });
                             } else {
                                 showNotification('error',
-                                    'Failed to delete selected type requirement!');
+                                    'Failed to delete selected requirement type!');
                             }
                         },
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'An error occurred while deleting selected type requirement.';
+                                'An error occurred when deleting selected requirement type.';
                             showNotification('error', message);
                         }
                     });
@@ -605,32 +592,22 @@
                     data: formData, // Kirim form data
                     success: function(response) {
                         if (response.success) {
-                            showNotification('success', response.message); // Notifikasi sukses
+                            showNotification('success', 'Requirement type successfully updated !'); // Notifikasi sukses
                             $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
                         } else {
                             showNotification('error', response.message ||
-                                'Gagal memperbarui requirement type.'); // Notifikasi gagal
+                                'Failed to update requirement type.'); // Notifikasi gagal
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat memperbarui requirement type.';
+                            'An error occurred when updating requirement type.';
                         showNotification('error', message); // Tampilkan notifikasi error
                     },
                     complete: function() {
                         $('#editData').modal('hide'); // Tutup modal setelah proses selesai
                     }
                 });
-            });
-
-            // Menangani perubahan checkbox extend pada form edit data
-            $('#edit-extend').change(function() {
-                if ($(this).is(':checked')) {
-                    $('#editExtensionNameField').show(); // Tampilkan input jika checkbox dicentang
-                } else {
-                    $('#editExtensionNameField').hide(); // Sembunyikan input jika checkbox tidak dicentang
-                    $('#edit-nama_tanggal_akhir').val(''); // Kosongkan input extension name
-                }
             });
 
             // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
@@ -644,19 +621,20 @@
                     success: function(data) {
                         // Periksa apakah data tersedia
                         if (!data || Object.keys(data).length === 0) {
-                            showNotification('error', 'Data tidak ditemukan.');
+                            showNotification('error', 'Data not found.');
                             return; // Hentikan eksekusi lebih lanjut
                         }
 
                         $('#edit-nama').val(data.nama);
                         $('#edit-extend').prop('checked', data.extend ==
-                            1); // Sesuaikan checkbox
+                        1); // Sesuaikan checkbox
                         $('#edit-id').val(id);
+                        $('#editbatas_hari').val(data.batas_hari); // Set batas_hari dari data
 
                         if (data.extend == 1) {
                             $('#editExtensionNameField').show();
                             $('#edit-nama_tanggal_akhir').val(data
-                                .nama_tanggal_akhir); // Isi extension name
+                            .nama_tanggal_akhir); // Isi extension name
                         } else {
                             $('#editExtensionNameField').hide();
                             $('#edit-nama_tanggal_akhir').val(''); // Kosongkan extension name
@@ -668,7 +646,7 @@
                         let message = xhr.responseJSON?.message ||
                             'Error fetching type requirement data.';
                         showNotification('error',
-                            message); // Tampilkan pesan error yang lebih informatif
+                        message); // Tampilkan pesan error yang lebih informatif
                     }
                 });
             });
