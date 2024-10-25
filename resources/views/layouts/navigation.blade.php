@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Matdash Free</title>
+    <title>Net2mart</title>
     <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
     <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
     <!-- jQuery -->
@@ -445,7 +445,7 @@
                                             <i class="ti ti-user fs-6"></i>
                                             <p class="mb-0 fs-3">My Profile</p>
                                         </a>
-                                        <a href="javascript:void(0)"
+                                        {{-- <a href="javascript:void(0)"
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-mail fs-6"></i>
                                             <p class="mb-0 fs-3">My Account</p>
@@ -454,7 +454,7 @@
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-list-check fs-6"></i>
                                             <p class="mb-0 fs-3">My Task</p>
-                                        </a>
+                                        </a> --}}
                                         <!-- Logout Button -->
                                         <a href="#" class="btn btn-outline-primary mx-3 mt-2 d-block"
                                             data-bs-toggle="modal" data-bs-target="#logoutModal">
@@ -487,13 +487,13 @@
         <div class="modal-dialog" role="document" style="max-width: 400px;">
             <div class="modal-content rounded-3 shadow">
                 <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+                    <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="text-center">
-                        <p class="mb-0">Apakah Anda yakin ingin keluar?</p>
-                        <p class="text-muted">Semua sesi yang sedang aktif akan dihentikan.</p>
+                        <h6 class="mb-1">Are you sure you want to quit?</h6>
+                        <p class="text-muted">All active sessions will be stopped.</p>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-end border-top-0">
@@ -508,8 +508,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
