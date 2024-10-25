@@ -501,46 +501,49 @@
         </div>
 
         <!-- Container for preview table -->
-        <div id="previewContainer" style="display: none;">
+         <div id="previewContainer" style="display: none;">
             {{-- <hr class="col-span-10 my-3"> --}}
             {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                 <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
             </button> --}}
             <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
-            <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
-                <thead>
+            <div class="table-responsive">
+                <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 5px; background-color:#cdcece;">No</th>
+                            <th style="width: 60px; background-color:#cdcece;">Item</th>
+                            <th style="background-color:#cdcece;">Description</th>
+                            <th style="background-color:#cdcece;">Serial Number</th>
+                            <th style="background-color:#cdcece;">Status</th>
+                            <th style="background-color:#cdcece;">Requirement</th>
+                            <th style="background-color:#cdcece; width: 100px;">Error</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <!-- Pagination controls -->
+                <div id="pagination" class="mt-3"></div>
+                {{-- <hr class="col-span-10 my-3"> --}}
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
+                <thead class="thead-dark">
                     <tr>
-                        <th style="width: 5px; background-color:#cdcece;">No</th>
-                        <th style="width: 60px; background-color:#cdcece;">Item</th>
-                        <th style="background-color:#cdcece;">Description</th>
-                        <th style="background-color:#cdcece;">Serial Number</th>
-                        <th style="background-color:#cdcece;">Status</th>
-                        <th style="background-color:#cdcece;">Requirement</th>
-                        <th style="background-color:#cdcece; width: 100px;">Error</th>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>No</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                        <th>Entry Date</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                </tbody>
             </table>
-            <!-- Pagination controls -->
-            <div id="pagination" class="mt-3"></div>
-            {{-- <hr class="col-span-10 my-3"> --}}
         </div>
-
-        <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
-            <thead class="thead-dark">
-                <tr>
-                    <th><input type="checkbox" id="select-all"></th>
-                    <th>No</th>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Description</th>
-                    <th>Entry Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
     </div>
 
     <!-- Modal Konfirmasi Hapus -->
@@ -628,7 +631,7 @@
                     searchable: false,
                 }]
             });
-    
+
             // Mengatur event listener untuk input file
             document.getElementById('file').addEventListener('change', function() {
                 if (this.files.length > 0) {
@@ -641,41 +644,45 @@
                     }
                 }
             });
-    
+
             // Fungsi untuk melakukan preview data dari file yang diunggah
             window.previewData = async function() {
                 const fileInput = document.getElementById('file');
                 const file = fileInput.files[0];
-    
+
                 if (!file) {
                     alert('Silakan pilih file terlebih dahulu!');
                     return;
                 }
-    
+
                 // Tampilkan indikator loading
                 const loadingIndicator = document.getElementById('loadingIndicator');
                 loadingIndicator.style.display = 'block';
-    
+
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     const data = e.target.result;
-                    const workbook = XLSX.read(data, { type: 'binary' });
+                    const workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-    
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                        header: 1
+                    });
+
                     console.log('Data dari Excel:', jsonData);
-    
+
                     // Mengosongkan tabel preview
                     table.clear();
-    
+
                     // Validasi kesalahan
                     const rowErrors = await checkExistingSerialNumbers(jsonData.slice(1));
-    
+
                     console.log('Row Errors:', rowErrors);
-    
+
                     const rowsWithErrors = [];
                     const rowsWithoutErrors = [];
-    
+
                     jsonData.slice(1).forEach((row, index) => {
                         const errorMessage = rowErrors[index] || '';
                         const rowData = [
@@ -687,97 +694,99 @@
                             row[4] || '', // Kelengkapan
                             errorMessage // Kesalahan
                         ];
-    
+
                         if (errorMessage) {
                             rowsWithErrors.push(rowData);
                         } else {
                             rowsWithoutErrors.push(rowData);
                         }
                     });
-    
+
                     const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
-    
+
                     combinedRows.forEach((row) => {
                         const rowNode = table.row.add(row).draw(false).node();
                         if (row[6]) {
-                            $(rowNode).find('td').last().css('color', '#f00'); // Mengatur warna teks kolom kesalahan
+                            $(rowNode).find('td').last().css('color',
+                            '#f00'); // Mengatur warna teks kolom kesalahan
                         }
                     });
-    
+
                     updateRowNumbers();
-    
+
                     toggleUploadButton(rowErrors);
-    
+
                     document.getElementById('previewContainer').style.display = 'block';
-    
+
                     loadingIndicator.style.display = 'none';
                 };
-    
+
                 reader.onerror = function(error) {
                     console.error('Error reading file:', error);
                     alert('Error reading file. Please try again.');
                     loadingIndicator.style.display = 'none';
                 };
-    
+
                 reader.readAsBinaryString(file);
             };
-    
+
             async function checkExistingSerialNumbers(dataRows) {
                 try {
-                    const serialNumberResponse = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber');
+                    const serialNumberResponse = await fetch(
+                    'https://doaibutiri.my.id/gudang/api/serialnumber');
                     if (!serialNumberResponse.ok) {
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
                     const serialNumberData = await serialNumberResponse.json();
                     const existingNumbers = serialNumberData.map(item => item.serial_number);
-    
+
                     const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
                     if (!barangResponse.ok) {
                         throw new Error(`HTTP error! status: ${barangResponse.status}`);
                     }
                     const barangData = await barangResponse.json();
                     const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang) : [];
-    
+
                     const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
                     if (!kondisiResponse.ok) {
                         throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
                     }
                     const kondisiData = await kondisiResponse.json();
                     const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama) : [];
-    
+
                     const errors = new Array(dataRows.length).fill(null);
-    
+
                     dataRows.forEach((row, index) => {
                         const serialNumber = row[2];
                         const barangName = row[0];
                         const kondisiBarang = row[3];
-    
+
                         let errorMessages = [];
-    
+
                         if (barangName && !existingBarang.includes(barangName.toString())) {
                             errorMessages.push(`Item not available`);
                         }
-    
+
                         if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
                             errorMessages.push(`Serial Number already used`);
                         }
-    
+
                         if (kondisiBarang && !existingKondisi.includes(kondisiBarang.toString())) {
                             errorMessages.push(`Status not available`);
                         }
-    
+
                         if (errorMessages.length > 0) {
                             errors[index] = errorMessages.join(' and ');
                         }
                     });
-    
+
                     return errors;
                 } catch (error) {
                     console.error('Error in checking serial numbers or barang data:', error.message);
                     return dataRows.map(() => `Error checking data: ${error.message}`);
                 }
             }
-    
+
             // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
             function toggleUploadButton(rowErrors) {
                 const uploadButton = document.getElementById('uploadButton');
@@ -805,7 +814,7 @@
             }
         });
     </script>
-    
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1126,7 +1135,8 @@
                         // Reload halaman sebelum menampilkan notifikasi
                         setTimeout(() => {
                             // Tampilkan notifikasi sukses
-                            showNotification('Selected data was successfully delected!', 'success');
+                            showNotification('Selected data was successfully delected!',
+                                'success');
                             location.reload(); // Reload halaman
                         }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
                     },
