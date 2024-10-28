@@ -290,7 +290,7 @@
         </div>
     </div>
 
-    <div class="row"> {{-- style="margin-top:-70px" --}}
+    <div class="row" style="margin-top:-70px"> {{-- style="margin-top:-70px" --}}
         <div class="col-lg-5">
             <!-- -------------------------------------------- -->
             <!-- Welcome Card -->

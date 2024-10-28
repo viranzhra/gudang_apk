@@ -426,15 +426,80 @@
                                 <i class="ti ti-menu-2"></i>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="javascript:void(0)">
-                                <iconify-icon icon="solar:bell-linear" class="fs-6"></iconify-icon>
-                                <div class="notification bg-primary rounded-circle"></div>
-                            </a>
-                        </li>
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+                            <style>
+                                .nav-item.dropdown:hover .dropdown-menu {
+                                    display: block;
+                                    opacity: 1;
+                                    visibility: visible;
+                                }
+    
+                                .dropdown-menu {
+                                    display: none;
+                                    opacity: 0;
+                                    visibility: hidden;
+                                    transition: all 0.2s ease;
+                                    position: absolute;
+                                    top: 100%;
+                                    right: 0;
+                                    min-width: 300px;
+                                    z-index: 1000;
+                                    background-color: #ffffff;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                }
+                            </style>
+                            <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
+                                <a class="nav-link position-relative" href="javascript:void(0)" id="drop2"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <iconify-icon icon="solar:bell-bing-line-duotone" class="fs-6"></iconify-icon>
+                                    <div class="notification bg-primary rounded-circle"></div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
+                                    aria-labelledby="drop2" style="min-width: 400px">
+                                    <div class="d-flex align-items-center justify-content-between py-3 px-4">
+                                        <h5 class="mb-0 fs-5 fw-semibold">Notifications</h5>
+                                        <span class="badge bg-primary rounded-4 px-3 py-1">2 new</span>
+                                    </div>
+                                    <div class="message-body" data-simplebar>
+                                        <a href="javascript:void(0)"
+                                            class="py-6 px-7 d-flex align-items-center dropdown-item gap-3">
+                                            <span
+                                                class="flex-shrink-0 bg-danger-subtle rounded-circle round d-flex align-items-center justify-content-center fs-6 text-danger">
+                                                <iconify-icon icon="solar:widget-3-line-duotone"></iconify-icon>
+                                            </span>
+                                            <div class="w-75">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h6 class="mb-1 fw-semibold">Launch Dashoard</h6>
+                                                    <span class="d-block fs-2">9:30 AM</span>
+                                                </div>
+                                                <span class="d-block text-truncate text-truncate fs-11">Just see
+                                                    the new dashboard!</span>
+                                            </div>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="py-6 px-7 d-flex align-items-center dropdown-item gap-3">
+                                            <span
+                                                class="flex-shrink-0 bg-secondary-subtle rounded-circle round d-flex align-items-center justify-content-center fs-6 text-secondary">
+                                                <iconify-icon icon="solar:settings-line-duotone"></iconify-icon>
+                                            </span>
+                                            <div class="w-75">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h6 class="mb-1 fw-semibold">Settings</h6>
+                                                    <span class="d-block fs-2">4:36 PM</span>
+                                                </div>
+                                                <span class="d-block text-truncate text-truncate fs-11">You can
+                                                    customize this application as you want</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="py-3 px-4">
+                                        <a href="#" class="btn btn-primary btn-sm w-100">View All Notifications</a>
+                                    </div>
+                                </div>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link " href="javascript:void(0)" id="drop2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
