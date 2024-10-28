@@ -1,260 +1,276 @@
 @extends('layouts.navigation')
 
 @section('content')
+<style>
+    .btn-action {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+    }
 
-    <head>
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-        <link rel="stylesheet" href="../assets/css/styles.min.css" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <!-- FontAwesome CDN -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
-    </head>
+    .icon-edit, .icon-delete, .icon-detail {
+        color: #ffffff;
+        font-size: 18px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 5px;
+    }
 
-    <style>
-        .card {
-            background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
+    .icon-edit {
+        background-color: #000000;
+    }
 
-        .table-responsive {
-            margin-top: 20px;
-        }
+    .icon-detail {
+        background-color: #000000; /* Warna untuk ikon detail */
+    }
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-            color: black;
-        }
+    .filter-export {
+        display: flex;
+        justify-content: flex-end; /* Mengatur posisi konten ke sebelah kanan */
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
-        th {
-            background-color: #f2f2f2;
-            cursor: default;
-            font-weight: semibold;
-            color: rgba(0, 0, 0, 0.829);
-        }
+    .filter-date {
+        margin-right: 20px;
+    }
 
-        /* search */
-        .search-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+    .filter-date label {
+        margin-right: 5px;
+    }
 
-        .search-box {
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
+    .icon-pdf, .icon-excel {
+        color: #ffffff; 
+        font-size: 25px;
+        width: 40px; 
+        height: 40px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        margin-right: 5px;
+    }
 
-        .search-box input[type="search"] {
-            padding: 5px 30px 5px 10px;
-            width: 250px;
-            height: 40px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    .icon-pdf {
+        background-color: #dc3545; /* Red color for PDF export */
+    }
 
-        .search-box .search-icon {
-            position: absolute;
-            right: 5px;
-            padding: 5px;
-            font-size: 18px;
-            border-radius: 4px;
-            color: gray;
-            cursor: pointer;
-        }
+    .icon-excel {
+        background-color: #28a745; /* Green color for Excel export */
+    }
+</style>
 
-        .search-container label {
-            margin-right: 10px;
-        }
+<div class="container mt-3" style="padding: 40px; width: 1160px;">     
+    <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
+    
+    <!-- Filter and Export Buttons -->
+    <div class="filter-export">
+        <!-- Date Range Filter -->
+        <div class="filter-date d-inline-block">
+            <label for="startDate">From:</label>
+            <input type="text" id="startDate" class="datepicker" placeholder="Start Date" autocomplete="off">
 
-        .search-container select {
-            padding: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+            <label for="endDate">To:</label>
+            <input type="text" id="endDate" class="datepicker" placeholder="End Date" autocomplete="off">
 
-        .btn-action {
-            background: none;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-
-        .icon-edit {
-            color: #ffffff;
-            background-color: #12b75c;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .icon-delete {
-            color: #ffffff;
-            background-color: #dc3545;
-            font-size: 20px;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-        }
-
-        .btn-action:hover .icon-edit,
-        .btn-action:hover .icon-delete {
-            opacity: 0.8;
-        }
-
-        .controls-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .controls-container label {
-            margin-right: 5px;
-        }
-
-        .controls-container select {
-            margin-right: 5px;
-        }
-
-        .btn-primary {
-            display: flex;
-            align-items: center;
-            background-color: #635bff;
-            color: #ffffff;
-            border: none;
-            padding: 7px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            white-space: nowrap;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            /* Color on hover */
-        }
-
-        /* Media query for small screens */
-        @media (max-width: 576px) {
-            .search-container {
-                flex-direction: column;
-                /* Stack items vertically */
-                align-items: flex-start;
-                /* Align items to the start of the container */
-            }
-
-            .search-box input[type="search"] {
-                width: 100%;
-                /* Make the search input full width */
-                margin-bottom: 10px;
-                /* Add space below the search input */
-            }
-
-            .btn-primary {
-                width: 100%;
-                /* Make the button full width */
-                text-align: center;
-                /* Center the text */
-                font-size: 16px;
-                /* Adjust font size for better readability */
-            }
-
-            .controls-container {
-                flex-direction: column;
-                /* Stack controls vertically on small screens */
-                align-items: stretch;
-                /* Stretch controls to full width */
-            }
-        }
-    </style>
-
-    <div class="container mt-3" style="padding: 30px;">
-        <h4 class="mb-4" style="color: #8a8a8a;">Incoming Item Report</h4>
-        <div class="search-container">
-            <form action="" method="GET" class="search-box">
-                <input type="search" id="search-input" name="search" placeholder="Search..."
-                    value="{{ request('search') }}">
-                <iconify-icon id="search-icon" name="search" icon="carbon:search" class="search-icon"></iconify-icon>
-            </form>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="datepicker" placeholder="From" />
-                        <span class="input-group-text bg-white">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="datepicker2" placeholder="To" />
-                        <span class="input-group-text bg-white">
-                            <i class="fa fa-calendar"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
+            <button id="filterBtn" class="btn btn-primary">Filter</button>
         </div>
-        <div class="table-responsive">
-            @if (!$data->isEmpty())
-            <table class="table">
-                <thead class="thead-lightblue">
-                    <tr>
-                        <th>No</th>
-                        <th>Item</th>
-                        <th>Quantity</th>
-                        <th>Description</th>
-                        <th>Entry Date</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($data as $d)
-                        <tr>
-                            <td>{{ $loop->iteration + ($data->currentPage() - 1) * $data->perPage() }}</td>
-                            <td>{{ $d->nama_barang }}</td>
-                            <td>{{ $d->jumlah ?: 0 }}</td>
-                            <td>{{ $d->keterangan }}</td>
-                            <td>{{ $d->tanggal }}</td>
-                            <td>
-                                
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-            <div class="info-pagination-container">
-                <div class="info-text">
-                    Menampilkan {{ $data->firstItem() }} - {{ $data->lastItem() }} dari {{ $data->total() }} data pada
-                    halaman {{ $data->currentPage() }}.
-                </div>
-                <div class="pagination-container">
-                    {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+
+        <!-- Export to Excel Button -->
+        <a href="#" id="exportExcelBtn" class="btn-action" title="Download Excel">
+            <div class="icon-excel">
+                <iconify-icon icon="mdi:file-excel"></iconify-icon>
+            </div>
+        </a>
+    </div>
+
+    <table class="table table-bordered table-striped table-hover" id="barangmasuk" width="100%">
+        <thead class="thead-dark">
+            <tr>
+                <th style="width: 25px;">No</th>
+                <th>Nama Barang</th>
+                <th>Jumlah</th>
+                <th>Keterangan</th>
+                <th>Tanggal Masuk</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<!-- Detail Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Incoming Item Detail</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="detailList">
+                    <!-- Data will be inserted here -->
                 </div>
             </div>
-        @else
-            <div class="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
-                <div class="mx-auto max-w-screen-sm text-center">
-                    <p class="mb-4 text-3xl tracking-tight font-bold text-gray-900 md:text-4xl dark:text-white">Data tidak
-                        ditemukan.</p>
-                </div>
-            </div>
-            @endif
         </div>
     </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- jQuery UI CSS for Datepicker -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<!-- jQuery UI JS for Datepicker -->
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<!-- DataTables JS -->
+<script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+<!-- DataTables Bootstrap 4 integration -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+<!-- Script for initializing DataTables -->
+<script>
+    $(document).ready(function() {
+        // Initialize jQuery UI Datepicker
+        $('.datepicker').datepicker({
+            dateFormat: 'yy-mm-dd' // Format tanggal yang akan digunakan
+        });
+
+        // Initialize DataTables
+        const table = $('#barangmasuk').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: 'https://doaibutiri.my.id/gudang/api/laporan/barangmasuk', // API URL
+                type: 'GET',
+                data: function(d) {
+                    // Kirim rentang tanggal dan input pencarian sebagai parameter
+                    d.search = $('input[type="search"]').val();
+                    d.start_date = $('#startDate').val();
+                    d.end_date = $('#endDate').val();
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('token') }}',
+                },
+                error: function(xhr, error, code) {
+                    console.error("Error fetching data:", xhr.responseText);
+                    alert("Failed to load data. Please check the API or your token.");
+                }
+            },
+            columns: [
+                { data: null, orderable: false, render: function(data, type, row, meta) {
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
+                { data: 'nama_barang' },
+                { data: 'jumlah' },
+                { data: 'keterangan' },
+                { data: 'tanggal' },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data) {
+                        return `
+                            <button class="btn-action detail-btn" 
+                                data-id="${data.barang_masuk_id}" 
+                                data-nama="${data.nama_barang}" 
+                                data-jumlah="${data.jumlah}" 
+                                data-keterangan="${data.keterangan}" 
+                                data-tanggal="${data.tanggal}">
+                                <div class="icon-detail"><iconify-icon icon="mdi:file-document-outline"></iconify-icon></div>
+                            </button>
+                        `;
+                    }
+                }
+            ],
+            language: {
+                emptyTable: "Tidak ada data yang tersedia",
+                search: "Cari:",
+                lengthMenu: "",
+                paginate: {
+                    first: "Pertama",
+                    last: "Terakhir",
+                    next: "Selanjutnya",
+                    previous: "Sebelumnya"
+                }
+            }
+        });
+
+        // Filter button click event to reload the DataTable based on date range
+        $('#filterBtn').on('click', function() {
+            table.ajax.reload(); // Reload table data with new date range
+        });
+
+   // Detail button functionality
+$(document).on('click', '.detail-btn', function() {
+    const permintaanId = $(this).data('id'); // Get the ID from the button
+
+    // Clear existing list content
+    $('#detailList').empty();
+
+    // Fetch details from the server
+    $.ajax({
+        url: 'https://doaibutiri.my.id/gudang/api/laporan/barangmasuk/' + permintaanId, // Fixed the URL concatenation
+        type: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + '{{ session("token") }}', // Fixed token reference
+        },
+        success: function(data) {
+            if (data.length > 0) {
+                // Populate the modal with fetched data as a list
+                data.forEach(item => {
+                    $('#detailList').append(`
+                        <div class="detail-item">
+                              <p>Item Name: <strong>${item.nama_barang}</strong></p>
+                                    <p>Item Type: <strong>${item.nama_jenis_barang}</strong></p>
+                                    <p>Supplier Name: <strong>${item.nama_supplier}</strong></p>
+                            <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
+                            <p>Status Barang: 
+                                <strong style="color: ${item.warna_status_barang};">
+                                    ${item.status_barang}
+                                </strong>
+                            </p>
+                            <p>Kelengkapan Barang: <strong>${item.kelengkapan_barang}</strong></p>
+                            <hr>
+                        </div>
+                    `);
+                });
+            } else {
+                $('#detailList').append('<p class="text-center">No details available</p>');
+            }
+
+            // Show the modal
+            $('#detailModal').modal('show');
+        },
+        error: function(xhr, status, error) {
+            alert('Failed to fetch details. Please try again.');
+            console.error('Error:', error);
+            console.error('Status:', status);
+            console.error(xhr.responseText);
+        }
+    });
+});
+
+
+        // Export Excel button click event
+        $('#exportExcelBtn').on('click', function(e) {
+            e.preventDefault();
+            const startDate = $('#startDate').val();
+            const endDate = $('#endDate').val();
+            const url = `/export-barang-masuk?start_date=${startDate}&end_date=${endDate}`;
+            window.location.href = url; // Redirect to the export URL
+        });
+
+        setInterval(function(){
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            exportExcelBtn.href = `/export-barang-masuk?start_date=${startDate}&end_date=${endDate}`;
+        }, 500);
+    });
+</script>
 @endsection

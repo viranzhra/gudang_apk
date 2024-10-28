@@ -50,9 +50,11 @@
             z-index: 9999;
             display: none;
             text-align: center;
-            justify-content: flex-start; /* Tetap di sebelah kiri */
+            justify-content: flex-start;
+            /* Tetap di sebelah kiri */
             align-items: center;
-            text-align: left; /* Teks tetap rata kiri */
+            text-align: left;
+            /* Teks tetap rata kiri */
             /* Hidden by default */
         }
 
@@ -104,22 +106,23 @@
                 Delete Selected
             </button>
         </div>
-
-        <table class="table table-bordered table-striped table-hover" id="customer-table" width="100%">
-            <thead class="thead-dark">
-                <tr>
-                    <th><input type="checkbox" id="select-all"></th>
-                    <th>No</th>
-                    <th>Customer</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="customer-table" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>No</th>
+                        <th>Customer</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Modal Tambah Data -->
@@ -214,7 +217,8 @@
                     <form id="deleteForm" method="POST" action="">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn" style="background-color: #910a0a; color: white;">Delete</button>
+                        <button type="submit" class="btn"
+                            style="background-color: #910a0a; color: white;">Delete</button>
                     </form>
                 </div>
             </div>
@@ -264,7 +268,8 @@
                     <p>Are you sure you want to delete the selected data?</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn" style="background-color: #910a0a; color: white;" id="confirmDeleteButton">Delete</button>
+                    <button type="button" class="btn" style="background-color: #910a0a; color: white;"
+                        id="confirmDeleteButton">Delete</button>
                 </div>
             </div>
         </div>
@@ -616,28 +621,31 @@
             // untuk notifikasi form tambah data
             $('form[action="{{ route('customer.store') }}"]').on('submit', function(e) {
                 e.preventDefault();
-                
+
                 let formData = $(this).serialize(); // Mengambil data dari form
-                let $submitButton = $(this).find('button[type="submit"]'); // Menyimpan referensi tombol submit
-                
+                let $submitButton = $(this).find(
+                'button[type="submit"]'); // Menyimpan referensi tombol submit
+
                 // Disable tombol dan tampilkan loading
-                $submitButton.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i>');
-                
+                $submitButton.prop('disabled', true).html(
+                    '<i class="spinner-border spinner-border-sm"></i>');
+
                 // Mengirimkan data melalui AJAX
                 $.post($(this).attr('action'), formData, function(response) {
                     if (response.success) {
                         showNotification('success', response.message); // Menampilkan pesan sukses
                         $('#tambahDataModal').modal('hide'); // Menutup modal
                         $('#customer-table').DataTable().ajax.reload(); // Reload tabel
-                        
+
                         // Reset form setelah berhasil submit
                         $('form[action="{{ route('customer.store') }}"]')[0].reset();
                     } else {
                         showNotification('error', response.message); // Menampilkan pesan error
                     }
                 }).fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error('Error:', jqXHR.responseText); 
-                    showNotification('error', 'Terjadi kesalahan saat menambahkan customer.'); // Menampilkan pesan error
+                    console.error('Error:', jqXHR.responseText);
+                    showNotification('error',
+                    'Terjadi kesalahan saat menambahkan customer.'); // Menampilkan pesan error
                 }).always(function() {
                     // Enable kembali tombol submit dan kembalikan teks aslinya
                     $submitButton.prop('disabled', false).html('Save');
@@ -645,7 +653,7 @@
             });
 
             // Reset form ketika modal ditutup
-            $('#tambahDataModal').on('hidden.bs.modal', function () {
+            $('#tambahDataModal').on('hidden.bs.modal', function() {
                 $('form[action="{{ route('customer.store') }}"]')[0].reset();
             });
 

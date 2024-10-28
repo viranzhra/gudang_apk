@@ -370,16 +370,16 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Supplier berhasil dihapus!');
+                            showNotification('success', 'Supplier was successfully deleted!');
                             deleteModal.hide();
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus supplier.');
+                            showNotification('error', 'Failed to delete supplier.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menghapus supplier.';
+                            'An error occurred when deleting supplier.';
                         showNotification('error', message);
                     }
                 });
@@ -430,7 +430,7 @@
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'An error occurred while deleting selected type requirement.';
+                                'An error occurred when deleting selected supplier.';
                             showNotification('error', message);
                         }
                     });
@@ -476,16 +476,16 @@
                     data: form.serialize(),
                     success: function(response) {
                         if (response.success) {
-                            showNotification('success', 'Supplier berhasil diperbarui!');
+                            showNotification('success', 'Supplier was updated successfully!');
                             $('#editData').modal('hide');
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal memperbarui supplier.');
+                            showNotification('error', 'Failed to update supplier.');
                         }
                     },
                     error: function() {
                         showNotification('error',
-                            'Terjadi kesalahan saat memperbarui supplier.');
+                            'An error occurred when updating the supplier.');
                     }
                 });
             });
@@ -504,7 +504,7 @@
                 let formData = $(this).serialize();
                 let $submitButton = $(this).find('button[type="submit"]');
 
-                // Disable the submit button to prevent multiple clicks
+                // Disable the submit button to prevent multiple clicks and show a spinner
                 $submitButton.prop('disabled', true).html(
                     '<i class="spinner-border spinner-border-sm"></i>');
 
@@ -530,21 +530,24 @@
                     error: function(xhr) {
                         // Handle AJAX errors
                         let message = xhr.responseJSON?.message ||
-                            'An error occurred while deleting selected supplier.';
+                            'An error occurred when adding the supplier.';
                         showNotification('error', message); // Show error message
                     },
                     complete: function() {
-                        // Hide the modal after a delay
+                        // Add delay to keep spinner visible longer even after the process is complete
                         setTimeout(function() {
+                            // Hide the modal after a delay
                             $('#tambahData').modal('hide'); // Hide modal
                             $('#supplier-table').DataTable().ajax
-                                .reload(); // Reload DataTable if needed
-                        }, 1000); // Delay of 1 second before hiding the modal
+                        .reload(); // Reload DataTable if needed
 
-                        $submitButton.prop('disabled', false).html('Save'); // Re-enable button
+                            // Re-enable button after the delay
+                            $submitButton.prop('disabled', false).html('Save');
+                        }, 1000); // 2000 milliseconds delay (2 seconds)
                     }
                 });
             });
+
 
             // Reset add form on modal close
             $('#tambahData').on('hidden.bs.modal', function() {

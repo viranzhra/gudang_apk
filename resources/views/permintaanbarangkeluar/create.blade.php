@@ -39,7 +39,7 @@
                     </ul>
                 </div>
             @endif
-
+ 
             <div class="grid md:grid-cols-2 md:gap-6">
                 <div class="relative z-0 w-full mb-3 group">
                     <label for="customer" class="form-label">Penerima</label>

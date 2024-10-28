@@ -9,10 +9,40 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\Facades\DataTables;
+use App\Exports\BarangMasukExport;
 
 class LaporanController extends Controller
 {
+
+    public function exportBarangMasuk(Request $request)
+    {
+        // Validasi input
+        $request->validate([
+            'search' => 'nullable|string',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+        ]);
+    
+        $search = $request->input('search');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+    
+        $fileName = 'LaporanBarangMasuk_' . $startDate . '_to_' . $endDate . '.xlsx';
+        // Kirim parameter untuk export
+        return Excel::download(new BarangMasukExport($startDate, $endDate), $fileName);
+        
+    }
+    // public function exportBarangKeluar(Request $request)
+    // {
+    //     $search = $request->input('search');
+    //     $startDate = $request->input('start_date');
+    //     $endDate = $request->input('end_date');
+    
+    //     return Excel::download(new BarangKeluarExport($search, $startDate, $endDate), 'barang_keluar.xlsx');
+    // }
 
     public function stok(Request $request)
     {
@@ -56,10 +86,7 @@ class LaporanController extends Controller
                 ->get();
         }
 
-        $data->getCollection()->transform(function ($item) {
-            $item->tanggal = \Carbon\Carbon::parse($item->tanggal)->isoFormat('DD MMMM YYYY');
-            return $item;
-        });
+      
 
         return view('laporan.stok.index', compact('data', 'startDate', 'endDate'));
     }
@@ -146,12 +173,7 @@ class LaporanController extends Controller
 				->get();
 		}
 
-		// Transform data untuk modal
-		$data->getCollection()->transform(function ($item) {
-			$item->tanggal = \Carbon\Carbon::parse($item->tanggal)->isoFormat('DD MMMM YYYY');
-			return $item;
-		});
-
+		
 		return view('laporan.barangmasuk.index', compact('data', 'startDate', 'endDate'));
 	}
 
@@ -202,11 +224,7 @@ class LaporanController extends Controller
                 ->get();
         }
 
-        // Format tanggal untuk tampilan
-        $data->getCollection()->transform(function ($item) {
-            $item->tanggal = \Carbon\Carbon::parse($item->tanggal)->isoFormat('DD MMMM YYYY');
-            return $item;
-        });
+        
 
         return view('laporan.barangkeluar.index', compact('data', 'startDate', 'endDate'));
     }
