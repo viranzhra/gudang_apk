@@ -308,24 +308,30 @@
                             <span class="hide-menu">TRANSACTION</span>
                         </li>
                         <li
-                            class="sidebar-item {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}">
-                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}"
+                            class="sidebar-item {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}">
+                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}"
                                 href="#"
-                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}"
+                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}"
                                 data-bs-toggle="collapse" data-bs-target="#itemSubmenu">
                                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                                 <span class="hide-menu">Item</span>
                             </a>
-
                             <ul id="itemSubmenu"
-                                class="collapse {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'show' : '' }}"
-                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}">
-
-                                <li class="sidebar-sub-item">
-                                    <a class="sidebar-link {{ request()->is('barangmasuk*') ? 'active' : '' }}"
+                                class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}"
+                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
+                                {{-- <li class="sidebar-sub-item">
+                                    <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}"
                                         href="/barangmasuk">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangmasuk*') ? '#635bff' : 'gray' }};">
+                                            style="color: {{ request()->is('barangmasuk') ? '#635bff' : 'gray' }};">Incoming
+                                            Item</span>
+                                    </a>
+                                </li> --}}
+                                <li class="sidebar-sub-item">
+                                    <a class="sidebar-link {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? 'active' : '' }}"
+                                        href="/barangmasuk">
+                                        <span class="hide-menu"
+                                            style="color: {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? '#635bff' : 'gray' }};">
                                             Incoming Item
                                         </span>
                                     </a>
@@ -335,14 +341,12 @@
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">
-                                            Outbound Item
-                                        </span>
+                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">Outbound
+                                            Item</span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
-
                         <li class="sidebar-item">
                             <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
                                 href="/permintaanbarangkeluar" aria-expanded="false">
@@ -455,13 +459,8 @@
                                             <i class="ti ti-list-check fs-6"></i>
                                             <p class="mb-0 fs-3">My Task</p>
                                         </a>
-                                        <!-- Logout Button -->
-                                        <a href="#" class="btn btn-outline-primary mx-3 mt-2 d-block"
-                                            data-bs-toggle="modal" data-bs-target="#logoutModal">
-                                            Logout
-                                        </a>
-                                        {{-- <a href="./authentication-login.html"
-                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a> --}}
+                                        <a href="./authentication-login.html"
+                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
                                     </div>
                                 </div>
                             </li>
@@ -480,36 +479,6 @@
     </div>
     </div>
     </div>
-
-    <!-- Logout Confirmation Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document" style="max-width: 400px;">
-            <div class="modal-content rounded-3 shadow">
-                <div class="modal-header border-bottom-0">
-                    <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="text-center">
-                        <p class="mb-0">Apakah Anda yakin ingin keluar?</p>
-                        <p class="text-muted">Semua sesi yang sedang aktif akan dihentikan.</p>
-                    </div>
-                </div>
-                <div class="modal-footer d-flex justify-content-end border-top-0">
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                        @csrf
-                    </form>
-                    <button style="background-color: #c70000; color: white;" type="button" class="btn"
-                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Logout
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
