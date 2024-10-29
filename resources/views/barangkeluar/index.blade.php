@@ -79,7 +79,7 @@
         <table class="table table-bordered table-striped table-hover" id="outboundTable" width="100%">
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 20px">No</th>
+                    <th style="width: 20px;">No</th>
                     <th style="width: 220px">Customer</th>
                     <th>Purpose</th>
                     <th style="width: 25px">Quantity</th>
@@ -129,6 +129,7 @@
                 columns: [{
                         data: 'id',
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
@@ -168,6 +169,9 @@
                             </div>`;
                         }
                     }
+                ],
+                order: [
+                    [2, 'asc']
                 ],
                 drawCallback: function(settings) {
                     $('.btn-detail').on('click', function() {

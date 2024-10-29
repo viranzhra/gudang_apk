@@ -57,7 +57,7 @@
                     <th style="width: 20px">
                         <input type="checkbox" id="select-all">
                     </th>
-                    <th>No</th>
+                    <th class="d-flex justify-content-center align-items-center">No</th>
                     <th>Item Name</th>
                     <th>Item Type</th>
                     <th>Supplier</th>
@@ -177,7 +177,7 @@
                     <form id="deleteForm" method="POST" action="">
                         @csrf
                         @method('GET')
-                        <button type="submit" class="btn" style="background-color: #910a0a; color: white;">Delete</button>
+                        <button type="submit" class="btn" style="background-color: #19850b; color: white;">Delete</button>
                     </form>
                 </div>
             </div>
@@ -346,6 +346,7 @@
                     {
                         data: null,
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }

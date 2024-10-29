@@ -112,7 +112,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th><input type="checkbox" id="select-all"></th>
-                    <th>No</th>
+                    <th class="d-flex justify-content-center align-items-center">No</th>
                     <th>Supplier</th>
                     <th>Address</th>
                     <th>Phone</th>
@@ -575,6 +575,7 @@
                     {
                         data: null,
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
