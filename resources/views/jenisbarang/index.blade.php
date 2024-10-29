@@ -2,10 +2,6 @@
 
 @section('content')
 <style>
-    /* Existing styles */
-    .select-item:checked {
-        accent-color: blue;
-    }
     .btn-action {
         background: none;
         border: none; 
@@ -61,14 +57,14 @@
     }
 </style>
 
-<div class="container mt-3" style="padding: 40px; width: 1160px;">
+<div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
     <!-- Notification Element -->
     <div id="notification" class="alert" style="display: none;">
         <strong id="notificationTitle">Notification</strong>
         <p id="notificationMessage"></p>
     </div>
 
-    <h4 class="mt-3" style="color: #8a8a8a;">Data Jenis Barang</h4>
+    <h4 class="mt-3" style="color: #8a8a8a;">Item Type Data</h4>
     <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
         <!-- Add Button -->
         <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px;">
@@ -183,6 +179,26 @@
         </div>
     </div>
 </div>
+
+<!-- Modal Konfirmasi Hapus Beberapa Data -->
+<div class="modal fade" id="confirmDeleteSelectedModal" tabindex="-1" aria-labelledby="confirmDeleteSelectedLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteSelectedLabel">Konfirmasi Hapus</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" style="color: black">
+                Apakah Anda yakin ingin menghapus <span id="selectedCount"></span> jenis barang yang dipilih?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" style="background-color: #1ca13b; border: none; color:rgb(255, 255, 255)" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="confirmDeleteSelected" class="btn btn-danger" style="background-color: #910a0a">Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -365,6 +381,49 @@
         $('#deleteSelected').on('click', function() {
             // Implement delete selected items functionality here
         });
+
+// Handle delete selected button
+$('#deleteSelected').on('click', function() {
+    const selectedIds = $('.select-item:checked').map(function() {
+        return $(this).val();
+    }).get();
+
+    // Show confirmation modal if there are selected items
+    if (selectedIds.length > 0) {
+        $('#selectedCount').text(selectedIds.length); // Display the number of selected items
+        $('#confirmDeleteSelectedModal').modal('show'); // Show the confirmation modal
+    } else {
+        showNotification('Warning', 'No items selected for deletion.', 'info');
+    }
+});
+
+// Handle the actual deletion after confirmation
+$('#confirmDeleteSelected').on('click', function() {
+    const selectedIds = $('.select-item:checked').map(function() {
+        return $(this).val();
+    }).get();
+
+    if (selectedIds.length > 0) {
+        $.ajax({
+            url: 'https://doaibutiri.my.id/gudang/api/jenisbarang/delete-selected', // Use named route for maintainability
+            method: 'POST', // Ensure you're using POST method
+            data: {
+                ids: selectedIds,
+                _token: "{{ csrf_token() }}" // Include CSRF token
+            },
+            success: function(response) {
+                showNotification('Success', response.message, 'success');
+                $('#jenisBarangTable').DataTable().ajax.reload(); // Reload the DataTable to reflect changes
+                $('#select-all').prop('checked', false); // Uncheck the select-all checkbox
+                $('#confirmDeleteSelectedModal').modal('hide'); // Hide the confirmation modal
+            },
+            error: function(xhr) {
+                showNotification('Error', 'Failed to delete selected items: ' + xhr.responseJSON.message, 'danger');
+            }
+        });
+    }
+});
+
     });
 </script>
 @endsection

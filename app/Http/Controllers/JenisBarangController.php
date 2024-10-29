@@ -185,12 +185,23 @@ class JenisBarangController extends Controller
 	public function deleteSelected(Request $request)
 	{
 		$ids = $request->input('ids');
-		foreach ($ids as $id) {
-			$data = JenisBarang::find($id);
-			if ($data) {
-				$data->delete();
-			}
+	
+		if (!$ids || !is_array($ids)) {
+			return response()->json(['message' => 'No IDs provided or invalid format.'], 400);
 		}
-		return redirect('/jenisbarang')->with('success', 'Anda berhasil menghapus data terpilih!');
-	}	
+	
+		try {
+			// Attempt to delete the items from the database
+			$deletedCount = JenisBarang::destroy($ids); // Returns number of records deleted
+			if ($deletedCount > 0) {
+				return response()->json(['message' => 'Selected items deleted successfully.']);
+			} else {
+				return response()->json(['message' => 'No items deleted.'], 404);
+			}
+		} catch (\Exception $e) {
+			return response()->json(['message' => 'Failed to delete items: ' . $e->getMessage()], 500);
+		}
+	}
+	
+	
 }
