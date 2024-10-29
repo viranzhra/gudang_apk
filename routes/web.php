@@ -15,18 +15,29 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SerialNumberController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
+Route::middleware('guest')->group(function() {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth_token')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    // Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
@@ -132,4 +143,4 @@ Route::middleware('auth')->group(function () {
     Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
