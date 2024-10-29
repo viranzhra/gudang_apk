@@ -501,7 +501,7 @@
         </div>
 
         <!-- Container for preview table -->
-         <div id="previewContainer" style="display: none;">
+        <div id="previewContainer" style="display: none;">
             {{-- <hr class="col-span-10 my-3"> --}}
             {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
                 <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
@@ -708,7 +708,7 @@
                         const rowNode = table.row.add(row).draw(false).node();
                         if (row[6]) {
                             $(rowNode).find('td').last().css('color',
-                            '#f00'); // Mengatur warna teks kolom kesalahan
+                                '#f00'); // Mengatur warna teks kolom kesalahan
                         }
                     });
 
@@ -733,7 +733,7 @@
             async function checkExistingSerialNumbers(dataRows) {
                 try {
                     const serialNumberResponse = await fetch(
-                    'https://doaibutiri.my.id/gudang/api/serialnumber');
+                        'https://doaibutiri.my.id/gudang/api/serialnumber');
                     if (!serialNumberResponse.ok) {
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
@@ -949,7 +949,7 @@
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Incoming Item Detail</h5>
+                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%; font-weight: bold;">Incoming Item Detail</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
@@ -973,7 +973,7 @@
                                                     <div class="col-8">${tanggalBarang || '—'}</div>
                                                 </div>
                                                 <div class="row mb-3">
-                                                    <div class="col-3"><strong>Completeness</strong></div>:
+                                                    <div class="col-3"><strong>Description</strong></div>:
                                                     <div class="col-8">
                                                         ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
                                                     </div>

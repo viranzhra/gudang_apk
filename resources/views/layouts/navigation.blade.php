@@ -308,30 +308,23 @@
                             <span class="hide-menu">TRANSACTION</span>
                         </li>
                         <li
-                            class="sidebar-item {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}">
-                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}"
+                            class="sidebar-item {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}">
+                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}"
                                 href="#"
-                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}"
+                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}"
                                 data-bs-toggle="collapse" data-bs-target="#itemSubmenu">
                                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                                 <span class="hide-menu">Item</span>
                             </a>
                             <ul id="itemSubmenu"
-                                class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}"
-                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
-                                {{-- <li class="sidebar-sub-item">
-                                    <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}"
-                                        href="/barangmasuk">
-                                        <span class="hide-menu"
-                                            style="color: {{ request()->is('barangmasuk') ? '#635bff' : 'gray' }};">Incoming
-                                            Item</span>
-                                    </a>
-                                </li> --}}
+                                class="collapse {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'show' : '' }}"
+                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}">
+
                                 <li class="sidebar-sub-item">
-                                    <a class="sidebar-link {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? 'active' : '' }}"
+                                    <a class="sidebar-link {{ request()->is('barangmasuk*') ? 'active' : '' }}"
                                         href="/barangmasuk">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangmasuk') || request()->is('barangmasuk/create') ? '#635bff' : 'gray' }};">
+                                            style="color: {{ request()->is('barangmasuk*') ? '#635bff' : 'gray' }};">
                                             Incoming Item
                                         </span>
                                     </a>
@@ -341,12 +334,14 @@
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">Outbound
-                                            Item</span>
+                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">
+                                            Outbound Item
+                                        </span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
+
                         <li class="sidebar-item">
                             <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
                                 href="/permintaanbarangkeluar" aria-expanded="false">
@@ -435,7 +430,7 @@
                                     opacity: 1;
                                     visibility: visible;
                                 }
-    
+
                                 .dropdown-menu {
                                     display: none;
                                     opacity: 0;
@@ -496,7 +491,8 @@
                                         </a>
                                     </div>
                                     <div class="py-3 px-4">
-                                        <a href="#" class="btn btn-primary btn-sm w-100">View All Notifications</a>
+                                        <a href="#" class="btn btn-primary btn-sm w-100">View All
+                                            Notifications</a>
                                     </div>
                                 </div>
                             </li>
