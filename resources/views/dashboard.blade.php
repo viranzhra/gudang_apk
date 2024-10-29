@@ -282,7 +282,7 @@
         aria-atomic="true">
         <div class="toast-body hstack align-items-start gap-6">
             <div>
-                <h5 class="text-white fs-3 mb-1">Welcome back <b>{{ Auth::user()->name }}</b>!</h5>
+                <h5 class="text-white fs-3 mb-1">Welcome back <b>{{ session('user_name') }}</b>!</h5>
                 <h6 class="text-white fs-2 mb-0">Have a bright day! Remember, you're capable of amazing things.</h6>
             </div>
             <button type="button" class="btn-close btn-close-white fs-2 m-0 ms-auto shadow-none" data-bs-dismiss="toast"
@@ -306,7 +306,7 @@
                                         <iconify-icon icon="solar:course-up-outline" class="fs-7 text-muted"></iconify-icon>
                                     </span>
                                     <h5 class="text-white fs-6 mb-0 text-nowrap">Welcome Back
-                                        <br>{{ Auth::user()->name }}
+                                        <br>{{ session('user_name') }}
                                     </h5>
                                 </div>
                                 <div class="mt-4 mt-sm-auto">
@@ -340,7 +340,7 @@
                     <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
                     <span class="fw-normal">Online</span>
                   </span>
-                  <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span class="fw-bolder"><br>{{ Auth::user()->name }}</span>!
+                  <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span class="fw-bolder"><br>{{ session('user_name') }}</span>!
                   </h4>
                   <h6 class="opacity-75 fw-normal text-white mb-0 d-none"></h6>
                 </div>
@@ -1360,7 +1360,7 @@
 
         {{-- <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
             <div class="card-body">
-                <h4 style="color: #5a5c69; font-size: 20px;">Hallo, {{ Auth::user()->name }}!</h4>
+                <h4 style="color: #5a5c69; font-size: 20px;">Hallo, {{ session('user_name') }}!</h4>
             </div>
         </div> --}}
 
