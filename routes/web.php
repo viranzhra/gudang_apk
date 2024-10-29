@@ -141,14 +141,10 @@ Route::middleware('auth_token')->group(function () {
     // Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
     Route::get('/laporan/barangmasuk', [LaporanController::class, 'barangmasuk'])->name('laporan.barangmasuk.index');
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index');
-<<<<<<< HEAD
     Route::get('api/laporan/barangkeluar/export/pdf', [LaporanController::class, 'exportPdf']);
     Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar']);
 
     // Route::get('api/laporan/barangkeluar/export/excel', [LaporanController::class, 'exportExcel']); 
-=======
-    Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
->>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
 });
 
 // require __DIR__.'/auth.php';
