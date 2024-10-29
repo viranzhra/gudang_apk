@@ -13,18 +13,31 @@ use App\Http\Controllers\BarangKeluarController;
 use App\Http\Controllers\KeperluanController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SerialNumberController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+
+Route::middleware('guest')->group(function() {
+    Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::middleware('auth_token')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index');
     Route::get('/supplier/create', [SupplierController::class, 'create'])->name('supplier.create');
@@ -78,8 +91,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/barangmasuk/update/{id}', [BarangMasukController::class, 'update'])->name('barangmasuk.update');
     Route::get('/barangmasuk/delete/{id}', [BarangMasukController::class, 'delete'])->name('barangmasuk.delete');
     Route::post('/barangmasuk/delete-selected', [BarangMasukController::class, 'deleteSelected']);
+    Route::get('/preview/data', [BarangMasukController::class, 'getData'])->name('preview.data');
 
-    Route::get('/template/download', [BarangMasukController::class, 'downloadTemplate'])->name('template.download');
+    Route::get('/download-template', [BarangMasukController::class, 'downloadTemplate'])->name('download.template');
     Route::post('/upload/excel', [BarangMasukController::class, 'uploadExcel'])->name('upload.excel');
 
 
@@ -101,8 +115,11 @@ Route::middleware('auth')->group(function () {
     //Route::get('/permintaanbarangkeluar/edit/{id}', [PermintaanBarangKeluarController::class, 'edit'])->name('permintaanbarangkeluar.edit');
     Route::put('/permintaanbarangkeluar/update/{id}', [PermintaanBarangKeluarController::class, 'update'])->name('permintaanbarangkeluar.update');
     Route::get('/permintaanbarangkeluar/delete/{id}', [PermintaanBarangKeluarController::class, 'delete'])->name('permintaanbarangkeluar.delete');
+    Route::get('/permintaanbarangkeluar/selectSN/{id}', [PermintaanBarangKeluarController::class, 'selectSN'])->name('permintaanbarangkeluar.selectSN');
+    Route::post('/permintaanbarangkeluar/setSN', [PermintaanBarangKeluarController::class, 'setSN'])->name('permintaanbarangkeluar.setSN');
 
     Route::get('/barangkeluar', [BarangKeluarController::class, 'index'])->name('barangkeluar.index');
+    Route::get('/barangkeluar/show', [BarangKeluarController::class, 'show'])->name('barangkeluar.show');
     Route::get('/barangkeluar/create/{id?}', [BarangKeluarController::class, 'create'])->name('barangkeluar.create');
     Route::get('/barangkeluar/get-by-jenis/{id}', [BarangKeluarController::class, 'getBarangByJenis']);
     Route::post('/barangkeluar/store', [BarangKeluarController::class, 'store'])->name('barangkeluar.store');
@@ -118,15 +135,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/keperluan/delete/{id}', [KeperluanController::class, 'delete'])->name('keperluan.delete');
     Route::post('/keperluan/delete-selected', [KeperluanController::class, 'deleteSelected']);
 
+
     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
     
     // Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
     Route::get('/laporan/barangmasuk', [LaporanController::class, 'barangmasuk'])->name('laporan.barangmasuk.index');
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index');
+<<<<<<< HEAD
     Route::get('api/laporan/barangkeluar/export/pdf', [LaporanController::class, 'exportPdf']);
     Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar']);
 
     // Route::get('api/laporan/barangkeluar/export/excel', [LaporanController::class, 'exportExcel']); 
+=======
+    Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
+>>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
 });
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';

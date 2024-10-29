@@ -15,6 +15,13 @@ use Illuminate\Support\Facades\Log;
 
 class KeperluanController extends Controller
 {
+	public function getBatasHari()
+	{
+		$batasHari = Keperluan::latest()->value('batas_hari');
+
+		return response()->json(['batas_hari' => $batasHari]);
+	}
+
 
 	public function index(Request $request)
 	{

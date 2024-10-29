@@ -67,6 +67,22 @@
             border: 1px solid #f5c6cb;
             height: 80px;
         }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            height: 80px;
+        }
+
+        .table-ellipsis {
+            display: inline-block;
+            max-width: 330px;
+            /* Atur sesuai kebutuhan */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
@@ -118,7 +134,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="addSupplierForm" method="post" action="{{ route('supplier.store') }}" enctype="multipart/form-data">
+                    <form id="addSupplierForm" method="post" action="{{ route('supplier.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         <div class="mb-3">
                             <label for="tambah-nama" class="form-label">Supplier</label>
@@ -136,7 +153,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="tambah-keterangan" class="form-label">Description</label>
-                            <input type="text" id="tambah-keterangan" name="keterangan" class="form-control">
+                            <textarea id="tambah-keterangan" name="keterangan" class="form-control"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
@@ -173,9 +190,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit-keterangan" class="form-label">Description</label>
-                            <input type="text" id="edit-keterangan" name="keterangan" class="form-control">
+                            <textarea name="keterangan" id="edit-keterangan" class="form-control"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-primary">Edit</button>
                     </form>
                 </div>
             </div>
@@ -201,6 +218,36 @@
                         <button type="submit" class="btn"
                             style="background-color: #910a0a; color: white;">Delete</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detail Data -->
+    <div class="modal fade" id="detailData" tabindex="-1" aria-labelledby="detailDataLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-top">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailDataLabel">Detail Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Supplier:</strong></div>
+                        <div class="col-8"><span class="detail-nama"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Address:</strong></div>
+                        <div class="col-8"><span class="detail-alamat"></span></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-3"><strong>Phone:</strong></div>
+                        <div class="col-8"><span class="detail-telepon"></span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3"><strong>Description:</strong></div>
+                        <div class="col-8"><span class="detail-keterangan"></span></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -233,6 +280,35 @@
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+    {{-- detail --}}
+    <script>
+        $(document).on('click', '.btn-detail', function(e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+
+            // mengambil data customer menggunakan API
+            $.ajax({
+                url: `{{ config('app.api_url') }}/suppliers/${id}`,
+                type: 'GET',
+                success: function(data) {
+                    // sesuaikan dengan yang di modal
+                    $('.detail-nama').text(data.nama);
+                    $('.detail-alamat').text(data.alamat);
+                    $('.detail-telepon').text(data.telepon);
+                    $('.detail-keterangan').text(data.keterangan);
+
+                    // perbarui judul dan menampilkan modal
+                    $('#detailDataLabel').text('Detail Supplier');
+                    $('#detailData').modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Failed to fetch supplier data:', xhr.responseText);
+                    alert('Failed to fetch supplier data.');
+                }
+            });
+        });
+    </script>
 
     {{-- konfirmasi hapus --}}
     <script>
@@ -294,16 +370,16 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Supplier berhasil dihapus!');
+                            showNotification('success', 'Supplier was successfully deleted!');
                             deleteModal.hide();
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus supplier.');
+                            showNotification('error', 'Failed to delete supplier.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menghapus supplier.';
+                            'An error occurred when deleting supplier.';
                         showNotification('error', message);
                     }
                 });
@@ -316,10 +392,10 @@
                     selectedIds.push($(this).val());
                 });
 
-                if (selectedIds.length === 0) {
-                    showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
-                    return;
-                }
+                // if (selectedIds.length === 0) {
+                //     showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
+                //     return;
+                // }
 
                 $('#confirmDelete').modal('show'); // Tampilkan modal konfirmasi
                 $('#confirmDeleteButton').off('click').on('click', function() {
@@ -336,18 +412,25 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Selected data was successfully delected!');
+                                    'Selected data was successfully deleted!');
                                 $('#confirmDelete').modal('hide');
                                 $('#supplier-table').DataTable().ajax.reload();
+
+                                // Uncheck all checkboxes
+                                $('.select-item').prop('checked', false);
+                                $('#select-all').prop('checked', false);
+
+                                // Hide the delete button after the operation
+                                toggleDeleteButton();
                             } else {
                                 showNotification('error',
-                                    'Gagal menghapus supplier terpilih.');
+                                    'Failed to delete selected supplier!');
                             }
                         },
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'Terjadi kesalahan saat menghapus supplier terpilih.';
+                                'An error occurred when deleting selected supplier.';
                             showNotification('error', message);
                         }
                     });
@@ -393,16 +476,16 @@
                     data: form.serialize(),
                     success: function(response) {
                         if (response.success) {
-                            showNotification('success', 'Supplier berhasil diperbarui!');
+                            showNotification('success', 'Supplier was updated successfully!');
                             $('#editData').modal('hide');
                             $('#supplier-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal memperbarui supplier.');
+                            showNotification('error', 'Failed to update supplier.');
                         }
                     },
                     error: function() {
                         showNotification('error',
-                            'Terjadi kesalahan saat memperbarui supplier.');
+                            'An error occurred when updating the supplier.');
                     }
                 });
             });
@@ -421,8 +504,9 @@
                 let formData = $(this).serialize();
                 let $submitButton = $(this).find('button[type="submit"]');
 
-                // Disable the submit button to prevent multiple clicks
-                $submitButton.prop('disabled', true).html('<i class="spinner-border spinner-border-sm"></i>');
+                // Disable the submit button to prevent multiple clicks and show a spinner
+                $submitButton.prop('disabled', true).html(
+                    '<i class="spinner-border spinner-border-sm"></i>');
 
                 // Sending the data via AJAX to the API
                 $.ajax({
@@ -439,25 +523,31 @@
                             showNotification('success', response.message);
                         } else {
                             // If not successful, show error message
-                            showNotification('error', response.message || 'Gagal menambahkan supplier.');
+                            showNotification('error', response.message ||
+                                'Failed to add supplier.');
                         }
                     },
                     error: function(xhr) {
                         // Handle AJAX errors
-                        let message = xhr.responseJSON?.message || 'Terjadi kesalahan saat menambahkan supplier.';
+                        let message = xhr.responseJSON?.message ||
+                            'An error occurred when adding the supplier.';
                         showNotification('error', message); // Show error message
                     },
                     complete: function() {
-                        // Hide the modal after a delay
+                        // Add delay to keep spinner visible longer even after the process is complete
                         setTimeout(function() {
+                            // Hide the modal after a delay
                             $('#tambahData').modal('hide'); // Hide modal
-                            $('#supplier-table').DataTable().ajax.reload(); // Reload DataTable if needed
-                        }, 1000); // Delay of 1 second before hiding the modal
+                            $('#supplier-table').DataTable().ajax
+                        .reload(); // Reload DataTable if needed
 
-                        $submitButton.prop('disabled', false).html('Save'); // Re-enable button
+                            // Re-enable button after the delay
+                            $submitButton.prop('disabled', false).html('Save');
+                        }, 1000); // 2000 milliseconds delay (2 seconds)
                     }
                 });
             });
+
 
             // Reset add form on modal close
             $('#tambahData').on('hidden.bs.modal', function() {
@@ -490,22 +580,47 @@
                         }
                     },
                     {
-                        data: 'nama'
+                        data: 'nama',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
-                        data: 'alamat'
+                        data: 'alamat',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
-                        data: 'telepon'
+                        data: 'telepon',
+                        render: function(data) {
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
-                        data: 'keterangan'
+                        data: 'keterangan',
+                        render: function(data) {
+                            if (!data) {
+                                return ''; // Tampilkan kosong jika data null atau undefined
+                            }
+                            return `<span class="table-ellipsis" title="${data}">${data}</span>`;
+                        }
                     },
                     {
                         data: 'id',
                         orderable: false,
                         render: function(data) {
-                            return `<div class="d-flex"><button data-id="${data}" class="btn-edit btn-action" aria-label="Edit"><iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon></button><button data-id="${data}" class="btn-delete btn-action" aria-label="Delete"><iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon></button></div>`;
+                            return `<div class="d-flex">
+                                <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                    <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                                </button>
+                                <button data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
+                                    <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+                                </button>
+                                <button data-id="${data}" class="btn-delete btn-action" aria-label="Delete">
+                                    <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                                </button>
+                                </div>`;
                         }
                     }
                 ],

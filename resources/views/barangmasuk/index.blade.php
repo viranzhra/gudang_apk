@@ -2,6 +2,13 @@
 
 @section('content')
     <style>
+        #previewContainer {
+            background-color: #f2f2f2;
+            padding-left: 12px;
+            padding-right: 12px;
+            border-radius: 16px;
+        }
+
         .card {
             background-color: #ffffff;
             padding: 20px;
@@ -303,6 +310,38 @@
             font-size: 1rem;
         }
 
+        /* Remove top border of the table header */
+        #previewTable thead tr {
+            border-top: none;
+            /* Remove top border */
+        }
+
+        /* Add a bottom border to each table row */
+        #previewTable tbody tr {
+            border-bottom: 1px solid #dee2e6;
+            /* Adjust color and width as needed */
+        }
+
+        /* Optional: Remove the border from the last row */
+        #previewTable tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+            /* Animasi berputar */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
         #notification {
             position: fixed;
             top: 10px;
@@ -330,28 +369,122 @@
             <p id="notificationMessage"></p>
         </div>
 
-        <div class="d-flex align-items-center gap-3 justify-content-end pb-3">
+        @if (session('success'))
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger');
+                notificationElement.classList.add('alert-success');
+                document.getElementById('notificationTitle').innerText = "Success";
+                document.getElementById('notificationMessage').innerText = "{{ session('success') }}";
+                notificationElement.style.display = 'block';
+
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 7000);
+            </script>
+        @endif
+
+        @if (session('notifications'))
+            <script>
+                const notificationElement = document.getElementById('notification');
+                let notificationQueue = @json(session('notifications'));
+
+                // Fungsi untuk menampilkan notifikasi satu per satu
+                function displayNotification(message) {
+                    // Ubah kelas notifikasi menjadi alert-danger (notifikasi error)
+                    notificationElement.classList.remove('alert-success');
+                    notificationElement.classList.add('alert-danger');
+                    document.getElementById('notificationTitle').innerText = "Error";
+                    document.getElementById('notificationMessage').innerText = message;
+                    notificationElement.style.display = 'block';
+
+                    // Sembunyikan notifikasi setelah beberapa detik
+                    setTimeout(() => {
+                        notificationElement.style.display = 'none';
+                        notificationElement.classList.remove('alert-danger');
+                        processNextNotification(); // Lanjutkan ke notifikasi berikutnya
+                    }, 7000);
+                }
+
+                // Proses antrian notifikasi
+                function processNextNotification() {
+                    if (notificationQueue.length > 0) {
+                        let nextNotification = notificationQueue.shift(); // Ambil notifikasi berikutnya
+                        displayNotification(nextNotification); // Tampilkan notifikasi berikutnya
+                    }
+                }
+
+                // Mulai memproses antrian notifikasi
+                processNextNotification();
+            </script>
+        @endif
+
+        @if (session('finalMessage'))
+            <script>
+                // Reset kelas dan konten untuk notifikasi
+                const notificationElement = document.getElementById('notification');
+                notificationElement.classList.remove('alert-danger', 'alert-success'); // Hapus kelas apapun
+                notificationElement.style.display = 'block'; // Tampilkan notifikasi
+
+                // Ambil pesan dari session
+                const message = "{{ session('finalMessage') }}";
+                if (message.includes("Error")) {
+                    notificationElement.classList.add('alert-danger'); // Jika ada error, tambahkan kelas danger
+                    document.getElementById('notificationTitle').innerText = "Error";
+                } else {
+                    notificationElement.classList.add('alert-success'); // Jika tidak ada error, tambahkan kelas success
+                    document.getElementById('notificationTitle').innerText = "Success";
+                }
+                document.getElementById('notificationMessage').innerText = message;
+
+                // Sembunyikan notifikasi setelah beberapa detik
+                setTimeout(() => {
+                    notificationElement.style.display = 'none';
+                }, 7000);
+            </script>
+        @endif
+
+        {{-- @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif --}}
+
+
+        <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
             <!-- Tombol Unduh Template -->
-            <a href="{{ route('template.download') }}" class="btn btn-primary d-flex align-items-center"
-                style="height: 40px;">
+            <a href="{{ route('download.template') }}" class="btn btn-primary d-flex align-items-center"
+                title="Download Template" style="height: 40px;">
                 <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                Unduh Template
+                Template File
             </a>
 
-            <!-- Form Upload -->
+            <!-- Form untuk Unggah File Excel -->
             <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
-                class="d-flex align-items-center">
+                class="d-flex align-items-center gap-2" id="uploadForm">
                 @csrf
-                <label class="btn btn-success d-flex align-items-center justify-content-center" for="fileInput"
-                    style="cursor: pointer; height: 40px;">
-                    <iconify-icon icon="mdi:upload" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                    Upload File
-                </label>
-                <input type="file" id="fileInput" name="file" class="d-none" accept=".xlsx, .xls, .csv" required>
-                <button type="submit" class="btn btn-primary ms-2" style="height: 40px;">
-                    Kirim
+                <div class="input-group mb-0">
+                    <input type="file" name="file" id="file" required class="form-control"
+                        aria-label="Unggah File Excel" style="width: 235px;">
+                    {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                        <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+                    </button> --}}
+
+                </div>
+                <div id="loadingIndicator" style="display: none;">Loading...</div>
+                <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
+                    title="Click to Upload" style="height: 40px; width: 193px;">
+                    <iconify-icon id="uploadIcon" icon="mdi:upload"
+                        style="font-size: 20px; margin-right: 8px;"></iconify-icon>Import Data
                 </button>
             </form>
+
 
             <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
                 style="height: 40px;">
@@ -367,21 +500,50 @@
             </button>
         </div>
 
-        <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
-            <thead class="thead-dark">
-                <tr>
-                    <th><input type="checkbox" id="select-all"></th>
-                    <th>No</th>
-                    <th>Barang</th>
-                    <th>Jumlah</th>
-                    <th>Keterangan</th>
-                    <th>Tanggal Masuk</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        <!-- Container for preview table -->
+        <div id="previewContainer" style="display: none;">
+            {{-- <hr class="col-span-10 my-3"> --}}
+            {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
+                <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
+            </button> --}}
+            <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
+            <div class="table-responsive">
+                <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 5px; background-color:#cdcece;">No</th>
+                            <th style="width: 60px; background-color:#cdcece;">Item</th>
+                            <th style="background-color:#cdcece;">Description</th>
+                            <th style="background-color:#cdcece;">Serial Number</th>
+                            <th style="background-color:#cdcece;">Status</th>
+                            <th style="background-color:#cdcece;">Requirement</th>
+                            <th style="background-color:#cdcece; width: 100px;">Error</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <!-- Pagination controls -->
+                <div id="pagination" class="mt-3"></div>
+                {{-- <hr class="col-span-10 my-3"> --}}
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th>No</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Description</th>
+                        <th>Entry Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Modal Konfirmasi Hapus -->
@@ -409,8 +571,8 @@
     </div>
 
     <!-- Modal hapus terpilih -->
-    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel"
-        aria-hidden="true">
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog"
+        aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -432,14 +594,227 @@
         </div>
     </div>
 
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const uploadIcon = document.getElementById('uploadIcon');
+
+            // Ganti ikon menjadi loading dan tambahkan kelas loading
+            uploadIcon.setAttribute('icon', 'mdi:sync');
+            uploadIcon.classList.add('loading');
+        });
+    </script>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Inisialisasi DataTable
+            const table = $('#previewTable').DataTable({
+                paging: true,
+                pageLength: 5,
+                lengthMenu: [5, 10, 25, 50],
+                language: {
+                    error: ''
+                },
+                columnDefs: [{
+                    targets: 0,
+                    orderable: false,
+                    searchable: false,
+                }]
+            });
+
+            // Mengatur event listener untuk input file
+            document.getElementById('file').addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    const file = this.files[0];
+                    // Memeriksa ekstensi file
+                    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                        previewData(); // Panggil fungsi previewData ketika file dipilih
+                    } else {
+                        alert('Silakan pilih file Excel (.xlsx atau .xls)!');
+                    }
+                }
+            });
+
+            // Fungsi untuk melakukan preview data dari file yang diunggah
+            window.previewData = async function() {
+                const fileInput = document.getElementById('file');
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    alert('Silakan pilih file terlebih dahulu!');
+                    return;
+                }
+
+                // Tampilkan indikator loading
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                loadingIndicator.style.display = 'block';
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const data = e.target.result;
+                    const workbook = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                        header: 1
+                    });
+
+                    console.log('Data dari Excel:', jsonData);
+
+                    // Mengosongkan tabel preview
+                    table.clear();
+
+                    // Validasi kesalahan
+                    const rowErrors = await checkExistingSerialNumbers(jsonData.slice(1));
+
+                    console.log('Row Errors:', rowErrors);
+
+                    const rowsWithErrors = [];
+                    const rowsWithoutErrors = [];
+
+                    jsonData.slice(1).forEach((row, index) => {
+                        const errorMessage = rowErrors[index] || '';
+                        const rowData = [
+                            '', // Placeholder untuk nomor urut
+                            row[0] || '', // Barang ID
+                            row[1] || '', // Keterangan
+                            row[2] || '', // Serial Number
+                            row[3] || '', // Kondisi Barang
+                            row[4] || '', // Kelengkapan
+                            errorMessage // Kesalahan
+                        ];
+
+                        if (errorMessage) {
+                            rowsWithErrors.push(rowData);
+                        } else {
+                            rowsWithoutErrors.push(rowData);
+                        }
+                    });
+
+                    const combinedRows = [...rowsWithErrors, ...rowsWithoutErrors];
+
+                    combinedRows.forEach((row) => {
+                        const rowNode = table.row.add(row).draw(false).node();
+                        if (row[6]) {
+                            $(rowNode).find('td').last().css('color',
+                                '#f00'); // Mengatur warna teks kolom kesalahan
+                        }
+                    });
+
+                    updateRowNumbers();
+
+                    toggleUploadButton(rowErrors);
+
+                    document.getElementById('previewContainer').style.display = 'block';
+
+                    loadingIndicator.style.display = 'none';
+                };
+
+                reader.onerror = function(error) {
+                    console.error('Error reading file:', error);
+                    alert('Error reading file. Please try again.');
+                    loadingIndicator.style.display = 'none';
+                };
+
+                reader.readAsBinaryString(file);
+            };
+
+            async function checkExistingSerialNumbers(dataRows) {
+                try {
+                    const serialNumberResponse = await fetch(
+                        'https://doaibutiri.my.id/gudang/api/serialnumber');
+                    if (!serialNumberResponse.ok) {
+                        throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
+                    }
+                    const serialNumberData = await serialNumberResponse.json();
+                    const existingNumbers = serialNumberData.map(item => item.serial_number);
+
+                    const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
+                    if (!barangResponse.ok) {
+                        throw new Error(`HTTP error! status: ${barangResponse.status}`);
+                    }
+                    const barangData = await barangResponse.json();
+                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang) : [];
+
+                    const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
+                    if (!kondisiResponse.ok) {
+                        throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
+                    }
+                    const kondisiData = await kondisiResponse.json();
+                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama) : [];
+
+                    const errors = new Array(dataRows.length).fill(null);
+
+                    dataRows.forEach((row, index) => {
+                        const serialNumber = row[2];
+                        const barangName = row[0];
+                        const kondisiBarang = row[3];
+
+                        let errorMessages = [];
+
+                        if (barangName && !existingBarang.includes(barangName.toString())) {
+                            errorMessages.push(`Item not available`);
+                        }
+
+                        if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
+                            errorMessages.push(`Serial Number already used`);
+                        }
+
+                        if (kondisiBarang && !existingKondisi.includes(kondisiBarang.toString())) {
+                            errorMessages.push(`Status not available`);
+                        }
+
+                        if (errorMessages.length > 0) {
+                            errors[index] = errorMessages.join(' and ');
+                        }
+                    });
+
+                    return errors;
+                } catch (error) {
+                    console.error('Error in checking serial numbers or barang data:', error.message);
+                    return dataRows.map(() => `Error checking data: ${error.message}`);
+                }
+            }
+
+            // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
+            function toggleUploadButton(rowErrors) {
+                const uploadButton = document.getElementById('uploadButton');
+
+                // Periksa apakah ada kesalahan; jika semua adalah null, berarti tidak ada kesalahan
+                const hasErrors = rowErrors.some(error => error !== null && error !==
+                    ''); // Cek jika ada kesalahan yang tidak null atau string kosong
+
+                // Jika tidak ada kesalahan, tampilkan tombol, jika ada kesalahan sembunyikan
+                if (hasErrors) {
+                    uploadButton.classList.add('d-none'); // Sembunyikan tombol upload jika ada kesalahan
+                } else {
+                    uploadButton.classList.remove('d-none'); // Tampilkan tombol upload jika tidak ada kesalahan
+                }
+            }
+
+
+            // Fungsi untuk mengupdate nomor urut
+            function updateRowNumbers() {
+                table.rows().every(function(rowIdx) {
+                    this.data()[0] = rowIdx + 1;
+                    this.invalidate();
+                });
+                table.draw();
+            }
+        });
+    </script>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -558,59 +933,62 @@
                         }
 
                         const detailContent = data.map((detail, index) => `
-                    <hr class="col-span-10 my-3">
-                    <div class="row">
-                        <div class="col-3"><strong>Barang ${index + 1}</strong></div>
-                        :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3"><strong>Kelengkapan</strong></div>
-                        :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
-                    </div>
-                `).join('');
+                            <hr class="col-span-10 my-3">
+                            <div class="row">
+                                <div class="col-3"><strong>Item ${index + 1}</strong></div>
+                                :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}">${detail.status_barang}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"><strong>Completeness</strong></div>
+                                :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+                            </div>
+                        `).join('');
 
                         const modalContent = `
-                    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%;">Detail Barang Masuk</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <hr class="col-span-6 my-1" style="margin-top: 0; margin-bottom: 0;">
-                                <div class="modal-body">
-                                    <div class="grid grid-cols-10 gap-2">
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Nama Barang</strong></div>:
-                                            <div class="col-8">${namaBarang || '—'}</div>
+                            <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%; font-weight: bold;">Incoming Item Detail</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Jenis Barang</strong></div>:
-                                            <div class="col-8">${namaJenisBarang || '—'}</div>
+                                        <div class="modal-body">
+                                            <div class="grid grid-cols-10 gap-2">
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Item</strong></div>:
+                                                    <div class="col-8">${namaBarang || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Type</strong></div>:
+                                                    <div class="col-8">
+                                                        ${namaJenisBarang !== null && namaJenisBarang !== '' && namaJenisBarang !== 'null' ? namaJenisBarang : '—'}
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Supplier</strong></div>:
+                                                    <div class="col-8">${namaSupplier || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Entry Date</strong></div>:
+                                                    <div class="col-8">${tanggalBarang || '—'}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Description</strong></div>:
+                                                    <div class="col-8">
+                                                        ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
+                                                    </div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Quantity</strong></div>:
+                                                    <div class="col-8">${jumlah || 0}</div>
+                                                </div>
+                                                ${detailContent}
+                                            </div>
                                         </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Supplier</strong></div>:
-                                            <div class="col-8">${namaSupplier || '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Tanggal Masuk</strong></div>:
-                                            <div class="col-8">${tanggalBarang || '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Keterangan</strong></div>:
-                                            <div class="col-8">${keteranganBarang ? keteranganBarang : '—'}</div>
-                                        </div>
-                                        <div class="row mb-3">
-                                            <div class="col-3"><strong>Jumlah</strong></div>:
-                                            <div class="col-8">${jumlah || 0}</div>
-                                        </div>
-                                        ${detailContent}
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                `;
+                        `;
 
                         document.body.insertAdjacentHTML('beforeend', modalContent);
                         new bootstrap.Modal(document.getElementById('detailModal')).show();
@@ -757,7 +1135,8 @@
                         // Reload halaman sebelum menampilkan notifikasi
                         setTimeout(() => {
                             // Tampilkan notifikasi sukses
-                            showNotification('Data berhasil dihapus.', 'success');
+                            showNotification('Selected data was successfully delected!',
+                                'success');
                             location.reload(); // Reload halaman
                         }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
                     },
@@ -776,7 +1155,7 @@
                         $('.loading-icon').hide(); // Sembunyikan ikon loading
                         $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
                         $('#confirmDeleteModal').modal(
-                        'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                            'hide'); // Sembunyikan modal hanya setelah semua proses selesai
                     }
                 });
             });

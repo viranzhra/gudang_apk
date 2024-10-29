@@ -4,17 +4,17 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Matdash Free</title>
-    <link rel="shortcut icon" type="image/png" href="../assets/images/logos/favicon.png" />
-    <link rel="stylesheet" href="../assets/css/styles.min.css" />
+    <title>Net2mart</title>
+    <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}" />
+    <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
     <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> --}}
     <!-- Yajra Datatables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <style>
         .container {
             width: 80%;
@@ -206,10 +206,12 @@
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
                     <a href="#" class="text-nowrap logo-img">
-                        <img src="../assets/images/logos/logo_ptjaringsolusi.png" style="width: 100px;
+                        <img src="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}"
+                            style="width: 100px;
                             border-radius: 7px;
                             margin-left: 50px;
-                            margin-top: 15px;" alt="" />
+                            margin-top: 15px;"
+                            alt="" />
                     </a>
                     <div class="close-btn d-xl-none d-block sidebartoggler cursor-pointer" id="sidebarCollapse">
                         <i class="ti ti-x fs-8"></i>
@@ -241,10 +243,19 @@
                                 <span class="hide-menu">Supplier</span>
                             </a>
                         </li>
-                        <li class="sidebar-item">
+                        <li class="sidebar-item" style="margin-left: -1.8px;">
                             <a class="sidebar-link" href="/customer" aria-expanded="false">
-                                <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
-                                <span class="hide-menu">Customer</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="21.7" height="21.7"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-user-square-rounded">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 13a3 3 0 1 0 0 -6a3 3 0 0 0 0 6z" />
+                                    <path d="M12 3c7.2 0 9 1.8 9 9s-1.8 9 -9 9s-9 -1.8 -9 -9s1.8 -9 9 -9z" />
+                                    <path d="M6 20.05v-.05a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v.05" />
+                                </svg>
+                                {{-- <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon> --}}
+                                <span class="hide-menu" style="margin-left: -2px;">Customer</span>
                             </a>
                         </li>
                         <li
@@ -292,41 +303,48 @@
                             <span class="sidebar-divider lg"></span>
                         </li>
                         <li class="nav-small-cap">
-                            <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <iconify-icon icon="solar:menu-dots-linear"
+                                class="nav-small-cap-icon fs-4"></iconify-icon>
                             <span class="hide-menu">TRANSACTION</span>
                         </li>
                         <li
-                            class="sidebar-item {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}">
-                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'active' : '' }}"
+                            class="sidebar-item {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}">
+                            <a class="sidebar-link has-arrow {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'active' : '' }}"
                                 href="#"
-                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}"
+                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}"
                                 data-bs-toggle="collapse" data-bs-target="#itemSubmenu">
                                 <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
                                 <span class="hide-menu">Item</span>
                             </a>
                             <ul id="itemSubmenu"
-                                class="collapse {{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'show' : '' }}"
-                                aria-expanded="{{ request()->is('barangmasuk') || request()->is('barangkeluar') ? 'true' : 'false' }}">
+                                class="collapse {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'show' : '' }}"
+                                aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}">
+
                                 <li class="sidebar-sub-item">
-                                    <a class="sidebar-link {{ request()->is('barangmasuk') ? 'active' : '' }}"
+                                    <a class="sidebar-link {{ request()->is('barangmasuk*') ? 'active' : '' }}"
                                         href="/barangmasuk">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangmasuk') ? '#635bff' : 'gray' }};">Incoming
-                                            Item</span>
+                                            style="color: {{ request()->is('barangmasuk*') ? '#635bff' : 'gray' }};">
+                                            Incoming Item
+                                        </span>
                                     </a>
                                 </li>
+
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">
                                         <span class="hide-menu"
-                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">Outbound
-                                            Item</span>
+                                            style="color: {{ request()->is('barangkeluar') ? '#635bff' : 'gray' }};">
+                                            Outbound Item
+                                        </span>
                                     </a>
                                 </li>
                             </ul>
                         </li>
+
                         <li class="sidebar-item">
-                            <a class="sidebar-link" href="permintaanbarangkeluar" aria-expanded="false">
+                            <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
+                                href="/permintaanbarangkeluar" aria-expanded="false">
                                 <iconify-icon icon="solar:file-text-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
@@ -334,11 +352,25 @@
                         <li
                             class="sidebar-item {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}">
                             <a class="sidebar-link has-arrow {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}"
-                                href="#"
+                                href="#" style="margin-left: -4.5px;"
                                 aria-expanded="{{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'true' : 'false' }}"
                                 data-bs-toggle="collapse" data-bs-target="#reportSubmenu">
-                                <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon>
-                                <span class="hide-menu">Report</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="29" height="23"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1."
+                                    stroke-linecap="round" stroke-linejoin="round"
+                                    class="icon icon-tabler icons-tabler-outline icon-tabler-report">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M8 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h5.697" />
+                                    <path d="M18 14v4h4" />
+                                    <path d="M18 11v-4a2 2 0 0 0 -2 -2h-2" />
+                                    <path
+                                        d="M8 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+                                    <path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" />
+                                    <path d="M8 11h4" />
+                                    <path d="M8 15h3" />
+                                </svg>
+                                {{-- <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon> --}}
+                                <span class="hide-menu" style="margin-left: -6px;">Report</span>
                             </a>
                             <ul id="reportSubmenu"
                                 class="collapse {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'show' : '' }}"
@@ -389,15 +421,81 @@
                                 <i class="ti ti-menu-2"></i>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link " href="javascript:void(0)">
-                                <iconify-icon icon="solar:bell-linear" class="fs-6"></iconify-icon>
-                                <div class="notification bg-primary rounded-circle"></div>
-                            </a>
-                        </li>
                     </ul>
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
+                            <style>
+                                .nav-item.dropdown:hover .dropdown-menu {
+                                    display: block;
+                                    opacity: 1;
+                                    visibility: visible;
+                                }
+
+                                .dropdown-menu {
+                                    display: none;
+                                    opacity: 0;
+                                    visibility: hidden;
+                                    transition: all 0.2s ease;
+                                    position: absolute;
+                                    top: 100%;
+                                    right: 0;
+                                    min-width: 300px;
+                                    z-index: 1000;
+                                    background-color: #ffffff;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                                }
+                            </style>
+                            <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
+                                <a class="nav-link position-relative" href="javascript:void(0)" id="drop2"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <iconify-icon icon="solar:bell-bing-line-duotone" class="fs-6"></iconify-icon>
+                                    <div class="notification bg-primary rounded-circle"></div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
+                                    aria-labelledby="drop2" style="min-width: 400px">
+                                    <div class="d-flex align-items-center justify-content-between py-3 px-4">
+                                        <h5 class="mb-0 fs-5 fw-semibold">Notifications</h5>
+                                        <span class="badge bg-primary rounded-4 px-3 py-1">2 new</span>
+                                    </div>
+                                    <div class="message-body" data-simplebar>
+                                        <a href="javascript:void(0)"
+                                            class="py-6 px-7 d-flex align-items-center dropdown-item gap-3">
+                                            <span
+                                                class="flex-shrink-0 bg-danger-subtle rounded-circle round d-flex align-items-center justify-content-center fs-6 text-danger">
+                                                <iconify-icon icon="solar:widget-3-line-duotone"></iconify-icon>
+                                            </span>
+                                            <div class="w-75">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h6 class="mb-1 fw-semibold">Launch Dashoard</h6>
+                                                    <span class="d-block fs-2">9:30 AM</span>
+                                                </div>
+                                                <span class="d-block text-truncate text-truncate fs-11">Just see
+                                                    the new dashboard!</span>
+                                            </div>
+                                        </a>
+                                        <a href="javascript:void(0)"
+                                            class="py-6 px-7 d-flex align-items-center dropdown-item gap-3">
+                                            <span
+                                                class="flex-shrink-0 bg-secondary-subtle rounded-circle round d-flex align-items-center justify-content-center fs-6 text-secondary">
+                                                <iconify-icon icon="solar:settings-line-duotone"></iconify-icon>
+                                            </span>
+                                            <div class="w-75">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <h6 class="mb-1 fw-semibold">Settings</h6>
+                                                    <span class="d-block fs-2">4:36 PM</span>
+                                                </div>
+                                                <span class="d-block text-truncate text-truncate fs-11">You can
+                                                    customize this application as you want</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="py-3 px-4">
+                                        <a href="#" class="btn btn-primary btn-sm w-100">View All
+                                            Notifications</a>
+                                    </div>
+                                </div>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link " href="javascript:void(0)" id="drop2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -412,7 +510,7 @@
                                             <i class="ti ti-user fs-6"></i>
                                             <p class="mb-0 fs-3">My Profile</p>
                                         </a>
-                                        <a href="javascript:void(0)"
+                                        {{-- <a href="javascript:void(0)"
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-mail fs-6"></i>
                                             <p class="mb-0 fs-3">My Account</p>
@@ -421,9 +519,14 @@
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-list-check fs-6"></i>
                                             <p class="mb-0 fs-3">My Task</p>
+                                        </a> --}}
+                                        <!-- Logout Button -->
+                                        <a href="#" class="btn btn-outline-primary mx-3 mt-2 d-block"
+                                            data-bs-toggle="modal" data-bs-target="#logoutModal">
+                                            Logout
                                         </a>
-                                        <a href="./authentication-login.html"
-                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a>
+                                        {{-- <a href="./authentication-login.html"
+                                            class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a> --}}
                                     </div>
                                 </div>
                             </li>
@@ -437,6 +540,51 @@
                     <!-- isi konten -->
                     @yield('content')
                 </div>
+                <!-- Logout Confirmation Modal -->
+                <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog"
+                    aria-labelledby="logoutModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document" style="max-width: 400px;">
+                        <div class="modal-content rounded-3 shadow">
+                            <div class="modal-header border-bottom-0">
+                                <h5 class="modal-title" id="logoutModalLabel">Konfirmasi Logout</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="text-center">
+                                    <p class="mb-0">Apakah Anda yakin ingin keluar?</p>
+                                    <p class="text-muted">Semua sesi yang sedang aktif akan dihentikan.</p>
+                                </div>
+                            </div>
+                            <div class="modal-footer d-flex justify-content-end border-top-0">
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    style="display: none;">
+                                    @csrf
+                                </form>
+                                <button style="background-color: #c70000; color: white;" type="button"
+                                    class="btn"
+                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Start of Tawk.to Script-->
+                <script type="text/javascript">
+                    var Tawk_API = Tawk_API || {},
+                        Tawk_LoadStart = new Date();
+                    (function() {
+                        var s1 = document.createElement("script"),
+                            s0 = document.getElementsByTagName("script")[0];
+                        s1.async = true;
+                        s1.src = 'https://embed.tawk.to/671f0e014304e3196ad95191/1ib8kteba';
+                        s1.charset = 'UTF-8';
+                        s1.setAttribute('crossorigin', '*');
+                        s0.parentNode.insertBefore(s1, s0);
+                    })();
+                </script>
+                <!--End of Tawk.to Script-->
             </div>
         </div>
     </div>
@@ -481,9 +629,9 @@
     <script src="../assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/sidebarmenu.js"></script>
     <script src="../assets/js/app.min.js"></script>
-    <script src="../assets/libs/apexcharts/dist/apexcharts.min.js"></script>
-    <script src="../assets/libs/simplebar/dist/simplebar.js"></script>
-    <script src="../assets/js/dashboard.js"></script>
+    {{-- <script src="{{ asset('assets/libs/apexcharts/dist/apexcharts.min.js') }}"></script> --}}
+    {{-- <script src="../assets/libs/simplebar/dist/simplebar.js"></script> --}}
+    {{-- <script src="{{ asset('assets/js/dashboard.js') }}"></script> --}}
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
 </body>
 

@@ -21,45 +21,52 @@ class PermintaanBarangKeluarController extends Controller
 
     public function create($id = null)
     {
-        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create');
+        try {
+            $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create');
 
-        if ($response->successful()) {
-            $data = $response->json();
-            $jenis_barang = collect($data['jenis_barang'])->map(function ($item) {
-                return (object) $item;
-            });
-            $barang = collect($data['barang'])->map(function ($item) {
-                return (object) $item;
-            });
-            $customer = collect($data['customer'])->map(function ($item) {
-                return (object) $item;
-            });
-            $keperluan = collect($data['keperluan'])->map(function ($item) {
-                return (object) $item;
-            });
+            if ($response->successful()) {
+                $data = $response->json();
+                $jenis_barang = collect($data['jenis_barang'])->map(function ($item) {
+                    return (object) $item;
+                });
+                $barang = collect($data['barang'])->map(function ($item) {
+                    return (object) $item;
+                });
+                $customer = collect($data['customer'])->map(function ($item) {
+                    return (object) $item;
+                });
+                $keperluan = collect($data['keperluan'])->map(function ($item) {
+                    return (object) $item;
+                });
 
-            $barangMasuk = null;
-            $jenis_barang_id = null;
-            $barangbyjenis = null;
+                $barangMasuk = null;
+                $jenis_barang_id = null;
+                $barangbyjenis = null;
 
-            if ($id !== null) {
-                $barangMasukResponse = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create/' . $id);
-                if ($barangMasukResponse->successful()) {
-                    $barangMasukData = $barangMasukResponse->json();
-                    $barangMasuk = isset($barangMasukData['barangMasuk']) ? (object) $barangMasukData['barangMasuk'] : null;
-                    $jenis_barang_id = $barangMasukData['jenis_barang_id'] ?? null;
-                    $barangbyjenis = isset($barangMasukData['barangbyjenis'])
-                        ? collect($barangMasukData['barangbyjenis'])->map(function ($item) {
-                            return (object) $item;
-                        })
-                        : collect();
+                if ($id !== null) {
+                    $barangMasukResponse = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create/' . $id);
+                    if ($barangMasukResponse->successful()) {
+                        $barangMasukData = $barangMasukResponse->json();
+                        $barangMasuk = isset($barangMasukData['barangMasuk']) ? (object) $barangMasukData['barangMasuk'] : null;
+                        $jenis_barang_id = $barangMasukData['jenis_barang_id'] ?? null;
+                        $barangbyjenis = isset($barangMasukData['barangbyjenis'])
+                            ? collect($barangMasukData['barangbyjenis'])->map(function ($item) {
+                                return (object) $item;
+                            })
+                            : collect();
+                    }
                 }
+
+                return view('permintaanbarangkeluar.create', compact('barangMasuk', 'customer', 'barang', 'barangbyjenis', 'jenis_barang', 'jenis_barang_id', 'keperluan'));
             }
 
-            return view('permintaanbarangkeluar.create', compact('barangMasuk', 'customer', 'barang', 'barangbyjenis', 'jenis_barang', 'jenis_barang_id', 'keperluan'));
+            return redirect('/permintaanbarangkeluar')->with('error', 'Gagal mengambil data untuk membuat permintaan barang keluar baru.');
+        } catch (\Exception $e) {
+            if (strpos($e->getMessage(), 'Could not resolve host: doaibutiri.my.id') !== false) {
+                return redirect('/permintaanbarangkeluar')->with('error', 'Tidak dapat terhubung ke server. Silakan periksa koneksi internet Anda dan coba lagi nanti.');
+            }
+            return redirect('/permintaanbarangkeluar')->with('error', 'Terjadi kesalahan dengan server. Silakan coba lagi nanti.');
         }
-
-        return redirect('/permintaanbarangkeluar')->withErrors('Gagal mengambil data untuk membuat permintaan barang keluar baru.');
     }
 
     public function getBarangByJenis($id)
@@ -122,7 +129,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar', $request->all());
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Anda berhasil menambahkan data!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         if ($response->status() === 422) {
@@ -140,7 +147,7 @@ class PermintaanBarangKeluarController extends Controller
         $response = Http::withToken(session('token'))->delete(config('app.api_url') . '/permintaanbarangkeluar/' . $id);
 
         if ($response->successful()) {
-            return redirect('/permintaanbarangkeluar')->with('success', 'Data berhasil dihapus!');
+            return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
         }
 
         return back()->withErrors('Gagal menghapus data permintaan barang keluar.');
@@ -165,4 +172,54 @@ class PermintaanBarangKeluarController extends Controller
             $response->status(),
         );
     }
+
+    public function selectSN($id)
+    {
+        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
+
+        if ($response->successful()) {
+            $serialNumbers = collect($response->json())->map(function ($item) {
+                return (object) $item;
+            });
+
+            // Mengelompokkan SN berdasarkan barang_id
+            $groupedSerialNumbers = $serialNumbers->groupBy('barang_id');
+
+            return view('permintaanbarangkeluar.selectSN', compact('groupedSerialNumbers', 'id'));
+        }
+
+        if ($response->status() === 404) {
+            // Ambil pesan dari API
+            $message = $response->json('message');
+            return redirect('/permintaanbarangkeluar')->with('error', $message);
+        }
+        
+        return redirect('/permintaanbarangkeluar')->with('error', $message);
+    }
+
+    public function setSN(Request $request)
+    {
+        $validated = $request->validate([
+            'permintaan_id' => 'required|integer',
+            'serial_number_ids' => 'required|array',
+            'serial_number_ids.*' => 'required|array',  // Barang ID
+            'serial_number_ids.*.*' => 'required|integer',  // SN ID
+        ]);
+
+        $payload = [
+            'permintaan_id' => $validated['permintaan_id'],
+            'serial_number_ids' => $validated['serial_number_ids']
+        ];
+
+        \Log::info('Mengirim data ke API:', $payload);
+
+        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
+
+        if ($response->successful()) {
+            return redirect()->route('permintaanbarangkeluar.index')->with('success', $response->json('message'));
+        }
+
+        return redirect()->route('permintaanbarangkeluar.index')->with('error', $response->json('message'));
+    }
+
 }

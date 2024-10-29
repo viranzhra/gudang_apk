@@ -9,25 +9,34 @@ use App\Models\SerialNumber;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class SerialNumberController extends Controller
 {
 
 	public function index(Request $request)
 	{
-		$search = $request->input('search');
-
-		$data = DB::table('serial_number')
-			->leftJoin('barang', 'serial_number.barangmasuk_id', '=', 'barang.id')
-			->select('serial_number.*', 'barang.nama as nama_barang')
-			->when($search, function ($query) use ($search) {
-				return $query->where('serial_number.serial_number', 'like', '%' . $search . '%')
-				->orWhere('barang.nama', 'like', '%' . $search . '%');
-			})
-			->orderBy('serial_number.serial_number', 'asc')
-			->paginate(7);
-			
-        return view('serialnumber.index', compact('data'));
+		$response = Http::withToken(session('token'))->get(config('app.api_url') . '/serialnumber');
+	
+		if ($response->successful()) {
+			$serialnumbers = $response->json();
+			// $snToCheck = [100100, 100300];
+			// $foundSn = [];
+		
+			// foreach ($serialnumbers as $serialnumber) {
+			// 	if (isset($serialnumber['serial_number']) && in_array($serialnumber['serial_number'], $snToCheck)) {
+			// 		$foundSn[] = $serialnumber['serial_number'];
+			// 	}
+			// }
+		
+			// if (!empty($foundSn)) {
+			// 	return response()->json(['message' => 'SN yang Anda maksud: ' . implode(', ', $foundSn) . ', ada!']);
+			// }
+		
+			return response()->json($serialnumbers);
+		}
+	
+		return response()->json(['error' => 'Failed to fetch data'], 500);
 	}
 
 	public function create()

@@ -70,9 +70,6 @@
         }
     </style>
 
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
@@ -99,8 +96,9 @@
                 <tr>
                     <th style="width: 20px"><input type="checkbox" id="select-all"></th>
                     <th style="width: 25px">No</th>
-                    <th style="width: 450px">Requirement Type</th>
+                    <th>Requirement Type</th>
                     <th>2 Dates?</th>
+                    <th>Time Limit (Days)</th>
                     <th style="width: 50px">Action</th>
                 </tr>
             </thead>
@@ -114,12 +112,11 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title" id="tambahDataLabel"><strong>Add Type</strong></h2>
+                    <h5 class="modal-title" id="tambahDataLabel">Add Requirement</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}"
-                        enctype="multipart/form-data">
+                    <form class="" method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
@@ -132,75 +129,172 @@
                                 </ul>
                             </div>
                         @endif
+
                         <div class="mb-3">
                             <label for="nama" class="form-label">Requirement Type</label>
                             <input type="text" id="nama" name="nama" class="form-control"
                                 placeholder="Untuk Dipinjam" required />
                         </div>
-                        <div class="mb-3">
-                            <input id="extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                            <label for="extend" class="form-check-labe">Extend</label>
-                        </div>
-                        <script>
-                            document.getElementById('extend').addEventListener('change', function() {
-                                this.value = this.checked ? '1' : '0';
-                                document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
 
-                                document.getElementById('nama_tanggal_akhir').required = this.checked;
-                            });
-                        </script>
+                        <div class="form-check form-switch mb-3">
+                            <input id="extend" type="checkbox" role="switch" name="extend" value="0"
+                                class="form-check-input">
+                            <label for="extend" class="form-check-label">Apply two dates?</label>
+                        </div>
+
                         <div id="tanggalInputs" style="display: none;">
-                            <div class="mb-3">
-                                <div class="relative z-0 w-full mb-3 group md:col-span-2">
+                            <div class="row">
+                                <!-- Input Nama Tanggal Akhir -->
+                                <div class="col-md-6 mb-3">
                                     <label for="nama_tanggal_akhir" class="form-label">Extension Name</label>
                                     <input type="text" id="nama_tanggal_akhir" name="nama_tanggal_akhir"
-                                        class="form-control" placeholder="Tanggal Pengembalian"
-                                        value="Tanggal Pengembalian" />
+                                        class="form-control" placeholder="Tanggal Peminjaman" value="Tanggal Peminjaman" />
+                                </div>
+
+                                <!-- Input Batas Waktu -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="batas_hari" class="form-label">Time Limit (Days)</label>
+                                    <input type="number" id="batas_hari" name="batas_hari" class="form-control"
+                                        min="1" max="90" value="1" placeholder="max. 90 days" required />
                                 </div>
                             </div>
+
+                            <script>
+                                document.getElementById('extend').addEventListener('change', function() {
+                                    this.value = this.checked ? '1' : '0';
+                                    document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
+                                    document.getElementById('nama_tanggal_akhir').required = this.checked;
+                                });
+                            </script>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const batasWaktuInput = document.getElementById('batas_hari');
+                                    const tanggalAkhirInput = document.getElementById('tanggal_akhir');
+
+                                    // Fungsi untuk memperbarui tanggal pengembalian berdasarkan batas waktu
+                                    function updateTanggalAkhir() {
+                                        const batasWaktu = parseInt(batasWaktuInput.value) || 1;
+
+                                        // Mengambil tanggal permintaan dari server
+                                        const tanggalPermintaan = new Date("{{ date('Y-m-d') }}");
+
+                                        const tanggalAkhir = new Date(tanggalPermintaan);
+                                        tanggalAkhir.setDate(tanggalPermintaan.getDate() + batasWaktu); // Menambahkan batas waktu
+                                        tanggalAkhirInput.value = tanggalAkhir.toISOString().split('T')[
+                                            0]; // Mengatur nilai untuk tanggal akhir
+                                    }
+
+                                    // Event listener jika batas waktu diubah
+                                    batasWaktuInput.addEventListener('input', updateTanggalAkhir);
+
+                                    // Inisialisasi tanggal akhir saat halaman dimuat
+                                    updateTanggalAkhir();
+                                });
+                            </script>
                         </div>
+
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
+
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Modal Edit Data -->
-<div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="editDataLabel"><strong>Edit Type</strong></h2>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="post" action="" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" id="edit-id" name="id" />
+    <div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editDataLabel">Edit Requirement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editForm" method="post" action="" enctype="multipart/form-data">
+                        @csrf
+                        @method('PUT')
+                        <input type="hidden" id="edit-id" name="id" value="">
 
-                    <div class="mb-3">
-                        <label for="edit-nama" class="form-label">Requirement Type</label>
-                        <input type="text" id="edit-nama" name="nama" class="form-control" placeholder="Requirement Type" required />
-                    </div>
+                        @if ($errors->any())
+                            <div class="alert alert-danger" role="alert">
+                                <strong>Ups!</strong> Terjadi kesalahan:
+                                <ul class="mt-3">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
-                    <div class="mb-3">
-                        <input id="edit-extend" type="checkbox" name="extend" value="0" class="form-check-input">
-                        <label for="edit-extend" class="form-check-label">Extend</label>
-                    </div>
+                        <div class="mb-3">
+                            <label for="edit-nama" class="form-label">Requirement Type</label>
+                            <input type="text" id="edit-nama" name="nama" class="form-control"
+                                placeholder="Nama Keperluan" required />
+                        </div>
 
-                    <div id="editExtensionNameField" class="mb-3" style="display: none;">
-                        <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
-                        <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir" class="form-control" placeholder="Tanggal Pengembalian" />
-                    </div>
+                        <div class="form-check form-switch mb-3">
+                            <input id="edit-extend" type="checkbox" role="switch" name="extend"
+                                class="form-check-input">
+                            <label for="edit-extend" class="form-check-label">Apply two dates?</label>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
+                        <div id="editExtensionNameField" style="display: none;">
+                            <div class="row">
+                                <!-- Input Nama Tanggal Akhir -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="edit-nama_tanggal_akhir" class="form-label">Extension Name</label>
+                                    <input type="text" id="edit-nama_tanggal_akhir" name="nama_tanggal_akhir"
+                                        class="form-control" placeholder="Tanggal Peminjaman" />
+                                </div>
+
+                                <!-- Input Batas Waktu -->
+                                <div class="col-md-6 mb-3">
+                                    <label for="editbatas_hari" class="form-label">Time Limit (Days)</label>
+                                    <input type="number" id="editbatas_hari" name="batas_hari" class="form-control"
+                                        min="1" max="90" placeholder="max. 90 days" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Save</button>
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        // Fungsi untuk mengatur tampilan berdasarkan status checkbox
+        function updateExtensionFieldVisibility() {
+            var checkbox = document.getElementById('edit-extend');
+            var extensionNameField = document.getElementById('editExtensionNameField');
+            var namaTanggalAkhir = document.getElementById('edit-nama_tanggal_akhir');
+            var batasHari = document.getElementById('editbatas_hari');
+
+            // Tampilkan atau sembunyikan field berdasarkan status checkbox
+            if (checkbox.checked) {
+                extensionNameField.style.display = 'block'; // Tampilkan field
+                namaTanggalAkhir.required = true; // Set field sebagai required
+                // Menyamakan nilai batas_hari dengan input form jika checkbox diaktifkan
+                batasHari.value = batasHari.value || 1; // Atur nilai default jika belum ada
+            } else {
+                extensionNameField.style.display = 'none'; // Sembunyikan field
+                namaTanggalAkhir.required = false; // Set field tidak perlu diisi
+                namaTanggalAkhir.value = ''; // Kosongkan input ketika checkbox tidak dicentang
+                batasHari.value = ''; // Kosongkan batas_hari ketika checkbox dimatikan
+            }
+        }
+
+        // Inisialisasi event listener setelah DOM siap
+        document.addEventListener('DOMContentLoaded', function() {
+            var extendCheckbox = document.getElementById('edit-extend');
+            if (extendCheckbox) {
+                extendCheckbox.addEventListener('change', updateExtensionFieldVisibility);
+                updateExtensionFieldVisibility(); // Panggil fungsi untuk mengatur tampilan awal
+            }
+        });
+    </script>
 
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
@@ -262,24 +356,12 @@
             var formData = {
                 _token: '{{ csrf_token() }}', // Pastikan CSRF token disertakan
                 nama: $('#nama').val(),
-                nama_tanggal_akhir: $('#setDates').is(':checked') ? $('#end_date').val() :
-                '', // Kirim string kosong bukan null
-                extend: $('#setDates').is(':checked') // Mengubah menjadi boolean secara otomatis
+                nama_tanggal_akhir: $('#extend').is(':checked') ? $('#end_date').val() :
+                '', // Kirim string kosong jika tidak dicentang
+                extend: $('#extend').is(':checked') // Mengubah menjadi boolean secara otomatis
             };
 
             console.log("Data yang dikirim:", formData); // Debug: cek data yang dikirim
-
-            // Validasi: Pastikan nama tidak kosong
-            if (!formData.nama) {
-                showNotification('error', 'Nama jenis barang harus diisi.');
-                return; // Hentikan pengiriman jika nama kosong
-            }
-
-            // Validasi: Pastikan nama_tanggal_akhir diisi jika extend true
-            if (formData.extend && !formData.nama_tanggal_akhir) {
-                showNotification('error', 'Nama tanggal akhir harus diisi saat extend dicentang.');
-                return; // Hentikan pengiriman jika tidak ada nama_tanggal_akhir
-            }
 
             // AJAX request untuk mengirim data
             $.ajax({
@@ -293,13 +375,13 @@
 
                     // Tampilkan notifikasi jika sukses
                     if (response.success) {
-                        showNotification('success', 'Data berhasil ditambahkan.');
+                        showNotification('success', 'Successfully add data.');
                         $('#tambahData').modal('hide'); // Tutup modal
                         $('#addForm')[0].reset(); // Reset form setelah pengiriman
                         $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
                     } else {
                         showNotification('error', response.message ||
-                            'Gagal menambahkan type requirement.');
+                            'Failed to add requirement type.');
                     }
                 },
                 error: function(xhr) {
@@ -311,10 +393,10 @@
                         // Tampilkan pesan error spesifik dari server
                         let errors = xhr.responseJSON.errors;
                         let message = errors.extend ? errors.extend[0] :
-                            'Terjadi kesalahan saat menambahkan data.';
+                            'An error occurred when adding data.';
                         showNotification('error', message);
                     } else {
-                        showNotification('error', 'Terjadi kesalahan pada jaringan atau server.');
+                        showNotification('error', 'Network or server error.');
                     }
                 }
             });
@@ -326,7 +408,7 @@
         });
 
         // Menangani perubahan checkbox extend pada form tambah data
-        $('#setDates').change(function() {
+        $('#extend').change(function() {
             if ($(this).is(':checked')) {
                 $('#extension_name').show(); // Tampilkan kolom extension_name jika checkbox dicentang
             } else {
@@ -423,16 +505,16 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Type requirement berhasil dihapus!');
+                            showNotification('success', 'Requirement type successfully deleted!');
                             deleteModal.hide();
                             $('#KeperluanTable').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus type requirement.');
+                            showNotification('error', 'Failed to delete requirement type.');
                         }
                     },
                     error: function(xhr) {
                         let message = xhr.responseJSON?.message ||
-                            'Terjadi kesalahan saat menghapus type requirement.';
+                            'An error occurred when deleting requirement type.';
                         showNotification('error', message);
                     }
                 });
@@ -444,11 +526,6 @@
                 $('.select-item:checked').each(function() {
                     selectedIds.push($(this).val());
                 });
-
-                if (selectedIds.length === 0) {
-                    showNotification('error', 'Pilih setidaknya satu type requirement untuk dihapus.');
-                    return;
-                }
 
                 $('#confirmDelete').modal('show'); // Show confirmation modal
                 $('#confirmDeleteButton').off('click').on('click', function() {
@@ -465,98 +542,114 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Data yang dipilih berhasil dihapus!');
+                                    'Selected data was successfully delected!');
                                 $('#confirmDelete').modal('hide');
-                                $('#KeperluanTable').DataTable().ajax.reload();
+                                $('#KeperluanTable').DataTable().ajax.reload(
+                                    function() {
+                                        // Setelah reload, sembunyikan tombol delete
+                                        toggleDeleteButton();
+                                    });
                             } else {
                                 showNotification('error',
-                                    'Gagal menghapus type requirement terpilih.');
+                                    'Failed to delete selected requirement type!');
                             }
                         },
                         error: function(xhr) {
                             console.error(xhr);
                             let message = xhr.responseJSON?.message ||
-                                'Terjadi kesalahan saat menghapus type requirement terpilih.';
+                                'An error occurred when deleting selected requirement type.';
                             showNotification('error', message);
                         }
                     });
                 });
             });
 
-            // Untuk edit data
+            // Menangani submit form edit
             $('#editForm').on('submit', function(e) {
-    e.preventDefault();
+                e.preventDefault();
 
-    // Ambil ID dari input hidden
-    var id = $('#edit-id').val(); // ID yang akan di-update
+                // Ambil ID dari input hidden
+                var id = $('#edit-id').val(); // ID yang akan di-update
 
-    // Konversi form data ke array dan tambahkan nilai extend secara manual
-    var formData = $(this).serializeArray();
-    formData.push({ name: 'extend', value: $('#edit-extend').is(':checked') ? '1' : '0' });
+                // Konversi form data ke array dan tambahkan nilai extend secara manual
+                var formData = $(this).serializeArray();
+                formData.push({
+                    name: 'extend',
+                    value: $('#edit-extend').is(':checked') ? '1' : '0' // Nilai extend
+                });
 
-    $.ajax({
-        url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
-        type: 'PUT', // Metode PUT untuk update data
-        data: $.param(formData), // Kirim form data
-        success: function(response) {
-            if (response.success) {
-                // Tampilkan notifikasi jika berhasil
-                showNotification('success', response.message);
-                $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
-            } else {
-                // Notifikasi jika gagal
-                showNotification('error', response.message || 'Gagal memperbarui requirement type.');
-            }
-        },
-        error: function(xhr) {
-            let message = xhr.responseJSON?.message || 'Terjadi kesalahan saat memperbarui requirement type.';
-            showNotification('error', message); // Tampilkan notifikasi error
-        },
-        complete: function() {
-            $('#editData').modal('hide'); // Tutup modal setelah proses selesai
-        }
-    });
-});
+                // Jika extend tidak dicentang, set nama_tanggal_akhir menjadi 'tidak ada batas hari'
+                if (!$('#edit-extend').is(':checked')) {
+                    formData.push({
+                        name: 'nama_tanggal_akhir',
+                        value: 'tidak ada batas hari' // Set nilai ketika extend tidak dicentang
+                    });
+                }
 
-// Menangani perubahan checkbox extend pada form edit data
-$('#edit-extend').change(function() {
-    if ($(this).is(':checked')) {
-        $('#editExtensionNameField').show(); // Tampilkan kolom extension name di form edit
-    } else {
-        $('#editExtensionNameField').hide(); // Sembunyikan kolom extension name di form edit
-        $('#edit_extension_name').val(''); // Kosongkan input extension name
-    }
-});
+                $.ajax({
+                    url: `{{ config('app.api_url') }}/keperluan/${id}`, // Endpoint API
+                    type: 'PUT', // Metode PUT untuk update data
+                    data: formData, // Kirim form data
+                    success: function(response) {
+                        if (response.success) {
+                            showNotification('success', 'Requirement type successfully updated !'); // Notifikasi sukses
+                            $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
+                        } else {
+                            showNotification('error', response.message ||
+                                'Failed to update requirement type.'); // Notifikasi gagal
+                        }
+                    },
+                    error: function(xhr) {
+                        let message = xhr.responseJSON?.message ||
+                            'An error occurred when updating requirement type.';
+                        showNotification('error', message); // Tampilkan notifikasi error
+                    },
+                    complete: function() {
+                        $('#editData').modal('hide'); // Tutup modal setelah proses selesai
+                    }
+                });
+            });
 
-// Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
-$(document).on('click', '.btn-edit', function() {
-    var id = $(this).data('id');
-    var url = `{{ config('app.api_url') }}/keperluan/${id}`;
+            // Memastikan kolom extension name tampil/sesuai saat membuka modal edit data
+            $(document).on('click', '.btn-edit', function() {
+                var id = $(this).data('id'); // Ambil ID dari data attribute
+                var url = `{{ config('app.api_url') }}/keperluan/${id}`; // Endpoint API
 
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function(data) {
-            $('#edit-nama').val(data.nama);
-            $('#edit-extend').prop('checked', data.extend == 1); // Sesuaikan checkbox
-            $('#edit-id').val(id);
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function(data) {
+                        // Periksa apakah data tersedia
+                        if (!data || Object.keys(data).length === 0) {
+                            showNotification('error', 'Data not found.');
+                            return; // Hentikan eksekusi lebih lanjut
+                        }
 
-            if (data.extend == 1) {
-                $('#editExtensionNameField').show();
-                $('#edit_extension_name').val(data.extension_name); // Isi extension name jika ada
-            } else {
-                $('#editExtensionNameField').hide();
-                $('#edit_extension_name').val(''); // Kosongkan extension name
-            }
+                        $('#edit-nama').val(data.nama);
+                        $('#edit-extend').prop('checked', data.extend ==
+                        1); // Sesuaikan checkbox
+                        $('#edit-id').val(id);
+                        $('#editbatas_hari').val(data.batas_hari); // Set batas_hari dari data
 
-            $('#editData').modal('show'); // Tampilkan modal edit
-        },
-        error: function(xhr) {
-            showNotification('error', 'Error fetching type requirement data.');
-        }
-    });
-});
+                        if (data.extend == 1) {
+                            $('#editExtensionNameField').show();
+                            $('#edit-nama_tanggal_akhir').val(data
+                            .nama_tanggal_akhir); // Isi extension name
+                        } else {
+                            $('#editExtensionNameField').hide();
+                            $('#edit-nama_tanggal_akhir').val(''); // Kosongkan extension name
+                        }
 
+                        $('#editData').modal('show'); // Tampilkan modal edit
+                    },
+                    error: function(xhr) {
+                        let message = xhr.responseJSON?.message ||
+                            'Error fetching type requirement data.';
+                        showNotification('error',
+                        message); // Tampilkan pesan error yang lebih informatif
+                    }
+                });
+            });
 
             // DataTable initialization
             var table = $('#KeperluanTable').DataTable({
@@ -591,6 +684,23 @@ $(document).on('click', '.btn-edit', function() {
                             return data == 1 ? 'Iya' : 'Tidak';
                         }
                     },
+                    // {
+                    //     data: 'created_at', // Tanggal Awal Dibuat (Start Date)
+                    //     render: function(data) {
+                    //         return data ? new Date(data).toLocaleDateString('id-ID') :
+                    //             '-'; // Format tanggal
+                    //     }
+                    // },
+                    {
+                        data: 'batas_hari',
+                        name: 'batas_hari',
+                        render: function(data, type, row) {
+                            // Jika extend bernilai 0 atau tidak ada batas hari, tampilkan "Tidak ada batas hari"
+                            return row.extend == 0 ? 'Tidak ada batas hari' : (data ? data +
+                                ' hari' : 'Tidak ada batas hari');
+                        },
+                        defaultContent: 'Tidak ada batas hari' // Tampilkan "Tidak ada batas hari" jika datanya kosong dari awal
+                    },
                     {
                         data: 'id',
                         orderable: false,
@@ -619,8 +729,13 @@ $(document).on('click', '.btn-edit', function() {
 
             // Enable/disable the delete selected button
             function toggleDeleteButton() {
-                const anyChecked = $('.select-item:checked').length > 0;
-                $('#deleteSelected').prop('disabled', !anyChecked);
+                const selected = $('.select-item:checked').length;
+                const deleteButton = $('#deleteSelected');
+                if (selected > 0) {
+                    deleteButton.removeClass('d-none');
+                } else {
+                    deleteButton.addClass('d-none');
+                }
             }
         });
     </script>

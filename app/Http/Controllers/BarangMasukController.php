@@ -20,21 +20,99 @@ class BarangMasukController extends Controller
 
     public function downloadTemplate()
     {
-        $filePath = public_path('templates/template.xlsx');
+        $filePath = public_path('templates/barangmasuk.xlsx');
         return response()->download($filePath);
     }
 
-    public function uploadExcel(Request $request)
+    public function getData()
+    {
+        $items = BarangMasuk::select(['id', 'item', 'description', 'serial_number', 'status_item', 'requirement']);
+        
+        return DataTables::of($items)
+            ->addIndexColumn()
+            ->toJson(); // Mengubah ke format JSON secara eksplisit
+    }
+
+	public function preview(Request $request)
 	{
 		$request->validate([
-			'file' => 'required|file|mimes:xlsx,xls,csv|max:2048',
+			'file' => 'required|mimes:xlsx,xls,csv',
 		]);
 
 		$file = $request->file('file');
+		$data = Excel::toArray(new BarangMasukImport, $file);
+		$data = $data[0]; // Ambil sheet pertama
 
-		Excel::import(new BarangMasukImport, $file);
+		return view('barangmasuk.index', compact('data', 'file'));
+	}
 
-		return redirect('/barangmasuk')->with('success', 'Data berhasil diunggah!');
+	public function uploadExcel(Request $request)
+	{
+		// Validasi file yang diunggah
+		$request->validate([
+			'file' => 'required|file|mimes:xlsx,xls,csv',
+		]);
+
+		// Baca data dari file Excel
+		$data = Excel::toArray(new BarangMasukImport, $request->file('file'));
+
+		// Cek apakah data ada
+		if (empty($data) || empty($data[0])) {
+			return redirect()->back()->withErrors('File Excel tidak memiliki data yang valid.');
+		}
+
+		// Inisialisasi variabel untuk menyimpan pesan
+		$successCount = 0;
+		$errorCount = 0;
+
+		// Proses data dari Excel
+		foreach ($data[0] as $row) {
+			// Validasi baris data sebelum diproses
+			if (empty($row['barang_id']) || empty($row['serial_number']) || empty($row['kondisi_barang'])) {
+				$errorCount++;
+				continue; // Jika data tidak lengkap, lewati ke baris berikutnya
+			}
+
+			// Ambil data dari setiap baris
+			$nama_barang = $row['barang_id'];
+			$keterangan = $row['keterangan'] ?? null;
+			$serial_number = $row['serial_number'];
+			$kondisi_barang = $row['kondisi_barang'];
+			$kelengkapan = $row['kelengkapan'] ?? null;
+
+			// Buat array data untuk request ke API
+			$apiData = [
+				'barang_id' => $nama_barang,
+				'keterangan' => $keterangan,
+				'tanggal' => now()->format('Y-m-d'),
+				'serial_numbers' => ["$serial_number"],
+				'status_barangs' => [$kondisi_barang],
+				'kelengkapans' => [$kelengkapan],
+			];
+
+			// Kirim data ke API menggunakan HTTP POST
+			$response = Http::post('https://doaibutiri.my.id/gudang/api/barangmasuk/excel', $apiData);
+
+			// Cek apakah respons API sukses
+			if ($response->successful()) {
+				$successCount++;
+			} else {
+				$errorCount++;
+				// Jika terjadi kesalahan, tidak perlu menangkap detailnya
+			}
+		}
+
+		// Menampilkan notifikasi jika ada kesalahan
+		if ($errorCount > 0) {
+			// Tampilkan pesan kesalahan umum
+			$finalMessage = "Data gagal diimpor, silakan periksa kembali data Anda.";
+			session()->flash('notifications', [$finalMessage]); // Simpan pesan kesalahan
+		} else {
+			$finalMessage = "$successCount data berhasil diimpor.";
+			session()->flash('success', $finalMessage);
+		}
+
+		return redirect()->back();
 	}
 
 	public function index(Request $request)
