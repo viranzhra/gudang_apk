@@ -12,20 +12,12 @@ use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\Facades\DataTables;
-<<<<<<< HEAD
 use App\Exports\BarangKeluarExport;
-=======
-use App\Exports\BarangMasukExport;
->>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
 
 class LaporanController extends Controller
 {
 
-<<<<<<< HEAD
         public function exportBarangKeluar(Request $request)
-=======
-    public function exportBarangMasuk(Request $request)
->>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
     {
         // Validasi input
         $request->validate([
@@ -33,7 +25,6 @@ class LaporanController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
         ]);
-<<<<<<< HEAD
 
         $search = $request->input('search');
         $startDate = $request->input('start_date');
@@ -56,18 +47,6 @@ class LaporanController extends Controller
 
 
     
-=======
-    
-        $search = $request->input('search');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
-    
-        $fileName = 'LaporanBarangMasuk_' . $startDate . '_to_' . $endDate . '.xlsx';
-        // Kirim parameter untuk export
-        return Excel::download(new BarangMasukExport($startDate, $endDate), $fileName);
-        
-    }
->>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
     // public function exportBarangKeluar(Request $request)
     // {
     //     $search = $request->input('search');
