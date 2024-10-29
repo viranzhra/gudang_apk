@@ -16,7 +16,7 @@ class AuthController extends Controller
     {
         $response = Http::withHeaders([
             'Accept' => 'application/json',
-        ])->post(env('API_URL') . '/api/login', [
+        ])->post(env('API_URL') . '/login', [
             'email' => $request->email,
             'password' => $request->password,
         ]);
@@ -46,7 +46,7 @@ class AuthController extends Controller
     {
         $response = Http::withHeaders([
             'Accept' => 'application/json',
-        ])->post(env('API_URL') . '/api/register', [            
+        ])->post(env('API_URL') . '/register', [            
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
