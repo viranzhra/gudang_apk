@@ -153,9 +153,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="keterangan" class="form-label">Description</label>
-                            <input type="text" id="keterangan" name="keterangan" class="form-control">
+                            <textarea id="keterangan" name="keterangan" class="form-control"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -624,7 +626,7 @@
 
                 let formData = $(this).serialize(); // Mengambil data dari form
                 let $submitButton = $(this).find(
-                'button[type="submit"]'); // Menyimpan referensi tombol submit
+                    'button[type="submit"]'); // Menyimpan referensi tombol submit
 
                 // Disable tombol dan tampilkan loading
                 $submitButton.prop('disabled', true).html(
@@ -645,7 +647,7 @@
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     console.error('Error:', jqXHR.responseText);
                     showNotification('error',
-                    'Terjadi kesalahan saat menambahkan customer.'); // Menampilkan pesan error
+                        'Terjadi kesalahan saat menambahkan customer.'); // Menampilkan pesan error
                 }).always(function() {
                     // Enable kembali tombol submit dan kembalikan teks aslinya
                     $submitButton.prop('disabled', false).html('Save');
