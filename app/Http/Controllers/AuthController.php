@@ -62,7 +62,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        session()->forget('auth_token');
+        session()->forget(['auth_token', 'user_name']);
         return redirect()->route('login')->with('success', 'Logout berhasil.');
     }
 }
