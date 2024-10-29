@@ -16,7 +16,7 @@ class AuthController extends Controller
     {
         $response = Http::withHeaders([
             'Accept' => 'application/json',
-        ])->post('http://127.0.0.1:5555/api/login', [
+        ])->post(env('API_URL') . '/api/login', [
             'email' => $request->email,
             'password' => $request->password,
         ]);
@@ -27,7 +27,7 @@ class AuthController extends Controller
             if (isset($data['data']['token'])) {
                 session(['auth_token' => $data['data']['token']]); // Simpan token di sesi
                 session(['user_name' => $data['data']['name']]); // Simpan nama
-                
+
                 return redirect()->route('dashboard')->with('success', 'Login berhasil');
             } else {
                 return back()->withErrors(['error' => 'Login gagal, token tidak ditemukan.']);
@@ -46,7 +46,7 @@ class AuthController extends Controller
     {
         $response = Http::withHeaders([
             'Accept' => 'application/json',
-        ])->post('http://127.0.0.1:5555/api/register', [
+        ])->post(env('API_URL') . '/api/register', [            
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
