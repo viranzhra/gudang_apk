@@ -1,0 +1,125 @@
+[33mb14a6c4[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m84597d1[m[33m ([m[1;31morigin/main[m[33m)[m HEAD@{1}: pull: Fast-forward
+[33m94279b2[m HEAD@{2}: commit: detail data barangkeluar
+[33m252e8f0[m HEAD@{3}: pull: Fast-forward
+[33m376d1a0[m HEAD@{4}: pull: Fast-forward
+[33mdc54ed6[m HEAD@{5}: pull: Merge made by the 'ort' strategy.
+[33mdfbb653[m HEAD@{6}: commit: Perbaikan blade nav, barangmasuk, customer
+[33mf34d1ac[m HEAD@{7}: commit: Perubahan file create keperluan
+[33m4bb8217[m HEAD@{8}: pull origin main: Fast-forward
+[33m8ee6d9a[m HEAD@{9}: commit: Perubahan table customer dan barangmasuk agar responsive
+[33ma88c22c[m HEAD@{10}: pull origin main: Fast-forward
+[33m3b1b0c6[m HEAD@{11}: pull origin main: Fast-forward
+[33m4d6c498[m HEAD@{12}: pull origin main: Fast-forward
+[33md89047f[m HEAD@{13}: pull origin main: Fast-forward
+[33mf4e7e64[m HEAD@{14}: commit: Ubah nama kolom tabel
+[33m676d739[m HEAD@{15}: commit: Ubah nama kolom tabel
+[33m4eca8db[m HEAD@{16}: commit: tambah kolom kesalahan
+[33m3fe8b6c[m HEAD@{17}: pull origin main: Fast-forward
+[33m63ddedc[m HEAD@{18}: pull origin main: Fast-forward
+[33m9c05df4[m HEAD@{19}: pull origin main: Fast-forward
+[33mf34bd9a[m HEAD@{20}: commit: dataTable preview
+[33m787971e[m HEAD@{21}: pull origin main: Fast-forward
+[33m782c397[m HEAD@{22}: pull origin main: Fast-forward
+[33m208448b[m HEAD@{23}: commit: tambahan di blade index barangmasuk
+[33m6795f26[m HEAD@{24}: commit: perbaikan notifikasi di controller barangmasuk uploadExcel
+[33m2a360bc[m HEAD@{25}: pull origin main: Fast-forward
+[33ma2337d4[m HEAD@{26}: commit: tambahan di controller barangmasuk getData
+[33m381d9b8[m HEAD@{27}: pull origin main: Fast-forward
+[33mb3354fe[m HEAD@{28}: commit: perbaikan controller barangmasuk uploadExcel
+[33m88d1805[m HEAD@{29}: pull: Merge made by the 'ort' strategy.
+[33m700e125[m HEAD@{30}: commit: tambahan dibarang masuk
+[33m87054dc[m HEAD@{31}: pull origin main: Fast-forward
+[33me8be4fa[m HEAD@{32}: pull: Merge made by the 'ort' strategy.
+[33m40a1ab5[m HEAD@{33}: commit: perbaikan
+[33mbbb2b15[m HEAD@{34}: commit (merge): barangmasuk
+[33m66db2d0[m HEAD@{35}: commit: barangmasuk
+[33m45032bd[m HEAD@{36}: reset: moving to HEAD
+[33m45032bd[m HEAD@{37}: commit: up terbaru
+[33m83b9027[m HEAD@{38}: pull origin main: Fast-forward
+[33meeca424[m HEAD@{39}: pull origin main: Fast-forward
+[33m4d768fa[m HEAD@{40}: commit: up customer
+[33mb90f682[m HEAD@{41}: pull origin main: Fast-forward
+[33m450957d[m HEAD@{42}: pull origin main: Fast-forward
+[33me530a50[m HEAD@{43}: commit: memperbaiki datatable menggunakan yajra
+[33m1ae290f[m HEAD@{44}: pull origin main: Fast-forward
+[33m3b22972[m HEAD@{45}: commit: mengubah datatable menggunakan yajra
+[33mfa7fab5[m HEAD@{46}: pull origin main: Fast-forward
+[33m2c403d4[m HEAD@{47}: commit: memperbarui dan memperbaiki beberapa kodee
+[33m4cafc3b[m HEAD@{48}: commit: memperbarui dan memperbaiki beberapa kode program
+[33m8cdb385[m HEAD@{49}: pull origin main: Fast-forward
+[33m7219059[m HEAD@{50}: commit: memperbarui dan memperbaiki beberapa kode
+[33m2d93f8e[m HEAD@{51}: pull origin main: Fast-forward
+[33m4019cf1[m HEAD@{52}: commit: memperbarui dan memperbaiki code program
+[33m0a2a15f[m HEAD@{53}: pull origin main: Fast-forward
+[33m229886e[m HEAD@{54}: commit: menambahkan code baru dan memperbaiki code
+[33m4900f1b[m HEAD@{55}: pull origin main: Fast-forward
+[33m0ba8583[m HEAD@{56}: commit: memperbarui dan memperbaiki code
+[33mff7e67e[m HEAD@{57}: pull origin main: Fast-forward
+[33m1724888[m HEAD@{58}: Branch: renamed refs/heads/master to refs/heads/main
+[33m1724888[m HEAD@{60}: commit (initial): upload laravel
+[33m84597d1[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{0}: pull origin main: Fast-forward
+[33m94279b2[m HEAD@{1}: reset: moving to 94279b2
+[33mb14a6c4[m HEAD@{2}: reset: moving to HEAD~1
+[33m84597d1[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{3}: pull origin main: Fast-forward
+[33m94279b2[m HEAD@{4}: reset: moving to 94279b2
+[33mb14a6c4[m HEAD@{5}: reset: moving to HEAD~1
+[33m84597d1[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m HEAD@{6}: pull: Fast-forward
+[33m94279b2[m HEAD@{7}: commit: detail data barangkeluar
+[33m252e8f0[m HEAD@{8}: pull: Fast-forward
+[33m376d1a0[m HEAD@{9}: pull: Fast-forward
+[33mdc54ed6[m HEAD@{10}: pull: Merge made by the 'ort' strategy.
+[33mdfbb653[m HEAD@{11}: commit: Perbaikan blade nav, barangmasuk, customer
+[33mf34d1ac[m HEAD@{12}: commit: Perubahan file create keperluan
+[33m4bb8217[m HEAD@{13}: pull origin main: Fast-forward
+[33m8ee6d9a[m HEAD@{14}: commit: Perubahan table customer dan barangmasuk agar responsive
+[33ma88c22c[m HEAD@{15}: pull origin main: Fast-forward
+[33m3b1b0c6[m HEAD@{16}: pull origin main: Fast-forward
+[33m4d6c498[m HEAD@{17}: pull origin main: Fast-forward
+[33md89047f[m HEAD@{18}: pull origin main: Fast-forward
+[33mf4e7e64[m HEAD@{19}: commit: Ubah nama kolom tabel
+[33m676d739[m HEAD@{20}: commit: Ubah nama kolom tabel
+[33m4eca8db[m HEAD@{21}: commit: tambah kolom kesalahan
+[33m3fe8b6c[m HEAD@{22}: pull origin main: Fast-forward
+[33m63ddedc[m HEAD@{23}: pull origin main: Fast-forward
+[33m9c05df4[m HEAD@{24}: pull origin main: Fast-forward
+[33mf34bd9a[m HEAD@{25}: commit: dataTable preview
+[33m787971e[m HEAD@{26}: pull origin main: Fast-forward
+[33m782c397[m HEAD@{27}: pull origin main: Fast-forward
+[33m208448b[m HEAD@{28}: commit: tambahan di blade index barangmasuk
+[33m6795f26[m HEAD@{29}: commit: perbaikan notifikasi di controller barangmasuk uploadExcel
+[33m2a360bc[m HEAD@{30}: pull origin main: Fast-forward
+[33ma2337d4[m HEAD@{31}: commit: tambahan di controller barangmasuk getData
+[33m381d9b8[m HEAD@{32}: pull origin main: Fast-forward
+[33mb3354fe[m HEAD@{33}: commit: perbaikan controller barangmasuk uploadExcel
+[33m88d1805[m HEAD@{34}: pull: Merge made by the 'ort' strategy.
+[33m700e125[m HEAD@{35}: commit: tambahan dibarang masuk
+[33m87054dc[m HEAD@{36}: pull origin main: Fast-forward
+[33me8be4fa[m HEAD@{37}: pull: Merge made by the 'ort' strategy.
+[33m40a1ab5[m HEAD@{38}: commit: perbaikan
+[33mbbb2b15[m HEAD@{39}: commit (merge): barangmasuk
+[33m66db2d0[m HEAD@{40}: commit: barangmasuk
+[33m45032bd[m HEAD@{41}: reset: moving to HEAD
+[33m45032bd[m HEAD@{42}: commit: up terbaru
+[33m83b9027[m HEAD@{43}: pull origin main: Fast-forward
+[33meeca424[m HEAD@{44}: pull origin main: Fast-forward
+[33m4d768fa[m HEAD@{45}: commit: up customer
+[33mb90f682[m HEAD@{46}: pull origin main: Fast-forward
+[33m450957d[m HEAD@{47}: pull origin main: Fast-forward
+[33me530a50[m HEAD@{48}: commit: memperbaiki datatable menggunakan yajra
+[33m1ae290f[m HEAD@{49}: pull origin main: Fast-forward
+[33m3b22972[m HEAD@{50}: commit: mengubah datatable menggunakan yajra
+[33mfa7fab5[m HEAD@{51}: pull origin main: Fast-forward
+[33m2c403d4[m HEAD@{52}: commit: memperbarui dan memperbaiki beberapa kodee
+[33m4cafc3b[m HEAD@{53}: commit: memperbarui dan memperbaiki beberapa kode program
+[33m8cdb385[m HEAD@{54}: pull origin main: Fast-forward
+[33m7219059[m HEAD@{55}: commit: memperbarui dan memperbaiki beberapa kode
+[33m2d93f8e[m HEAD@{56}: pull origin main: Fast-forward
+[33m4019cf1[m HEAD@{57}: commit: memperbarui dan memperbaiki code program
+[33m0a2a15f[m HEAD@{58}: pull origin main: Fast-forward
+[33m229886e[m HEAD@{59}: commit: menambahkan code baru dan memperbaiki code
+[33m4900f1b[m HEAD@{60}: pull origin main: Fast-forward
+[33m0ba8583[m HEAD@{61}: commit: memperbarui dan memperbaiki code
+[33mff7e67e[m HEAD@{62}: pull origin main: Fast-forward
+[33m1724888[m HEAD@{63}: Branch: renamed refs/heads/master to refs/heads/main
+[33m1724888[m HEAD@{65}: commit (initial): upload laravel

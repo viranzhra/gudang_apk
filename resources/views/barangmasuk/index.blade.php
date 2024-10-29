@@ -508,16 +508,16 @@
             </button> --}}
             <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
             <div class="table-responsive">
-                <table id="previewTable" class="display table table-bordered row-border table-hover" style="width: 100%;">
+                <table id="previewTable" class="display table table-bordered row-border table-hover" style="table-layout: auto; width: 100%;">
                     <thead>
                         <tr>
                             <th style="width: 5px; background-color:#cdcece;">No</th>
                             <th style="width: 60px; background-color:#cdcece;">Item</th>
                             <th style="background-color:#cdcece;">Description</th>
-                            <th style="background-color:#cdcece;">Serial Number</th>
+                            <th style="background-color:#cdcece; width: 80px;">Serial Number</th>
                             <th style="background-color:#cdcece;">Status</th>
                             <th style="background-color:#cdcece;">Requirement</th>
-                            <th style="background-color:#cdcece; width: 100px;">Error</th>
+                            <th style="background-color:#cdcece; width: 150px;">Error</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -731,61 +731,78 @@
             };
 
             async function checkExistingSerialNumbers(dataRows) {
-                try {
-                    const serialNumberResponse = await fetch(
-                        'https://doaibutiri.my.id/gudang/api/serialnumber');
-                    if (!serialNumberResponse.ok) {
-                        throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
-                    }
-                    const serialNumberData = await serialNumberResponse.json();
-                    const existingNumbers = serialNumberData.map(item => item.serial_number);
+    try {
+        // Memeriksa apakah dataRows kosong
+        if (!dataRows || dataRows.length === 0) {
+            // Mengembalikan array dengan "Kosong" untuk setiap kolom
+            return new Array(7).fill("Kosong"); // Mengisi dengan "Kosong" untuk 7 kolom
+        }
 
-                    const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
-                    if (!barangResponse.ok) {
-                        throw new Error(`HTTP error! status: ${barangResponse.status}`);
-                    }
-                    const barangData = await barangResponse.json();
-                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang) : [];
+        // Mengambil data serial numbers yang sudah ada
+        const serialNumberResponse = await fetch(
+            'https://doaibutiri.my.id/gudang/api/serialnumber'
+        );
+        if (!serialNumberResponse.ok) {
+            throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
+        }
+        const serialNumberData = await serialNumberResponse.json();
+        const existingNumbers = serialNumberData.map(item => item.serial_number.toString().trim()); // Menyimpan sebagai string
 
-                    const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
-                    if (!kondisiResponse.ok) {
-                        throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
-                    }
-                    const kondisiData = await kondisiResponse.json();
-                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama) : [];
+        // Mengambil data barang
+        const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
+        if (!barangResponse.ok) {
+            throw new Error(`HTTP error! status: ${barangResponse.status}`);
+        }
+        const barangData = await barangResponse.json();
+        const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang.trim()) : [];
 
-                    const errors = new Array(dataRows.length).fill(null);
+        // Mengambil data kondisi barang
+        const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
+        if (!kondisiResponse.ok) {
+            throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
+        }
+        const kondisiData = await kondisiResponse.json();
+        const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama.trim()) : [];
 
-                    dataRows.forEach((row, index) => {
-                        const serialNumber = row[2];
-                        const barangName = row[0];
-                        const kondisiBarang = row[3];
+        // Array untuk menyimpan kesalahan
+        const errors = new Array(dataRows.length).fill(null);
 
-                        let errorMessages = [];
+        // Memeriksa setiap baris data
+        dataRows.forEach((row, index) => {
+            const barangName = row[0] ? row[0].trim() : ""; // Pastikan trim untuk nama barang
+            const serialNumber = row[2] ? row[2].toString().trim() : ""; // Pastikan serial number sebagai string
+            const kondisiBarang = row[3] ? row[3].trim() : ""; // Pastikan trim untuk kondisi barang
 
-                        if (barangName && !existingBarang.includes(barangName.toString())) {
-                            errorMessages.push(`Item not available`);
-                        }
+            let errorMessages = [];
 
-                        if (serialNumber && existingNumbers.includes(serialNumber.toString())) {
-                            errorMessages.push(`Serial Number already used`);
-                        }
-
-                        if (kondisiBarang && !existingKondisi.includes(kondisiBarang.toString())) {
-                            errorMessages.push(`Status not available`);
-                        }
-
-                        if (errorMessages.length > 0) {
-                            errors[index] = errorMessages.join(' and ');
-                        }
-                    });
-
-                    return errors;
-                } catch (error) {
-                    console.error('Error in checking serial numbers or barang data:', error.message);
-                    return dataRows.map(() => `Error checking data: ${error.message}`);
-                }
+            // Cek apakah barang ada
+            if (barangName && !existingBarang.includes(barangName)) {
+                errorMessages.push(`Item not available`);
             }
+
+            // Cek apakah serial number sudah digunakan
+            if (serialNumber && existingNumbers.includes(serialNumber)) {
+                errorMessages.push(`Serial Number already used`);
+            }
+
+            // Cek apakah kondisi barang ada
+            if (kondisiBarang && !existingKondisi.includes(kondisiBarang)) {
+                errorMessages.push(`Status not available`);
+            }
+
+            // Jika ada kesalahan, simpan ke array errors
+            if (errorMessages.length > 0) {
+                errors[index] = errorMessages.join(' and ');
+            }
+        });
+
+        return errors;
+    } catch (error) {
+        console.error('Error in checking serial numbers or barang data:', error.message);
+        return dataRows.map(() => `Error checking data: ${error.message}`);
+    }
+}
+
 
             // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
             function toggleUploadButton(rowErrors) {

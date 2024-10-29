@@ -145,6 +145,7 @@ Route::middleware('auth_token')->group(function () {
     Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar']);
 
     // Route::get('api/laporan/barangkeluar/export/excel', [LaporanController::class, 'exportExcel']); 
+    Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
 });
 
 // require __DIR__.'/auth.php';
