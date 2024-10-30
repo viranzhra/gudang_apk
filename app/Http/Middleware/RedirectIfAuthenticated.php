@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
     {
         if ($request->session()->has('auth_token')) {
             return redirect()->route('dashboard');
-        }
+        } 
 
         return $next($request);
     }

@@ -31,7 +31,7 @@ class AuthController extends Controller
                 // Simpan permissions di sesi untuk digunakan dengan @can
                 if (isset($data['data']['permissions'])) {
                     session(['permissions' => $data['data']['permissions']]);
-                }
+                } 
 
                 return redirect()->route('dashboard')->with('success', 'Login berhasil');
             } else {

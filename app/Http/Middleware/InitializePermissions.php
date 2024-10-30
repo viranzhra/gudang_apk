@@ -18,6 +18,6 @@ class InitializePermissions
             });
         }
 
-        return $next($request);
+        return $next($request); 
     }
 }

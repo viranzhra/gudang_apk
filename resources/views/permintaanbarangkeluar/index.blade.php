@@ -237,7 +237,7 @@
                         document.getElementById('modalFooterContent').innerHTML = footerContent;
                     @endifcan
                     // @endif                
-                })
+                }) 
                 .catch(error => {
                     console.error('Error fetching detail data:', error);
                     document.getElementById('loadingSpinner').classList.add('d-none');

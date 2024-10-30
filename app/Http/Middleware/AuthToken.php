@@ -49,6 +49,6 @@ class AuthToken
             abort(403, 'Anda tidak memiliki izin.');
         }
 
-        return $next($request);
+        return $next($request); 
     }
 }

@@ -3,7 +3,7 @@
 @section('content')
 <div class="container shadow-sm mt-3" style="border-radius: 20px;">
     <h2>Create New Role</h2>
-
+ 
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>

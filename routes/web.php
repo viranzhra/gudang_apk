@@ -33,7 +33,7 @@ Route::middleware('guest')->group(function() {
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Route::middleware(['initialize_permissions', 'auth_token'])->group(function () {
-    
+     
 // });
 
 Route::middleware('auth_token')->group(function () {

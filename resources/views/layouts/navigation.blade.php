@@ -358,7 +358,7 @@
                                         </span>
                                     </a>
                                 </li>
-                                @endcan
+                                @endcan 
 
                                 @can('outbound item.view')
                                 <li class="sidebar-sub-item">

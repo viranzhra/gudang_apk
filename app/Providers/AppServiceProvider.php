@@ -50,6 +50,6 @@ class AppServiceProvider extends ServiceProvider
 
         Blade::directive('endcanany', function () {
             return "<?php endif; ?>";
-        });
+        }); 
     }
 }

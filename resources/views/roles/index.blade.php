@@ -46,7 +46,7 @@
                             {{-- @endcan --}}
                         </td>
                     </tr>
-                @endforeach
+                @endforeach 
             </tbody>
         </table>
         <!-- Form untuk Menambahkan Role Baru, hanya jika user memiliki permission create -->
