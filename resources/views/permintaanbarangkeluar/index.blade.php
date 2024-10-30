@@ -186,21 +186,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     modalContentElement.innerHTML = contentHtml;
                     modalContentElement.classList.remove('d-none');
 
-                    // Update footer content
-                    const footerContent = status === 'Belum Disetujui' ? `
-                        <button type="button" class="btn btn-success me-2"
-                            onclick="updateStatus(${id}, 'Diproses')"
-                            data-bs-dismiss="modal">Proses</button>
-                        <button type="button" class="btn btn-danger"
-                            onclick="updateStatus(${id}, 'Ditolak')"
-                            data-bs-dismiss="modal">Tolak</button>
-                    ` : status === 'Diproses' ? `
-                        <button type="button" class="btn btn-primary"
-                            onclick="window.location.href='/permintaanbarangkeluar/selectSN/${id}'">
-                            Pilih SN
-                        </button>
-                    ` : '';
-                    document.getElementById('modalFooterContent').innerHTML = footerContent;
+                    // Tambahkan konten footer berdasarkan izin
+                    // @if(in_array('item request.confirm', session('permissions', [])) && in_array('item request.view', session('permissions', []))) 
+                    @ifcan('item request.confirm')                    
+                        const footerContent = status === 'Belum Disetujui' ? `
+                            <button type="button" class="btn btn-success me-2"
+                                onclick="updateStatus(${id}, 'Diproses')"
+                                data-bs-dismiss="modal">Proses</button>
+                            <button type="button" class="btn btn-danger"
+                                onclick="updateStatus(${id}, 'Ditolak')"
+                                data-bs-dismiss="modal">Tolak</button>
+                        ` : status === 'Diproses' ? `
+                            <button type="button" class="btn btn-primary"
+                                onclick="window.location.href='/permintaanbarangkeluar/selectSN/${id}'">
+                                Pilih SN
+                            </button>
+                        ` : '';
+                        document.getElementById('modalFooterContent').innerHTML = footerContent;
+                    @endifcan
+                    // @endif                
                 })
                 .catch(error => {
                     console.error('Error fetching detail data:', error);

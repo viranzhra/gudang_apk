@@ -14,8 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth_token' => \App\Http\Middleware\AuthToken::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            // 'initialize_permissions' => \App\Http\Middleware\InitializePermissions::class,
         ]);
-    })
+    })    
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

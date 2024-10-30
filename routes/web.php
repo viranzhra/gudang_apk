@@ -15,7 +15,12 @@ use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\SerialNumberController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuthController;
+
+Route::get('/', function () {
+    return redirect('/login');
+});
 
 Route::middleware('guest')->group(function() {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
@@ -27,12 +32,22 @@ Route::middleware('guest')->group(function() {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::middleware(['initialize_permissions', 'auth_token'])->group(function () {
+    
+// });
 
 Route::middleware('auth_token')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('roles')->group(function () {
+        Route::get('/', [RoleController::class, 'index'])->name('roles.index'); // Menampilkan daftar roles dan permissions
+        Route::get('/create', [RoleController::class, 'create'])->name('roles.create'); // Menampilkan daftar roles dan permissions
+        Route::post('/', [RoleController::class, 'store'])->name('roles.store'); // Membuat role baru
+        Route::get('/{id}/edit', [RoleController::class, 'edit'])->name('roles.edit'); // Mengedit role
+        Route::put('/{id}', [RoleController::class, 'update'])->name('roles.update'); // Memperbarui role
+        Route::delete('/{id}', [RoleController::class, 'destroy'])->name('roles.destroy'); // Menghapus role
+        Route::put('/assign-role/{userId}', [RoleController::class, 'assignRole'])->name('roles.assignRole'); // Menetapkan role ke pengguna
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

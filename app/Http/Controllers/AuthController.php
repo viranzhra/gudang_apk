@@ -23,10 +23,15 @@ class AuthController extends Controller
 
         if ($response->successful()) {
             $data = $response->json();
-        
+            
             if (isset($data['data']['token'])) {
                 session(['auth_token' => $data['data']['token']]); // Simpan token di sesi
-                session(['user_name' => $data['data']['name']]); // Simpan nama
+                session(['user_name' => $data['data']['name']]);   // Simpan nama
+
+                // Simpan permissions di sesi untuk digunakan dengan @can
+                if (isset($data['data']['permissions'])) {
+                    session(['permissions' => $data['data']['permissions']]);
+                }
 
                 return redirect()->route('dashboard')->with('success', 'Login berhasil');
             } else {
@@ -62,7 +67,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        session()->forget(['auth_token', 'user_name']);
+        session()->forget(['auth_token', 'user_name', 'permissions']);
         return redirect()->route('login')->with('success', 'Logout berhasil.');
     }
 }

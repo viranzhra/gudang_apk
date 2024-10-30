@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,30 @@ class AppServiceProvider extends ServiceProvider
 
         Http::macro('api', function () {
             return Http::baseUrl(config('app.api_url'));
+        });
+
+        Blade::directive('ifcan', function ($permission) {
+            return "<?php if (in_array({$permission}, session('permissions', []))): ?>";
+        });
+    
+        Blade::directive('endifcan', function () {
+            return "<?php endif; ?>";
+        });
+
+        Blade::directive('can', function ($permission) {
+            return "<?php if (in_array({$permission}, session('permissions', []))): ?>";
+        });
+    
+        Blade::directive('endcan', function () {
+            return "<?php endif; ?>";
+        });    
+
+        Blade::directive('canany', function ($permissions) {
+            return "<?php if (!empty(array_intersect($permissions, session('permissions', [])))): ?>";
+        });
+
+        Blade::directive('endcanany', function () {
+            return "<?php endif; ?>";
         });
     }
 }

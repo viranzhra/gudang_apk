@@ -233,16 +233,23 @@
                         <li>
                             <span class="sidebar-divider lg"></span>
                         </li>
+
+                        @canany(['supplier.view', 'customer.view', 'item.view', 'item type.view', 'item status.view'])
                         <li class="nav-small-cap">
                             <iconify-icon icon="solar:menu-dots-linear" class="nav-small-cap-icon fs-4"></iconify-icon>
                             <span class="hide-menu">MANAGEMENT</span>
                         </li>
+
+                        @can('supplier.view')
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="/supplier" aria-expanded="false">
                                 <iconify-icon icon="solar:bookmark-square-minimalistic-line-duotone"></iconify-icon>
                                 <span class="hide-menu">Supplier</span>
                             </a>
                         </li>
+                        @endcan
+
+                        @can('customer.view')
                         <li class="sidebar-item" style="margin-left: -1.8px;">
                             <a class="sidebar-link" href="/customer" aria-expanded="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="21.7" height="21.7"
@@ -258,6 +265,9 @@
                                 <span class="hide-menu" style="margin-left: -2px;">Customer</span>
                             </a>
                         </li>
+                        @endcan
+
+                        @canany(['item.view', 'item type.view', 'item status.view'])
                         <li
                             class="sidebar-item {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}">
                             <a class="sidebar-link has-arrow {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'active' : '' }}"
@@ -270,6 +280,8 @@
                             <ul id="Submenu"
                                 class="collapse {{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'show' : '' }}"
                                 aria-expanded="{{ request()->is('barang') || request()->is('jenisbarang') || request()->is('statusbarang') ? 'true' : 'false' }}">
+                                
+                                @can('item.view')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barang') ? 'active' : '' }}"
                                         href="/barang">
@@ -277,6 +289,9 @@
                                             style="color: {{ request()->is('barang') ? '#635bff' : 'gray' }};">Data</span>
                                     </a>
                                 </li>
+                                @endcan
+
+                                @can('item type.view')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('jenisbarang') ? 'active' : '' }}"
                                         href="/jenisbarang">
@@ -284,6 +299,9 @@
                                             style="color: {{ request()->is('jenisbarang') ? '#635bff' : 'gray' }};">Type</span>
                                     </a>
                                 </li>
+                                @endcan
+
+                                @can('item status.view')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('statusbarang') ? 'active' : '' }}"
                                         href="/statusbarang">
@@ -291,17 +309,27 @@
                                             style="color: {{ request()->is('statusbarang') ? '#635bff' : 'gray' }};">Status</span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
+                        @endcanany
+
+                        @can('requirement type.view')
                         <li class="sidebar-item">
                             <a class="sidebar-link" href="/keperluan" aria-expanded="false">
                                 <iconify-icon icon="solar:layers-minimalistic-bold-duotone"></iconify-icon>
                                 <span class="hide-menu">Requirement Type</span>
                             </a>
                         </li>
+                        @endcan
+
+                        @endcanany
+                        
                         <li>
                             <span class="sidebar-divider lg"></span>
                         </li>
+
+                        @canany(['incoming item.view', 'outbound item.view'])
                         <li class="nav-small-cap">
                             <iconify-icon icon="solar:menu-dots-linear"
                                 class="nav-small-cap-icon fs-4"></iconify-icon>
@@ -320,6 +348,7 @@
                                 class="collapse {{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'show' : '' }}"
                                 aria-expanded="{{ request()->is('barangmasuk*') || request()->is('barangkeluar') ? 'true' : 'false' }}">
 
+                                @can('incoming item.view')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangmasuk*') ? 'active' : '' }}"
                                         href="/barangmasuk">
@@ -329,7 +358,9 @@
                                         </span>
                                     </a>
                                 </li>
+                                @endcan
 
+                                @can('outbound item.view')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('barangkeluar') ? 'active' : '' }}"
                                         href="/barangkeluar">
@@ -339,9 +370,12 @@
                                         </span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
+                        @endcanany
 
+                        @can('item request.view')
                         <li class="sidebar-item">
                             <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
                                 href="/permintaanbarangkeluar" aria-expanded="false">
@@ -349,6 +383,8 @@
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
                         </li>
+                        @endcan
+                        @canany(['report.view stock', 'report.view incoming item', 'report.view outbound item'])
                         <li
                             class="sidebar-item {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}">
                             <a class="sidebar-link has-arrow {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}"
@@ -369,12 +405,12 @@
                                     <path d="M8 11h4" />
                                     <path d="M8 15h3" />
                                 </svg>
-                                {{-- <iconify-icon icon="fa-solid:box-open" style="font-size: 14px;"></iconify-icon> --}}
                                 <span class="hide-menu" style="margin-left: -6px;">Report</span>
                             </a>
                             <ul id="reportSubmenu"
                                 class="collapse {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'show' : '' }}"
                                 aria-expanded="{{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'true' : 'false' }}">
+                                @can('report.view stock')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('laporan/stok') ? 'active' : '' }}"
                                         href="/laporan/stok">
@@ -382,6 +418,8 @@
                                             style="color: {{ request()->is('laporan/stok') ? '#635bff' : 'gray' }};">Stock</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can('report.view incoming item')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('laporan/barangmasuk') ? 'active' : '' }}"
                                         href="/laporan/barangmasuk">
@@ -390,6 +428,8 @@
                                             Item</span>
                                     </a>
                                 </li>
+                                @endcan
+                                @can('report.view outbound item')
                                 <li class="sidebar-sub-item">
                                     <a class="sidebar-link {{ request()->is('laporan/barangkeluar') ? 'active' : '' }}"
                                         href="/laporan/barangkeluar">
@@ -398,8 +438,24 @@
                                             Item</span>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
+                        @endcanany   
+                        @can('roles.view')                     
+                        <li class="nav-small-cap">
+                            <iconify-icon icon="solar:menu-dots-linear"
+                                class="nav-small-cap-icon fs-4"></iconify-icon>
+                            <span class="hide-menu">OTHER</span>
+                        </li>
+                        <li class="sidebar-item">
+                            <a class="sidebar-link {{ request()->is('roles/*') ? 'active' : '' }}"
+                                href="/roles" aria-expanded="false">
+                                <iconify-icon icon="fluent:person-passkey-32-regular"></iconify-icon>
+                                <span class="hide-menu">Role Management</span>
+                            </a>
+                        </li>
+                        @endcan                        
                         <li>
                             <span class="sidebar-divider lg"></span>
                         </li>
