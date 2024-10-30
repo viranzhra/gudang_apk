@@ -267,7 +267,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete the selected data?</p>
+                    <p>Are you sure you want to delete <strong><span id="selectedCount"></span> selected data?</p><strong>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -276,6 +276,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -565,8 +566,12 @@
                 });
 
                 if (selected.length > 0) {
+                    // Update jumlah data yang dipilih di modal
+                    $('#selectedCount').text(selected.length);
+
                     // Tampilkan modal konfirmasi
                     $('#confirmDeleteModal').modal('show');
+
                     // Simpan daftar ID yang akan dihapus
                     $('#confirmDeleteButton').data('ids', selected);
                 } else {
@@ -589,7 +594,7 @@
                     })
                 }).then(response => {
                     if (response.ok) {
-                        showNotification('success', 'Selected data was successfully delected!');
+                        showNotification('success', 'Selected data was successfully deleted!');
                         $('#customer-table').DataTable().ajax.reload(); // Reload DataTable
                     } else {
                         showNotification('error', 'Gagal menghapus data.');
@@ -602,6 +607,7 @@
                     $('#confirmDeleteModal').modal('hide');
                 });
             });
+
             // Handle form submission for adding data
             // $('form[action="{{ route('customer.store') }}"]').on('submit', function(e) {
             //     e.preventDefault();
