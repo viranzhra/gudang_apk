@@ -3,119 +3,115 @@
 @section('content')
 <style>
     .btn-action {
-        background: none;
-<<<<<<< HEAD
-        border: none; 
-        padding: 0; 
-        cursor: pointer; 
-    }
-    
-    .icon-edit, .icon-delete {
-        color: #ffffff; 
-        font-size: 18px;
-        width: 30px; 
-        height: 30px; 
-=======
-        border: none;
-        padding: 0;
-        cursor: pointer;
-    }
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+        }
 
-    .icon-edit, .icon-delete, .icon-detail {
-        color: #ffffff;
-        font-size: 18px;
-        width: 30px;
-        height: 30px;
->>>>>>> 94279b2e0f690329bccc69313aa8e0c577b41aa9
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        margin-right: 5px;
-    }
+        .icon-edit,
+        .icon-delete,
+        .icon-detail {
+            color: #ffffff;
+            font-size: 18px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
 
-    .icon-edit {
-        background-color: #000000;
-    }
+        .icon-detail {
+            background-color: #112337;
+        }
 
-    .icon-detail {
-        background-color: #000000; /* Warna untuk ikon detail */
-    }
+        .icon-edit {
+            background-color: #000000;
+        }
 
-    .filter-export {
-        display: flex;
-        justify-content: flex-end; /* Mengatur posisi konten ke sebelah kanan */
-        align-items: center;
-        margin-bottom: 20px;
-    }
+        .icon-pdf,
+        .icon-excel {
+            color: #ffffff;
+            font-size: 25px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            margin-right: 5px;
+        }
 
-    .filter-date {
-        margin-right: 20px;
-    }
+        .icon-pdf {
+            background-color: #dc3545;
+        }
 
-    .filter-date label {
-        margin-right: 5px;
-    }
+        .icon-excel {
+            background-color: #28a745;
+        }
 
-    .icon-pdf, .icon-excel {
-        color: #ffffff; 
-        font-size: 25px;
-        width: 40px; 
-        height: 40px; 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 10px;
-        margin-right: 5px;
-    }
+        .filter-export {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-    .icon-pdf {
-        background-color: #dc3545; /* Red color for PDF export */
-    }
+        .filter-date {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-    .icon-excel {
-        background-color: #28a745; /* Green color for Excel export */
-    }
-</style>
+        .filter-date input {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+        }
+    </style>
 
-<div class="container mt-3" style="padding: 40px; width: 1160px;">     
-    <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
-    
-    <!-- Filter and Export Buttons -->
-    <div class="filter-export">
-        <!-- Date Range Filter -->
-        <div class="filter-date d-inline-block">
-            <label for="startDate">From:</label>
-            <input type="text" id="startDate" class="datepicker" placeholder="Start Date" autocomplete="off">
+    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+        <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
 
-            <label for="endDate">To:</label>
-            <input type="text" id="endDate" class="datepicker" placeholder="End Date" autocomplete="off">
+        <!-- Filter and Export Buttons -->
+        <div class="filter-export">
+            <!-- Date Range Filter -->
+            <div class="d-flex filter-date">
+                <label for="startDate">From:</label>
+                <input type="text" id="startDate" class="datepicker form-control form-control" placeholder="Start Date">
+        
+                <label for="endDate">To:</label>
+                <input type="text" id="endDate" class="datepicker form-control form-control" placeholder="End Date">
+        
+                <button id="filterBtn" class="btn btn-primary">Filter</button>
+            </div>
 
-            <button id="filterBtn" class="btn btn-primary">Filter</button>
+            <!-- Export to Excel Button -->
+            <a href="#" id="exportExcelBtn" class="btn-action" title="Download Excel">
+                <div class="icon-excel">
+                    <iconify-icon icon="mdi:file-excel"></iconify-icon>
+                </div>
+            </a>
         </div>
 
-        <!-- Export to Excel Button -->
-        <a href="#" id="exportExcelBtn" class="btn-action" title="Download Excel">
-            <div class="icon-excel">
-                <iconify-icon icon="mdi:file-excel"></iconify-icon>
-            </div>
-        </a>
+        <table class="table table-bordered table-striped table-hover" id="barangmasuk" width="100%">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 25px;">No</th>
+                    <th>Nama Barang</th>
+                    <th>Jumlah</th>
+                    <th>Keterangan</th>
+                    <th>Tanggal Masuk</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
-
-    <table class="table table-bordered table-striped table-hover" id="barangmasuk" width="100%">
-        <thead class="thead-dark">
-            <tr>
-                <th style="width: 25px;">No</th>
-                <th>Nama Barang</th>
-                <th>Jumlah</th>
-                <th>Keterangan</th>
-                <th>Tanggal Masuk</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
 </div>
 
 <!-- Detail Modal -->
@@ -145,14 +141,32 @@
 <!-- DataTables Bootstrap 4 integration -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
 <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+<!-- Date -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- jQuery UI (for Datepicker) -->
+<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+<!-- DataTables JS -->
 
+<!-- Script for initializing DataTables and Datepicker -->
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Inisialisasi Flatpickr untuk kedua input tanggal
+        flatpickr("#startDate", {
+            dateFormat: "d-m-Y", // format tanggal (tahun-bulan-hari)
+            maxDate: new Date()  // batas maksimum tanggal adalah hari ini
+        });
+
+        flatpickr("#endDate", {
+            dateFormat: "d-m-Y",
+            maxDate: new Date()
+        });
+    });
+</script>
 <!-- Script for initializing DataTables -->
 <script>
     $(document).ready(function() {
-        // Initialize jQuery UI Datepicker
-        $('.datepicker').datepicker({
-            dateFormat: 'yy-mm-dd' // Format tanggal yang akan digunakan
-        });
 
         // Initialize DataTables
         const table = $('#barangmasuk').DataTable({
