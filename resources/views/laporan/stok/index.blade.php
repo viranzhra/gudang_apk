@@ -76,18 +76,28 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewModalLabel">Detail Stock Item</h5>
+                <h5 class="modal-title" id="viewModalLabel" style="margin-left: 30%; font-weight: bold;">Detail Stock Item</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <span class="sidebar-divider lg"></span>
-            <p><strong>ID Item:</strong> <span id="viewBarangId"></span></p>
-            <p><strong>Item Name:</strong> <span id="viewNamaBarang"></span></p>
-            <p><strong>Item Type:</strong> <span id="viewJenisBarang"></span></p>
-            <p><strong>Amount:</strong> <span id="viewJumlahBarang"></span></p>
-            
-            <hr>
-            <h6>Serial Numbers & Status</h6>
+                <div class="row">
+                    <div class="col-3"><strong>ID Item</strong></div>:
+                    <div class="col-8"><span id="viewBarangId"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Item Name</strong></div>:
+                    <div class="col-8"><span id="viewNamaBarang"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Item Type</strong></div>:
+                    <div class="col-8"><span id="viewJenisBarang"></span></div>
+                </div>
+                <div class="row">
+                    <div class="col-3"><strong>Amount</strong></div>:
+                    <div class="col-8"><span id="viewJumlahBarang"></span></div>
+                </div>
+                <hr>
+            <h5 style="padding-bottom: 10px; margin-left: 25%; font-weight: bold;"><strong>Serial Numbers & Status</strong></h5>
             <div id="serialDetails">
                 <!-- Serial numbers and status will be appended here dynamically -->
             </div>
@@ -190,12 +200,17 @@ $(document).on('click', '.view-btn', function() {
                 // Loop through the response and append each serial number and status to the modal
                 response.forEach(function(item) {
                     $('#serialDetails').append(`
-                        <p><strong>Serial Number:</strong> ${item.serial_number}</p>
-                        <p><strong>Status:</strong> 
-                            <span style="color: ${item.warna_status_barang};">${item.status_barang}</span>
-                        </p>
-                        <p><strong>Accessories:</strong> ${item.kelengkapan}</p>
-                        <hr>
+                            <div class="grid grid-cols-10 gap-2">
+                            <div class="row">
+                                <div class="col-3"><strong>Serial Number</strong></div>:
+                                <div class="col-8">${item.serial_number} - <span style="color: ${item.warna_status_barang};">${item.status_barang}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-3"><strong>Completeness</strong></div>:
+                                <div class="col-8">${item.kelengkapan || '-'}</div>
+                            </div>
+                            <hr>
+                        </div>
                     `);
                 });
                 
