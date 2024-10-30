@@ -79,7 +79,7 @@
         <table class="table table-bordered table-striped table-hover" id="outboundTable" width="100%">
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 20px">No</th>
+                    <th style="width: 20px;">No</th>
                     <th style="width: 220px">Customer</th>
                     <th>Purpose</th>
                     <th style="width: 25px">Quantity</th>
@@ -94,7 +94,7 @@
 
     <!-- Detail Modal -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog" style="max-width: 600px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="detailModalLabel">Outbound Item Detail</h5>
@@ -129,6 +129,7 @@
                 columns: [{
                         data: 'id',
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
@@ -169,6 +170,9 @@
                         }
                     }
                 ],
+                order: [
+                    [2, 'asc']
+                ],
                 drawCallback: function(settings) {
                     $('.btn-detail').on('click', function() {
                         var permintaanId = $(this).data('id');
@@ -187,10 +191,23 @@
                                     data.forEach(item => {
                                         $('#detailList').append(`
                                             <div class="detail-item">
-                                                <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
-                                                <h6>Item Name: <strong>${item.nama_barang}</strong></h6>
-                                                <h6>Item Type: <strong>${item.nama_jenis_barang}</strong></h6>
-                                                <h6>Supplier Name: <strong>${item.nama_supplier}</strong></h6>
+                                                <div class="grid grid-cols-10 gap-2">
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Serial Number</strong></div>:
+                                                    <div class="col-8">${item.serial_number}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Item Name</strong></div>:
+                                                    <div class="col-8">${item.nama_barang}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Item Type</strong></div>:
+                                                    <div class="col-8">${item.nama_jenis_barang}</div>
+                                                </div>
+                                                <div class="row mb-3">
+                                                    <div class="col-3"><strong>Supplier Name</strong></div>:
+                                                    <div class="col-8">${item.nama_supplier}</div>
+                                                </div>
                                                 <hr>
                                             </div>
                                         `);

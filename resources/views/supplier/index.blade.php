@@ -112,7 +112,7 @@
             <thead class="thead-dark">
                 <tr>
                     <th><input type="checkbox" id="select-all"></th>
-                    <th>No</th>
+                    <th class="d-flex justify-content-center align-items-center">No</th>
                     <th>Supplier</th>
                     <th>Address</th>
                     <th>Phone</th>
@@ -209,7 +209,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="color: black">
-                    Are you sure you want to delete <span id="supplierName"></span>?
+                    Are you sure you want to delete <strong id="supplierName"></strong>?
                 </div>
                 <div class="modal-footer">
                     <form id="deleteForm" method="POST" action="">
@@ -520,7 +520,7 @@
                         // Set notification message based on controller response
                         if (response.success) {
                             // If successful, show success message
-                            showNotification('success', response.message);
+                            showNotification('success', 'Successfully added data!'); //response.message
                         } else {
                             // If not successful, show error message
                             showNotification('error', response.message ||
@@ -575,6 +575,7 @@
                     {
                         data: null,
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }

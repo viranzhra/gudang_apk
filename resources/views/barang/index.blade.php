@@ -2,18 +2,19 @@
 
 @section('content')
 <style>
+.icon-edit {background-color: #01578d;} .icon-delete {background-color: #910a0a;}.btn-action:hover .icon-edit, .btn-action:hover .icon-delete {opacity: 0.8;}
 #notification{position:fixed;top:10px;right:10px;width:300px;padding:15px;border-radius:5px;z-index:9999;display:none;text-align:center;justify-content:flex-start;align-items:center;text-align:left}
 /* .alert-success{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;height:80px}.alert-danger{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;height:80px}.alert-info{background-color:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;height:80px} */
 </style>
-    <div class="container mt-3 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; width: 1160px;border-radius: 20px;">
+    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
             <strong id="notificationTitle">Notification</strong>
             <p id="notificationMessage"></p>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center my-3">
-            <h4 style="color: black;">Item</h4>
+        <h4 class="mt-3" style="color: #8a8a8a;">Item</h4>
+        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
             <div class="d-flex gap-2">
                 <!-- Add Button -->
                 <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
@@ -26,7 +27,7 @@
                 <button id="delete-selected" class="btn btn-danger d-none"
                     style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
                     <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
-                    Delete
+                    Delete Selected
                 </button>
             </div>
         </div>
@@ -50,37 +51,23 @@
         @endif
 
         {{-- Table --}}
-        <table id="barang-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
+        <table id="barang-table" class="table table-bordered table-striped table-hover" width="100%" style="font-size: 14px;">
             <thead class="thead-dark">
                 <tr>
                     <th style="width: 20px">
                         <input type="checkbox" id="select-all">
                     </th>
-                    <th>
-                        No
-                    </th>
-                    <th>
-                        Item Name
-                    </th>
-                    <th>
-                        Item Type
-                    </th>
-                    <th>
-                        Supplier
-                    </th>
-                    {{-- <th>
-                        Stock
-                    </th> --}}
-                    <th>
-                        Description
-                    </th>
-                    <th>
-                        Action
-                    </th>
+                    <th class="d-flex justify-content-center align-items-center">No</th>
+                    <th>Item Name</th>
+                    <th>Item Type</th>
+                    <th>Supplier</th>
+                    {{-- <th>Stock</th> --}}
+                    <th>Description</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             {{-- Isi dari table --}}
-            <tbody class="text-gray"></tbody>
+            {{-- <tbody class="text-gray"></tbody> --}}
         </table>
     </div>
 
@@ -163,7 +150,7 @@
                 url: url,
                 data: form.serialize(),
                 success: function(response) {
-                    showNotification('success', 'Berhasil menambahkan data!'); //response.message
+                    showNotification('success', 'Successfully added data!'); //response.message
                     $('#barang-table').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
@@ -180,7 +167,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="color: black">
@@ -190,7 +177,7 @@
                     <form id="deleteForm" method="POST" action="">
                         @csrf
                         @method('GET')
-                        <button type="submit" class="btn btn-danger">Delete</button>
+                        <button type="submit" class="btn" style="background-color: #19850b; color: white;">Delete</button>
                     </form>
                 </div>
             </div>
@@ -326,7 +313,7 @@
                 url: url,
                 data: form.serialize(),
                 success: function(response) {
-                    showNotification('success', 'Berhasil memperbarui data!'); //response.message
+                    showNotification('success', 'Item was updated successfully!'); //response.message
                     $('#barang-table').DataTable().ajax.reload();
                 },
                 error: function(xhr, status, error) {
@@ -359,6 +346,7 @@
                     {
                         data: null,
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
@@ -406,25 +394,8 @@
                     }
                 ],
                 order: [
-                    [5, 'desc']
-                ],
-                pagingType: 'full_numbers',
-                language: {
-                    paginate: {
-                        first: '«',
-                        previous: '‹',
-                        next: '›',
-                        last: '»'
-                    }
-                },
-                drawCallback: function(settings) {
-                    var pagination = $(this).closest('.dataTables_wrapper').find(
-                    '.dataTables_paginate');
-                    pagination.toggle(this.api().page.info().pages > 1);
-                    pagination.find('.paginate_button').addClass('btn btn-sm btn-outline-secondary');
-                    pagination.find('.paginate_button.current').removeClass('btn-outline-secondary')
-                        .addClass('btn-secondary');
-                }
+                    [2, 'asc']
+                ]
             });
         });
     </script>
@@ -521,14 +492,23 @@
                             if (response.ok) {
                                 location.reload();
                             } else {
-                                alert('Gagal menghapus data.');
+                                alert('Failed to delete data.');
                             }
                         });
                     });
                 } else {
-                    alert('Tidak ada data yang dipilih.');
+                    alert('No data selected.');
                 }
             });
         });
     </script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap 4 integration -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
+
 @endsection

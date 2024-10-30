@@ -81,8 +81,8 @@
     <table class="table table-bordered table-striped table-hover" id="statusbarangtable" width="100%">
         <thead class="thead-dark">
             <tr>
-                <th style="width: 20px"><input type="checkbox" id="select-all"></th>
-                <th>No</th>
+                <th style="width: 25px"><input type="checkbox" id="select-all"></th>
+                <th style="width: 25px">No</th>
                 <th>Item Status</th>
                 <th>Action</th>
             </tr>
@@ -134,17 +134,17 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteModalLabel">Konfirmasi Hapus</h5>
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> 
             </div>
             <div class="modal-body" style="color: black">
-                Apakah Anda yakin ingin menghapus status barang <span id="itemName"></span> ini?
+                Are you sure you want to delete <strong id="itemName"></strong> ?
             </div>
             <div class="modal-footer">
                 <form id="deleteForm" method="POST" action="">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn" style="background-color: #910a0a; color: white;">Delete</button>
                 </form>                               
             </div>
         </div>
@@ -263,6 +263,7 @@ $('#deleteModal').on('show.bs.modal', function(event) {
             {
                 data: null,
                 sortable: false,
+                className: 'text-center',
                 render: function(data, type, row, meta) {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 }

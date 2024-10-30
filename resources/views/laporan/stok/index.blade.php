@@ -71,26 +71,30 @@
     </table>
 </div>
 
-<!-- Modal untuk menampilkan detail barang -->
+<!-- Modal for showing stock item details -->
 <div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="viewModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="viewModalLabel">Detail Stock Item</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <p><strong>ID Item:</strong> <span id="viewBarangId"></span></p>
-          <p><strong>Item Name:</strong> <span id="viewNamaBarang"></span></p>
-          <p><strong>Item Type:</strong> <span id="viewJenisBarang"></span></p>
-          <p><strong>Amount:</strong> <span id="viewJumlahBarang"></span></p>
-          <span class="sidebar-divider lg"></span>
-          <p><strong>SN / Kondisi</strong></p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewModalLabel">Detail Stock Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <span class="sidebar-divider lg"></span>
+            <p><strong>ID Item:</strong> <span id="viewBarangId"></span></p>
+            <p><strong>Item Name:</strong> <span id="viewNamaBarang"></span></p>
+            <p><strong>Item Type:</strong> <span id="viewJenisBarang"></span></p>
+            <p><strong>Amount:</strong> <span id="viewJumlahBarang"></span></p>
+            
+            <hr>
+            <h6>Serial Numbers & Status</h6>
+            <div id="serialDetails">
+                <!-- Serial numbers and status will be appended here dynamically -->
+            </div>
         </div>
       </div>
     </div>
-  </div>
-  
+</div>  
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -123,6 +127,7 @@
                 {
                     data: null,
                     orderable: false,
+                    className: 'text-center',
                     render: function(data, type, row, meta) {
                         return meta.row + meta.settings._iDisplayStart + 1;
                     }
@@ -142,6 +147,9 @@
                     }
                 }
             ],
+            order: [
+                    [2, 'asc']
+            ],
             // language: {
             //     emptyTable: "Tidak ada data yang tersedia",
             //     search: "Cari:",
@@ -155,21 +163,49 @@
             // }
         });
 
-        // Saat tombol detail ditekan
-    $(document).on('click', '.view-btn', function() {
+// When the view detail button is clicked
+$(document).on('click', '.view-btn', function() {
         var barangId = $(this).data('id');
         var namaBarang = $(this).data('nama');
         var jenisBarang = $(this).data('jenis');
         var jumlahBarang = $(this).data('jumlah');
         
-        // Set data ke dalam modal untuk dilihat
+        // Set the static modal details
         $('#viewBarangId').text(barangId);
         $('#viewNamaBarang').text(namaBarang);
         $('#viewJenisBarang').text(jenisBarang);
         $('#viewJumlahBarang').text(jumlahBarang);
-        
-        // Tampilkan modal
+
+        // Clear the previous serial details
+        $('#serialDetails').empty();
+
+        // Manually trigger the modal for testing
         $('#viewModal').modal('show');
+
+        // Make AJAX request to get the stock details
+        $.ajax({
+            url: `https://doaibutiri.my.id/gudang/api/laporan/stok/${barangId}`, // Update to the correct route
+            type: 'GET',
+            success: function(response) {
+                // Loop through the response and append each serial number and status to the modal
+                response.forEach(function(item) {
+                    $('#serialDetails').append(`
+                        <p><strong>Serial Number:</strong> ${item.serial_number}</p>
+                        <p><strong>Status:</strong> 
+                            <span style="color: ${item.warna_status_barang};">${item.status_barang}</span>
+                        </p>
+                        <p><strong>Accessories:</strong> ${item.kelengkapan}</p>
+                        <hr>
+                    `);
+                });
+                
+                // Show the modal after data is loaded
+                $('#viewModal').modal('show');
+            },
+            error: function(xhr) {
+                console.error('Error fetching details:', xhr.responseText);
+            }
+        });
     });
 });
 </script>

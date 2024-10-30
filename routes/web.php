@@ -152,9 +152,14 @@ Route::middleware('auth_token')->group(function () {
 
 
     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok');
+    
     // Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
     Route::get('/laporan/barangmasuk', [LaporanController::class, 'barangmasuk'])->name('laporan.barangmasuk.index');
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index');
+    Route::get('api/laporan/barangkeluar/export/pdf', [LaporanController::class, 'exportPdf']);
+    Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar']);
+
+    // Route::get('api/laporan/barangkeluar/export/excel', [LaporanController::class, 'exportExcel']); 
     Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
 });
 

@@ -12,12 +12,12 @@ use Illuminate\Support\Facades\Http;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Yajra\DataTables\Facades\DataTables;
-use App\Exports\BarangMasukExport;
+use App\Exports\BarangKeluarExport;
 
 class LaporanController extends Controller
 {
 
-    public function exportBarangMasuk(Request $request)
+        public function exportBarangKeluar(Request $request)
     {
         // Validasi input
         $request->validate([
@@ -25,16 +25,28 @@ class LaporanController extends Controller
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date',
         ]);
-    
+
         $search = $request->input('search');
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
-    
-        $fileName = 'LaporanBarangMasuk_' . $startDate . '_to_' . $endDate . '.xlsx';
-        // Kirim parameter untuk export
-        return Excel::download(new BarangMasukExport($startDate, $endDate), $fileName);
         
+        // Tentukan nama file berdasarkan input tanggal
+        if ($startDate || $endDate) {
+            // Format tanggal jika salah satu atau kedua tanggal diisi
+            $formattedStartDate = $startDate ? date('Y-m-d', strtotime($startDate)) : 'start';
+            $formattedEndDate = $endDate ? date('Y-m-d', strtotime($endDate)) : 'end';
+            $fileName = 'LaporanBarangKeluar_' . $formattedStartDate . '_to_' . $formattedEndDate . '.xlsx';
+        } else {
+            // Jika tidak ada tanggal yang dipilih, gunakan nama file 'All'
+            $fileName = 'LaporanBarangKeluar_All.xlsx';
+        }
+
+        // Kirim parameter untuk export
+        return Excel::download(new BarangKeluarExport($search, $startDate, $endDate), $fileName);
     }
+
+
+    
     // public function exportBarangKeluar(Request $request)
     // {
     //     $search = $request->input('search');

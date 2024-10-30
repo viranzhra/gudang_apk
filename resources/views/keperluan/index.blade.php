@@ -671,6 +671,7 @@
                     {
                         data: null,
                         sortable: false,
+                        className: 'text-center',
                         render: function(data, type, row, meta) {
                             return meta.row + meta.settings._iDisplayStart + 1;
                         }
