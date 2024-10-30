@@ -16,18 +16,22 @@
             <h4 style="color: black;">Item</h4>
             <div class="d-flex gap-2">
                 <!-- Add Button -->
+                @can('item.create')
                 <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
                     data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px;">
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                     Add
                 </button>
+                @endcan
 
                 <!-- Delete Button -->
+                @can('item.delete')
                 <button id="delete-selected" class="btn btn-danger d-none"
                     style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
                     <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
                     Delete
                 </button>
+                @endcan
             </div>
         </div>
 
@@ -53,9 +57,11 @@
         <table id="barang-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
             <thead class="thead-dark">
                 <tr>
+                    @can('item.delete')
                     <th style="width: 20px">
                         <input type="checkbox" id="select-all">
                     </th>
+                    @endcan
                     <th>
                         No
                     </th>
@@ -349,13 +355,16 @@
                         //'Authorization': 'Bearer ' + '{{ session('token') }}'
                     }
                 },
-                columns: [{
+                columns: [
+                    @can('item.delete')
+                    {
                         data: 'id',
                         orderable: false,
                         render: function(data, type, row) {
                             return `<input type="checkbox" class="select-item flex justify-center items-center" value="${data}">`;
                         }
                     },
+                    @endcan
                     {
                         data: null,
                         sortable: false,
@@ -390,6 +399,7 @@
                         orderable: false,
                         render: function(data, type, row) {
                             return `
+                    @can('item.edit')
                     <button type="button" class="btn-edit btn-action" 
                         data-id="${row.id}" 
                         data-nama="${row.nama_barang}"
@@ -397,10 +407,13 @@
                         aria-label="Edit">
                         <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
                     </button>
+                    @endcan
+                    @can('item.delete')
                     <button type="button" data-id="${row.id}" class="btn-action" aria-label="Hapus"
                         data-bs-toggle="modal" data-bs-target="#deleteModal">
                         <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
                     </button>
+                    @endcan
                 `;
                         }
                     }

@@ -17,11 +17,13 @@
             <h4 style="color: black;">Stock Out Request</h4>
             <div class="d-flex gap-2">
                 <!-- Add Button -->
+                @can('item request.create')
                 <a type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
                     href="{{ route('permintaanbarangkeluar.create') }}" style="width: 75px; height: 35px;">
                     <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                     Add
                 </a>
+                @endcan
             </div>
         </div>
 
@@ -37,6 +39,7 @@
         @endif
 
         {{-- Table --}}
+        @can('item request.view')
         <table id="permintaan-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
             <thead class="thead-dark">
                 <tr>
@@ -51,6 +54,7 @@
             </thead>
             <tbody class="text-gray"></tbody>
         </table>
+        @endcan
         
     </div>
 

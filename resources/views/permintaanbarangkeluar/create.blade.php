@@ -26,7 +26,7 @@
     <div class="container mt-3 shadow-sm p-4" style="border-radius: 20px;width:768px">
 
         <h5 style="font-weight:700;margin-bottom: 30px">Buat Permintaan</h5>
-
+        @can('item request.create')
         <form method="post" action="{{ route('permintaanbarangkeluar.store') }}" enctype="multipart/form-data">
             @csrf
             @if ($errors->any())
@@ -174,6 +174,7 @@
                 });
             });
         </script>
+        @endcan
 
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
