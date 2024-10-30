@@ -82,7 +82,7 @@
             <thead>
                 <tr>
                     <th>User</th>
-                    <th>Current Roles</th>
+                    <th>Roles</th>
                     <th>Action</th>
                 </tr>
             </thead>
