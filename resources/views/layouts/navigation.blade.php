@@ -481,13 +481,13 @@
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                             <style>
-                                .nav-item.dropdown:hover .dropdown-menu {
+                                .nav-item.dropdown:hover .dropdown-menu-end{
                                     display: block;
                                     opacity: 1;
                                     visibility: visible;
                                 }
 
-                                .dropdown-menu {
+                                .dropdown-menu-end{
                                     display: none;
                                     opacity: 0;
                                     visibility: hidden;
