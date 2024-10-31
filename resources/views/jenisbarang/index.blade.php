@@ -372,59 +372,61 @@
             });
         });
 
-        // Handle select all checkbox
+         // Handle select all checkbox
         $('#select-all').on('click', function() {
-            $('.select-item').prop('checked', this.checked);
-            $('#deleteSelected').toggleClass('d-none', !this.checked);
+            const isChecked = $(this).is(':checked');
+            $('.select-item').prop('checked', isChecked);
+            $('#deleteSelected').toggleClass('d-none', !isChecked);
+        });
+
+        // Toggle delete button visibility based on item selection
+        $(document).on('change', '.select-item', function() {
+            const anyChecked = $('.select-item:checked').length > 0;
+            $('#deleteSelected').toggleClass('d-none', !anyChecked);
+            $('#select-all').prop('checked', $('.select-item:checked').length === $('.select-item').length);
         });
 
         // Handle delete selected button
         $('#deleteSelected').on('click', function() {
-            // Implement delete selected items functionality here
-        });
+            const selectedIds = $('.select-item:checked').map(function() {
+                return $(this).val();
+            }).get();
 
-// Handle delete selected button
-$('#deleteSelected').on('click', function() {
-    const selectedIds = $('.select-item:checked').map(function() {
-        return $(this).val();
-    }).get();
-
-    // Show confirmation modal if there are selected items
-    if (selectedIds.length > 0) {
-        $('#selectedCount').text(selectedIds.length); // Display the number of selected items
-        $('#confirmDeleteSelectedModal').modal('show'); // Show the confirmation modal
-    } else {
-        showNotification('Warning', 'No items selected for deletion.', 'info');
-    }
-});
-
-// Handle the actual deletion after confirmation
-$('#confirmDeleteSelected').on('click', function() {
-    const selectedIds = $('.select-item:checked').map(function() {
-        return $(this).val();
-    }).get();
-
-    if (selectedIds.length > 0) {
-        $.ajax({
-            url: 'https://doaibutiri.my.id/gudang/api/jenisbarang/delete-selected', // Use named route for maintainability
-            method: 'POST', // Ensure you're using POST method
-            data: {
-                ids: selectedIds,
-                _token: "{{ csrf_token() }}" // Include CSRF token
-            },
-            success: function(response) {
-                showNotification('Success', response.message, 'success');
-                $('#jenisBarangTable').DataTable().ajax.reload(); // Reload the DataTable to reflect changes
-                $('#select-all').prop('checked', false); // Uncheck the select-all checkbox
-                $('#confirmDeleteSelectedModal').modal('hide'); // Hide the confirmation modal
-            },
-            error: function(xhr) {
-                showNotification('Error', 'Failed to delete selected items: ' + xhr.responseJSON.message, 'danger');
+            if (selectedIds.length > 0) {
+                $('#selectedCount').text(selectedIds.length);
+                $('#confirmDeleteSelectedModal').modal('show');
+            } else {
+                showNotification('Warning', 'No items selected for deletion.', 'info');
             }
         });
-    }
-});
 
+        // Handle the actual deletion after confirmation
+        $('#confirmDeleteSelected').on('click', function() {
+            const selectedIds = $('.select-item:checked').map(function() {
+                return $(this).val();
+            }).get();
+
+            if (selectedIds.length > 0) {
+                $.ajax({
+                    url: 'https://doaibutiri.my.id/gudang/api/jenisbarang/delete-selected',
+                    method: 'POST',
+                    data: {
+                        ids: selectedIds,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        showNotification('Success', response.message, 'success');
+                        table.ajax.reload();
+                        $('#select-all').prop('checked', false);
+                        $('#confirmDeleteSelectedModal').modal('hide');
+                        $('#deleteSelected').addClass('d-none');
+                    },
+                    error: function(xhr) {
+                        showNotification('Error', 'Failed to delete selected items: ' + xhr.responseJSON.message, 'danger');
+                    }
+                });
+            }
+        });
     });
 </script>
 @endsection
