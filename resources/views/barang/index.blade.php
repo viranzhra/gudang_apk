@@ -80,9 +80,11 @@
                     <th>
                         Description
                     </th>
+                    @canany(['item.edit', 'item.delete'])
                     <th>
                         Action
                     </th>
+                    @endcanany
                 </tr>
             </thead>
             {{-- Isi dari table --}}
@@ -394,6 +396,7 @@
                         data: 'keterangan_barang',
                         name: 'barang.keterangan'
                     },
+                    @canany(['item.edit', 'item.delete'])
                     {
                         data: 'id',
                         orderable: false,
@@ -417,10 +420,11 @@
                 `;
                         }
                     }
+                    @endcanany
                 ],
-                order: [
-                    [5, 'desc']
-                ],
+                // order: [
+                //     [5, 'desc']
+                // ],
                 pagingType: 'full_numbers',
                 language: {
                     paginate: {
