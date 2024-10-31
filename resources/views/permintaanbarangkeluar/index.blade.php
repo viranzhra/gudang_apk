@@ -254,12 +254,17 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    const urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar/onlyfor';
+    @canall(['item request.view', 'item request.confirm'])
+        const urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar';
+    @endcanall
+
     const table = new DataTable('#permintaan-table', {
         processing: false,
         serverSide: true,
         debug: false,
         ajax: {
-            url: '{{ env('API_URL') }}/permintaanbarangkeluar',
+            url: urlDataPermintaan,
             headers: {
                 'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
             }
