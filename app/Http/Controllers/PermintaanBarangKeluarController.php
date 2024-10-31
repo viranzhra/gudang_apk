@@ -22,7 +22,7 @@ class PermintaanBarangKeluarController extends Controller
     public function create($id = null)
     {
         try {
-            $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create');
+            $response = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create');
 
             if ($response->successful()) {
                 $data = $response->json();
@@ -44,7 +44,7 @@ class PermintaanBarangKeluarController extends Controller
                 $barangbyjenis = null;
 
                 if ($id !== null) {
-                    $barangMasukResponse = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create/' . $id);
+                    $barangMasukResponse = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/create/' . $id);
                     if ($barangMasukResponse->successful()) {
                         $barangMasukData = $barangMasukResponse->json();
                         $barangMasuk = isset($barangMasukData['barangMasuk']) ? (object) $barangMasukData['barangMasuk'] : null;
@@ -73,7 +73,7 @@ class PermintaanBarangKeluarController extends Controller
     {
         // $barang = DB::table('barang')->where('jenis_barang_id', $id)->orderBy('nama', 'asc')->get();
         // return response()->json($barang);
-		$response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-by-jenis/' . $id);
+		$response = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-by-jenis/' . $id);
 		
 		if ($response->successful()) {
 			$barang = $response->json();
@@ -85,7 +85,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function getStok($id)
 	{
-		$response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-stok/' . $id);
+		$response = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-stok/' . $id);
 
 		if ($response->successful()) {
 			$stok = $response->json();
@@ -97,7 +97,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function getSerialNumberByBarang($id)
     {
-		$response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-by-barang/' . $id);
+		$response = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/get-by-barang/' . $id);
 		
 		if ($response->successful()) {
 			$serialnumber = $response->json();
@@ -126,7 +126,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar', $request->all());
+        $response = Http::withToken(session('auth_token'))->post(config('app.api_url') . '/permintaanbarangkeluar', $request->all());
 
         if ($response->successful()) {
             return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
@@ -144,7 +144,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function delete($id)
     {
-        $response = Http::withToken(session('token'))->delete(config('app.api_url') . '/permintaanbarangkeluar/' . $id);
+        $response = Http::withToken(session('auth_token'))->delete(config('app.api_url') . '/permintaanbarangkeluar/' . $id);
 
         if ($response->successful()) {
             return redirect('/permintaanbarangkeluar')->with('success', $response->json('message'));
@@ -155,7 +155,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/update-status', $request->all());
+        $response = Http::withToken(session('auth_token'))->post(config('app.api_url') . '/permintaanbarangkeluar/update-status', $request->all());
 
         if ($response->successful()) {
             return response()->json([
@@ -175,7 +175,7 @@ class PermintaanBarangKeluarController extends Controller
 
     public function selectSN($id)
     {
-        $response = Http::withToken(session('token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
+        $response = Http::withToken(session('auth_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
 
         if ($response->successful()) {
             $serialNumbers = collect($response->json())->map(function ($item) {
@@ -213,7 +213,7 @@ class PermintaanBarangKeluarController extends Controller
 
         \Log::info('Mengirim data ke API:', $payload);
 
-        $response = Http::withToken(session('token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
+        $response = Http::withToken(session('auth_token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
 
         if ($response->successful()) {
             return redirect()->route('permintaanbarangkeluar.index')->with('success', $response->json('message'));

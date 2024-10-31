@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
                     }
                 })
                 .then(response => response.json())
@@ -228,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
             serialNumbersElement.innerHTML = '<li><span class="dropdown-item">Loading...</span></li>';
 
             setTimeout(() => {
-                fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/get-sn/${id}`, {
+                fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/show-detail-sn/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
                     }
                 })
                 .then(response => response.json())
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ajax: {
             url: '{{ env('API_URL') }}/permintaanbarangkeluar',
             headers: {
-                'Authorization': 'Bearer ' + '{{ session('token') }}'
+                'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
             }
         },
         columns: [{
