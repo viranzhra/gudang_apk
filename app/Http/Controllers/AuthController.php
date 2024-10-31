@@ -28,9 +28,8 @@ class AuthController extends Controller
                 session(['auth_token' => $data['data']['token']]); // Simpan token di sesi
                 session(['user_name' => $data['data']['name']]);   // Simpan nama
 
-                // Simpan permissions di sesi untuk digunakan dengan @can
                 if (isset($data['data']['permissions'])) {
-                    session(['permissions' => $data['data']['permissions']]);
+                    session(['permissions' => $data['data']['permissions']]); // Simpan permission
                 } 
 
                 return redirect()->route('dashboard')->with('success', 'Login berhasil');

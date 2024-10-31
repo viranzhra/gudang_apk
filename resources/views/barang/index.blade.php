@@ -137,6 +137,9 @@
             $.ajax({
                 url: '{{ env('API_URL') }}/barang/create',
                 method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                },
                 success: function(data) {
                     var jenisBarangSelect = $('#jenis_barang');
                     var supplierSelect = $('#supplier');
@@ -169,6 +172,9 @@
             $.ajax({
                 type: "POST",
                 url: url,
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                },
                 data: form.serialize(),
                 success: function(response) {
                     showNotification('success', 'Berhasil menambahkan data!'); //response.message
@@ -290,6 +296,9 @@
             $.ajax({
                 url: '{{ env('API_URL') }}/barang/' + id,
                 method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                },
                 success: function(response) {
                     // Fill jenis barang select
                     var jenisBarangSelect = $('#edit_jenis_barang');
@@ -332,6 +341,9 @@
             $.ajax({
                 type: "POST",
                 url: url,
+                headers: {
+                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                },
                 data: form.serialize(),
                 success: function(response) {
                     showNotification('success', 'Berhasil memperbarui data!'); //response.message
@@ -354,7 +366,7 @@
                     url: '{{ env('API_URL') }}/barang',
                     data: function(d) {},
                     headers: {
-                        //'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
                     }
                 },
                 columns: [
