@@ -254,9 +254,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    const urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar/onlyfor';
+    var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar/onlyfor';
     @canall(['item request.view', 'item request.confirm'])
-        const urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar';
+        var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar';
     @endcanall
 
     const table = new DataTable('#permintaan-table', {
