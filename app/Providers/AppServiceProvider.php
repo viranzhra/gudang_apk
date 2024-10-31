@@ -51,5 +51,13 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('endcanany', function () {
             return "<?php endif; ?>";
         }); 
+
+        Blade::directive('canall', function ($permissions) {
+            return "<?php if (empty(array_diff($permissions, session('permissions', [])))): ?>";
+        });
+
+        Blade::directive('endcanall', function () {
+            return "<?php endif; ?>";
+        });    
     }
 }

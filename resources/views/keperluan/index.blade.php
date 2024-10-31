@@ -116,7 +116,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
+                    <form class="" method="post" action="{{ route('keperluan.store') }}"
+                        enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
@@ -329,7 +330,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete the selected data?</p>
+                    <p>Are you sure you want to delete <strong><span id="selectedCount"></span> selected data?</p><strong>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -505,7 +506,8 @@
                     },
                     success: function(data) {
                         if (data.success) {
-                            showNotification('success', 'Requirement type successfully deleted!');
+                            showNotification('success',
+                                'Requirement type successfully deleted!');
                             deleteModal.hide();
                             $('#KeperluanTable').DataTable().ajax.reload();
                         } else {
@@ -527,7 +529,13 @@
                     selectedIds.push($(this).val());
                 });
 
-                $('#confirmDelete').modal('show'); // Show confirmation modal
+                // Update jumlah data yang dipilih di modal
+                $('#selectedCount').text(selectedIds.length);
+
+                // Tampilkan modal konfirmasi
+                $('#confirmDelete').modal('show');
+
+                // Event untuk konfirmasi penghapusan
                 $('#confirmDeleteButton').off('click').on('click', function() {
                     $.ajax({
                         url: `{{ config('app.api_url') }}/keperluan/delete-selected`, // Adjusted to match the API
@@ -542,13 +550,13 @@
                         success: function(data) {
                             if (data.success) {
                                 showNotification('success',
-                                    'Selected data was successfully delected!');
+                                    'Selected data was successfully deleted!');
                                 $('#confirmDelete').modal('hide');
                                 $('#KeperluanTable').DataTable().ajax.reload(
-                                    function() {
-                                        // Setelah reload, sembunyikan tombol delete
-                                        toggleDeleteButton();
-                                    });
+                            function() {
+                                    // Sembunyikan tombol delete setelah reload
+                                    toggleDeleteButton();
+                                });
                             } else {
                                 showNotification('error',
                                     'Failed to delete selected requirement type!');
@@ -592,7 +600,8 @@
                     data: formData, // Kirim form data
                     success: function(response) {
                         if (response.success) {
-                            showNotification('success', 'Requirement type successfully updated !'); // Notifikasi sukses
+                            showNotification('success',
+                                'Requirement type successfully updated !'); // Notifikasi sukses
                             $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
                         } else {
                             showNotification('error', response.message ||
@@ -627,14 +636,14 @@
 
                         $('#edit-nama').val(data.nama);
                         $('#edit-extend').prop('checked', data.extend ==
-                        1); // Sesuaikan checkbox
+                            1); // Sesuaikan checkbox
                         $('#edit-id').val(id);
                         $('#editbatas_hari').val(data.batas_hari); // Set batas_hari dari data
 
                         if (data.extend == 1) {
                             $('#editExtensionNameField').show();
                             $('#edit-nama_tanggal_akhir').val(data
-                            .nama_tanggal_akhir); // Isi extension name
+                                .nama_tanggal_akhir); // Isi extension name
                         } else {
                             $('#editExtensionNameField').hide();
                             $('#edit-nama_tanggal_akhir').val(''); // Kosongkan extension name
@@ -646,7 +655,7 @@
                         let message = xhr.responseJSON?.message ||
                             'Error fetching type requirement data.';
                         showNotification('error',
-                        message); // Tampilkan pesan error yang lebih informatif
+                            message); // Tampilkan pesan error yang lebih informatif
                     }
                 });
             });

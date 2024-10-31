@@ -39,7 +39,7 @@
         @endif
 
         {{-- Table --}}
-        @can('item request.view')
+        @canany(['item request.viewAll', 'item request.viewFilterbyUser'])
         <table id="permintaan-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
             <thead class="thead-dark">
                 <tr>
@@ -54,7 +54,7 @@
             </thead>
             <tbody class="text-gray"></tbody>
         </table>
-        @endcan
+        @endcanany
         
     </div>
 
@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
                     }
                 })
                 .then(response => response.json())
@@ -228,10 +228,10 @@ document.addEventListener('DOMContentLoaded', function() {
             serialNumbersElement.innerHTML = '<li><span class="dropdown-item">Loading...</span></li>';
 
             setTimeout(() => {
-                fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/get-sn/${id}`, {
+                fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/show-detail-sn/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('token') }}'
+                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
                     }
                 })
                 .then(response => response.json())
@@ -254,14 +254,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar/onlyfor';
+    @can('item request.viewAll')
+        var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar';
+    @endcan
+
     const table = new DataTable('#permintaan-table', {
         processing: false,
         serverSide: true,
         debug: false,
         ajax: {
-            url: '{{ env('API_URL') }}/permintaanbarangkeluar',
+            url: urlDataPermintaan,
             headers: {
-                'Authorization': 'Bearer ' + '{{ session('token') }}'
+                'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
             }
         },
         columns: [{

@@ -375,7 +375,7 @@
                         </li>
                         @endcanany
 
-                        @can('item request.view')
+                        @canany(['item request.viewAll', 'item request.viewFilterbyUser'])
                         <li class="sidebar-item">
                             <a class="sidebar-link {{ request()->is('permintaanbarangkeluar/*') ? 'active' : '' }}"
                                 href="/permintaanbarangkeluar" aria-expanded="false">
@@ -383,7 +383,7 @@
                                 <span class="hide-menu">Outbound Item Request</span>
                             </a>
                         </li>
-                        @endcan
+                        @endcanany
                         @canany(['report.view stock', 'report.view incoming item', 'report.view outbound item'])
                         <li
                             class="sidebar-item {{ request()->is('laporan/stok') || request()->is('laporan/barangmasuk') || request()->is('laporan/barangkeluar') ? 'active' : '' }}">
@@ -481,13 +481,13 @@
                     <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
                         <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
                             <style>
-                                .nav-item.dropdown:hover .dropdown-menu {
+                                .nav-item.dropdown:hover .dropdown-menu-end{
                                     display: block;
                                     opacity: 1;
                                     visibility: visible;
                                 }
 
-                                .dropdown-menu {
+                                .dropdown-menu-end{
                                     display: none;
                                     opacity: 0;
                                     visibility: hidden;

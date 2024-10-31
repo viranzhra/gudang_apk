@@ -263,7 +263,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete the selected data?</p>
+                    <p>Are you sure you want to delete <strong><span id="selectedCount"></span> selected data?</p><strong>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -392,12 +392,13 @@
                     selectedIds.push($(this).val());
                 });
 
-                // if (selectedIds.length === 0) {
-                //     showNotification('error', 'Pilih setidaknya satu supplier untuk dihapus.');
-                //     return;
-                // }
+                // Update jumlah data yang dipilih di modal
+                $('#selectedCount').text(selectedIds.length);
 
-                $('#confirmDelete').modal('show'); // Tampilkan modal konfirmasi
+                // Show modal konfirmasi
+                $('#confirmDelete').modal('show');
+
+                // Event untuk konfirmasi penghapusan
                 $('#confirmDeleteButton').off('click').on('click', function() {
                     $.ajax({
                         url: `{{ config('app.api_url') }}/suppliers/delete-selected`, // Endpoint penghapusan
@@ -520,7 +521,8 @@
                         // Set notification message based on controller response
                         if (response.success) {
                             // If successful, show success message
-                            showNotification('success', 'Successfully added data!'); //response.message
+                            showNotification('success',
+                                'Successfully added data!'); //response.message
                         } else {
                             // If not successful, show error message
                             showNotification('error', response.message ||
@@ -539,7 +541,7 @@
                             // Hide the modal after a delay
                             $('#tambahData').modal('hide'); // Hide modal
                             $('#supplier-table').DataTable().ajax
-                        .reload(); // Reload DataTable if needed
+                                .reload(); // Reload DataTable if needed
 
                             // Re-enable button after the delay
                             $submitButton.prop('disabled', false).html('Save');
