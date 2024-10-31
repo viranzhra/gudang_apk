@@ -39,7 +39,7 @@
         @endif
 
         {{-- Table --}}
-        @can('item request.view')
+        @canany(['item request.viewAll', 'item request.viewFilterbyUser'])
         <table id="permintaan-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
             <thead class="thead-dark">
                 <tr>
@@ -54,7 +54,7 @@
             </thead>
             <tbody class="text-gray"></tbody>
         </table>
-        @endcan
+        @endcanany
         
     </div>
 
@@ -255,9 +255,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar/onlyfor';
-    @canall(['item request.view', 'item request.confirm'])
+    @can('item request.viewAll')
         var urlDataPermintaan = '{{ env('API_URL') }}/permintaanbarangkeluar';
-    @endcanall
+    @endcan
 
     const table = new DataTable('#permintaan-table', {
         processing: false,
