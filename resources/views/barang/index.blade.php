@@ -54,6 +54,7 @@
         @endif
 
         {{-- Table --}}
+        @can('item.view')
         <table id="barang-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
             <thead class="thead-dark">
                 <tr>
@@ -90,6 +91,7 @@
             {{-- Isi dari table --}}
             <tbody class="text-gray"></tbody>
         </table>
+        @endcan
     </div>
 
     <!-- Modal Tambah Data -->
@@ -357,6 +359,7 @@
     </script>
 
     {{-- Data Tabel --}}
+    @can('item.view')
     <script>
         $(document).ready(function() {
             $('#barang-table').DataTable({
@@ -457,6 +460,7 @@
             });
         });
     </script>
+    @endcan
 
     {{-- Notifikasi --}}
     <script>
