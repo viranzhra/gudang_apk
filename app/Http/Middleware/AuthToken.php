@@ -38,6 +38,11 @@ class AuthToken
         }
 
         $userData = $response->json();
+        session(['user_name' => $userData['name']]);
+
+        if (isset($userData['permissions'])) {
+            session(['permissions' => $userData['permissions']]);
+        }
 
         // // Jika role diperlukan, periksa apakah pengguna memiliki role tersebut
         // if ($role && !in_array($role, $userData['roles'])) {
