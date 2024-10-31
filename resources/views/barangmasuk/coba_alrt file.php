@@ -413,6 +413,19 @@
             margin-right: 10px;
             /* Space between input and button */
         }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #009b65cf;
+            /* Merah */
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
@@ -533,13 +546,6 @@
                 @csrf
 
 
-                {{-- <div class="file-upload">
-                    <input type="file" name="file" id="file" required class="form-control"
-                        aria-label="Unggah File Excel">
-                    <label for="file" class="custom-file-upload">
-                        Upload File
-                    </label>
-                </div> --}}
                 <div class="file-upload">
                     <input type="file" name="file" id="file" required class="form-control"
                         aria-label="Unggah File Excel">
@@ -559,9 +565,16 @@
                 <div id="loadingIndicator" style="display: none;">Loading...</div>
                 <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
                     title="Click to Upload">
-                    <iconify-icon id="uploadIcon" icon="mdi:upload"
-                        style="font-size: 20px; margin-right: 3px;"></iconify-icon>
-                        Import Data
+                    {{-- <iconify-icon id="uploadIcon" icon="mdi:upload"
+                        style="font-size: 20px; margin-right: 8px;"></iconify-icon> --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                        viewBox="0 0 256 256">
+                        <path d="M208,88H152V32Z" opacity="0.2"></path>
+                        <path
+                            d="M156,208a8,8,0,0,1-8,8H120a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48h20A8,8,0,0,1,156,208ZM92.65,145.49a8,8,0,0,0-11.16,1.86L68,166.24,54.51,147.35a8,8,0,1,0-13,9.3L58.17,180,41.49,203.35a8,8,0,0,0,13,9.3L68,193.76l13.49,18.89a8,8,0,0,0,13-9.3L77.83,180l16.68-23.35A8,8,0,0,0,92.65,145.49Zm98.94,25.82c-4-1.16-8.14-2.35-10.45-3.84-1.25-.82-1.23-1-1.12-1.9a4.54,4.54,0,0,1,2-3.67c4.6-3.12,15.34-1.73,19.82-.56a8,8,0,0,0,4.07-15.48c-2.11-.55-21-5.22-32.83,2.76a20.58,20.58,0,0,0-8.95,14.94c-2,15.89,13.65,20.42,23,23.12,12.06,3.49,13.12,4.92,12.78,7.59-.31,2.41-1.26,3.33-2.15,3.93-4.6,3.06-15.16,1.56-19.54.35A8,8,0,0,0,173.93,214a60.63,60.63,0,0,0,15.19,2c5.82,0,12.3-1,17.49-4.46a20.81,20.81,0,0,0,9.18-15.23C218,179,201.48,174.17,191.59,171.31ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,1,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.68L160,51.31Z">
+                        </path>
+                    </svg>
+                    Import Data
                 </button>
             </form>
 
@@ -581,34 +594,30 @@
         </div>
 
         <!-- Container for preview table -->
-        <div id="previewContainer" style="display: none;">
-            {{-- <hr class="col-span-10 my-3"> --}}
-            {{-- <button type="submit" class="btn btn-primary" id="uploadButton" title="Click to Upload">
-                <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
-            </button> --}}
-            <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
-            <p id="uploadedFileName" style="text-align: center; color: #555;"></p> <!-- Menampilkan nama file yang diunggah -->
-            <div class="table-responsive">
-                <table id="previewTable" class="display table table-bordered row-border table-hover"
-                    style="table-layout: auto; width: 100%;">
-                    <thead>
-                        <tr>
-                            <th style="width: 5px; background-color:#cdcece;">No</th>
-                            <th style="width: 60px; background-color:#cdcece;">Item</th>
-                            <th style="background-color:#cdcece;">Description</th>
-                            <th style="background-color:#cdcece; width: 80px;">Serial Number</th>
-                            <th style="background-color:#cdcece;">Status</th>
-                            <th style="background-color:#cdcece;">Requirement</th>
-                            <th style="background-color:#cdcece; width: 150px;">Error</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-                <!-- Pagination controls -->
-                <div id="pagination" class="mt-3"></div>
-                {{-- <hr class="col-span-10 my-3"> --}}
-            </div>
-        </div>
+<div id="previewContainer" style="display: none;">
+    <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
+    <p id="uploadedFileName" style="text-align: center; color: #555;"></p> <!-- Menampilkan nama file yang diunggah -->
+    <div class="table-responsive">
+        <table id="previewTable" class="display table table-bordered row-border table-hover"
+            style="table-layout: auto; width: 100%;">
+            <thead>
+                <tr>
+                    <th style="width: 5px; background-color:#cdcece;">No</th>
+                    <th style="width: 60px; background-color:#cdcece;">Item</th>
+                    <th style="background-color:#cdcece;">Description</th>
+                    <th style="background-color:#cdcece; width: 80px;">Serial Number</th>
+                    <th style="background-color:#cdcece;">Status</th>
+                    <th style="background-color:#cdcece;">Requirement</th>
+                    <th style="background-color:#cdcece; width: 150px;">Error</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <!-- Pagination controls -->
+        <div id="pagination" class="mt-3"></div>
+    </div>
+</div>
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover" id="barang-table" width="100%">
                 <thead class="thead-dark">
@@ -662,7 +671,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete <span id="selectedCount" style="font-weight: bold;"></span> <b>data</b>?</p>
+                    <p>Are you sure you want to delete the selected data?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -676,25 +685,6 @@
         </div>
     </div>
 
-    <!-- Modal Info pilih file -->
-    <div class="modal fade" id="fileErrorModal" tabindex="-1" role="dialog" aria-labelledby="fileErrorModalLabel" aria-hidden="true">
-        <div style="width: 400px;" class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="fileErrorModalLabel">Invalid File</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Silakan pilih file Excel <strong>(.xlsx atau .xls)</strong>!
-                </div>
-                <div class="modal-footer">
-                    {{-- <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button> --}}
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <script>
         document.getElementById('uploadForm').addEventListener('submit', function() {
             const uploadIcon = document.getElementById('uploadIcon');
@@ -704,10 +694,6 @@
             uploadIcon.classList.add('loading');
         });
     </script>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -750,21 +736,39 @@
             //     }
             // });
 
+            // Mengatur event listener untuk input file
             document.getElementById('file').addEventListener('change', function() {
                 if (this.files.length > 0) {
                     const file = this.files[0];
-                    // Check file extension
+                    // Memeriksa ekstensi file
                     if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
                         // Menampilkan nama file yang diunggah
-                        document.getElementById('uploadedFileName').innerHTML = `File Name: <b>${file.name}</b>`;
+                        document.getElementById('uploadedFileName').textContent = `Nama File: ${file.name}`;
                         document.getElementById('previewContainer').style.display = 'block'; // Tampilkan previewContainer
                         previewData(); // Panggil fungsi previewData ketika file dipilih
                     } else {
-                        // Trigger the modal for invalid file types
-                        $('#fileErrorModal').modal('show');
+                        // Menampilkan notifikasi jika file tidak valid
+                        showNotification('Silakan pilih file Excel (.xlsx atau .xls)!', 'warning');
                     }
                 }
             });
+
+            // Fungsi untuk menampilkan notifikasi
+            function showNotification(message, type) {
+                const notificationTitle = document.getElementById('notificationTitle');
+                const notificationMessage = document.getElementById('notificationMessage');
+                const notification = document.getElementById('notification');
+
+                notificationTitle.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                notificationMessage.textContent = message;
+                notification.style.display = 'block';
+
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000); // Menyembunyikan notifikasi setelah 3 detik
+            }
+
+
 
             // Fungsi untuk melakukan preview data dari file yang diunggah
             window.previewData = async function() {
@@ -868,7 +872,7 @@
                     }
                     const serialNumberData = await serialNumberResponse.json();
                     const existingNumbers = serialNumberData.map(item => item.serial_number.toString()
-                .trim()); // Menyimpan sebagai string
+                        .trim()); // Menyimpan sebagai string
 
                     // Mengambil data barang
                     const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
@@ -877,7 +881,7 @@
                     }
                     const barangData = await barangResponse.json();
                     const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang
-                    .trim()) : [];
+                        .trim()) : [];
 
                     // Mengambil data kondisi barang
                     const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
@@ -894,11 +898,11 @@
                     // Memeriksa setiap baris data
                     dataRows.forEach((row, index) => {
                         const barangName = row[0] ? row[0].trim() :
-                        ""; // Pastikan trim untuk nama barang
+                            ""; // Pastikan trim untuk nama barang
                         const serialNumber = row[2] ? row[2].toString().trim() :
-                        ""; // Pastikan serial number sebagai string
+                            ""; // Pastikan serial number sebagai string
                         const kondisiBarang = row[3] ? row[3].trim() :
-                        ""; // Pastikan trim untuk kondisi barang
+                            ""; // Pastikan trim untuk kondisi barang
 
                         let errorMessages = [];
 
@@ -1244,65 +1248,66 @@
             }
 
             // Menangani klik tombol hapus terpilih
-$('#deleteSelected').on('click', function() {
-    const selectedItemsCount = $('.select-item:checked').length; // Hitung jumlah item yang terpilih
-    $('#selectedCount').text(selectedItemsCount); // Update teks di modal
-    $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
-});
-
-// Menangani konfirmasi penghapusan
-$('#confirmDeleteButton').on('click', function() {
-    const selectedItems = $('.select-item:checked');
-    const idsToDelete = [];
-
-    // Ambil ID dari checkbox yang terpilih
-    selectedItems.each(function() {
-        idsToDelete.push($(this).val());
-    });
-
-    // Menampilkan ikon loading dan menyembunyikan teks tombol
-    $('#confirmDeleteText').hide(); // Sembunyikan teks tombol
-    $('.loading-icon').show(); // Tampilkan ikon loading
-
-    // Kirim permintaan AJAX untuk menghapus item
-    $.ajax({
-        url: '{{ config('app.api_url') }}/barangmasuk/delete-selected', // Ganti dengan URL endpoint yang sesuai
-        type: 'POST', // Gunakan POST jika DELETE tidak berfungsi di server
-        data: {
-            ids: idsToDelete,
-            _token: $('meta[name="csrf-token"]').attr('content') // Jika menggunakan Laravel
-        },
-        success: function(response) {
-            // Hapus baris yang terpilih dari tabel
-            selectedItems.each(function() {
-                $(this).closest('tr').remove();
+            $('#deleteSelected').on('click', function() {
+                $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
             });
 
-            // Reload halaman sebelum menampilkan notifikasi
-            setTimeout(() => {
-                // Tampilkan notifikasi sukses
-                showNotification('Selected data was successfully deleted!', 'success');
-                location.reload(); // Reload halaman
-            }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
-        },
-        error: function(xhr) {
-            console.error(xhr.responseText);
-            // Reload halaman sebelum menampilkan notifikasi
-            setTimeout(() => {
-                // Tampilkan notifikasi gagal
-                showNotification('Terjadi kesalahan saat menghapus data: ' + xhr.responseText, 'error');
-                location.reload(); // Reload halaman
-            }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
-        },
-        complete: function() {
-            // Menyembunyikan ikon loading dan menampilkan teks tombol
-            $('.loading-icon').hide(); // Sembunyikan ikon loading
-            $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
-            $('#confirmDeleteModal').modal('hide'); // Sembunyikan modal hanya setelah semua proses selesai
-        }
-    });
-});
+            // Menangani konfirmasi penghapusan
+            $('#confirmDeleteButton').on('click', function() {
+                const selectedItems = $('.select-item:checked');
+                const idsToDelete = [];
 
+                // Ambil ID dari checkbox yang terpilih
+                selectedItems.each(function() {
+                    idsToDelete.push($(this).val());
+                });
+
+                // Menampilkan ikon loading dan menyembunyikan teks tombol
+                $('#confirmDeleteText').hide(); // Sembunyikan teks tombol
+                $('.loading-icon').show(); // Tampilkan ikon loading
+
+                // Kirim permintaan AJAX untuk menghapus item
+                $.ajax({
+                    url: '{{ config('app.api_url') }}/barangmasuk/delete-selected', // Ganti dengan URL endpoint yang sesuai
+                    type: 'POST', // Gunakan POST jika DELETE tidak berfungsi di server
+                    data: {
+                        ids: idsToDelete,
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content') // Jika menggunakan Laravel
+                    },
+                    success: function(response) {
+                        // Hapus baris yang terpilih dari tabel
+                        selectedItems.each(function() {
+                            $(this).closest('tr').remove();
+                        });
+
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi sukses
+                            showNotification('Selected data was successfully delected!',
+                                'success');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi gagal
+                            showNotification('Terjadi kesalahan saat menghapus data: ' +
+                                xhr.responseText, 'error');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    complete: function() {
+                        // Menyembunyikan ikon loading dan menampilkan teks tombol
+                        $('.loading-icon').hide(); // Sembunyikan ikon loading
+                        $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
+                        $('#confirmDeleteModal').modal(
+                            'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                    }
+                });
+            });
 
             // Fungsi untuk menampilkan notifikasi
             function showNotification(message, type) {

@@ -116,7 +116,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
+                    <form id="addForm" method="post" action="{{ route('keperluan.store') }}" enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
                             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-3"
@@ -193,7 +193,7 @@
                             </script>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-submit">Submit</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
 
                 </div>
@@ -348,116 +348,86 @@
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
     <script>
-        // Menghandle pengiriman form
-$('form[action="{{ route('keperluan.store') }}"]').on('submit', function(e) {
-    e.preventDefault(); // Mencegah reload halaman
-
-    // Menyiapkan data untuk dikirim
-    var formData = {
-        _token: '{{ csrf_token() }}', // Pastikan CSRF token disertakan
-        nama: $('#nama').val(), // Mengambil nilai dari input 'nama'
-        nama_tanggal_akhir: $('#extend').is(':checked') ? $('#end_date').val() : '', // Kirim string kosong jika tidak dicentang
-        extend: $('#extend').is(':checked') // Mengubah menjadi boolean secara otomatis
-    };
-
-    console.log("Data yang dikirim:", formData); // Debug: cek data yang dikirim
-
-    // Disable tombol dan tampilkan loading
-    let $submitButton = $(this).find('button[type="submit"]'); // Menyimpan referensi tombol submit
-    $submitButton.prop('disabled', true).html('<i class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></i> Loading...');
-
-    // AJAX request untuk mengirim data
-    $.ajax({
-        url: $(this).attr('action'), // URL dari form
-        method: 'POST',
-        contentType: 'application/json', // Mengirim data sebagai JSON
-        dataType: 'json', // Mengharapkan respons dalam format JSON
-        data: JSON.stringify(formData), // Mengubah formData menjadi string JSON
-        success: function(response) {
-            console.log("Response dari server:", response); // Debug: log response dari server
-
-            // Tampilkan notifikasi jika sukses
-            if (response.success) {
-                showNotification('success', response.message || 'Successfully added data.'); // Menampilkan pesan sukses
-                $('#tambahDataModal').modal('hide'); // Menutup modal
-                $('#keperluan-table').DataTable().ajax.reload(); // Reload tabel
-
-                // Reset form setelah berhasil submit
-                $('form[action="{{ route('keperluan.store') }}"]')[0].reset();
-            } else {
-                showNotification('error', response.message || 'Failed to add requirement type.'); // Menampilkan pesan error
+        $(document).ready(function () {
+            // Handle form submission
+            $('#addForm').on('submit', function(e) {
+                e.preventDefault();
+        
+                // Prepare data to be sent
+                var formData = {
+                    _token: '{{ csrf_token() }}',
+                    nama: $('#nama').val(),
+                    nama_tanggal_akhir: $('#extend').is(':checked') ? $('#end_date').val() : null,
+                    extend: $('#extend').is(':checked') ? 1 : 0
+                };
+    
+                // Log the form data being sent
+                console.log("Form Data being sent:", formData);
+        
+                // AJAX request to send data
+                $.ajax({
+                    url: '{{ route("keperluan.store") }}',
+                    method: 'POST',
+                    dataType: 'json',  // Expect JSON response
+                    data: formData,     // Send formData
+                    success: function(response) {
+                        console.log("Response from server:", response);  // Log server response
+        
+                        if (response.success) {
+                            showNotification('success', response.message || 'Data successfully added.');
+                            $('#tambahData').modal('hide');         // Close the modal
+                            $('#addForm')[0].reset();               // Reset form after submission
+                            $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
+                        } else {
+                            showNotification('error', response.message || 'Failed to add data.');
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error('Status:', xhr.status);          // Log status code
+                        console.error('Response Text:', xhr.responseText);  // Log response text
+        
+                        let message = xhr.responseJSON?.message || 'Network or server error.';
+                        showNotification('error', message);
+                    }
+                });
+            });
+        
+            // Hide the extension_name field initially
+            $('#extension_name').hide();
+        
+            // Toggle visibility based on checkbox
+            $('#extend').change(function() {
+                $('#extension_name').toggle($(this).is(':checked')).val('');
+            });
+        
+            // Function to show notification
+            function showNotification(type, message) {
+                let notificationClass = type === 'success' ? 'alert-success' : 'alert-danger';
+        
+                // Create notification element if it doesn't exist
+                if ($('#notification').length === 0) {
+                    $('body').append('<div id="notification" class="alert fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 1050; display: none;"></div>');
+                }
+        
+                $('#notification').html(`<strong>${type === 'success' ? 'Success!' : 'Error!'}</strong> ${message}`)
+                    .removeClass('alert-success alert-danger')
+                    .addClass(notificationClass)
+                    .fadeIn(300);
+        
+                setTimeout(function () {
+                    $('#notification').fadeOut(300);
+                }, 3000); // Notification disappears after 3 seconds
             }
-        },
-        error: function(xhr) {
-            // Tampilkan notifikasi jika terjadi error
-            console.error('Status:', xhr.status); // Log status code
-            console.error('Response Text:', xhr.responseText); // Log response text
-
-            if (xhr.responseJSON && xhr.responseJSON.errors) {
-                // Tampilkan pesan error spesifik dari server
-                let errors = xhr.responseJSON.errors;
-                let message = errors.extend ? errors.extend[0] : 'An error occurred when adding data.';
-                showNotification('error', message); // Menampilkan pesan error spesifik
-            } else {
-                showNotification('error', 'Network or server error.'); // Pesan error umum
-            }
-        },
-        complete: function() {
-            // Enable kembali tombol submit dan kembalikan teks aslinya
-            $submitButton.prop('disabled', false).html('Save'); // Ganti kembali teks tombol
-        }
-    });
-});
-
-// Reset form ketika modal ditutup
-$('#tambahDataModal').on('hidden.bs.modal', function() {
-    $('form[action="{{ route('keperluan.store') }}"]')[0].reset(); // Reset form saat modal ditutup
-});
-
-// Menyembunyikan input extension_name saat halaman pertama kali dimuat
-$(document).ready(function() {
-    $('#extension_name').hide(); // Sembunyikan input extension_name saat pertama kali dimuat
-});
-
-// Menangani perubahan checkbox extend pada form tambah data
-$('#extend').change(function() {
-    if ($(this).is(':checked')) {
-        $('#extension_name').show(); // Tampilkan kolom extension_name jika checkbox dicentang
-    } else {
-        $('#extension_name').hide(); // Sembunyikan kolom extension_name jika checkbox tidak dicentang
-        $('#extension_name').val(''); // Kosongkan input extension_name
-    }
-});
-
-// Fungsi untuk menampilkan notifikasi
-function showNotification(type, message) {
-    let notificationTitle = '';
-    let notificationClass = '';
-
-    switch (type) {
-        case 'success':
-            notificationTitle = 'Sukses!';
-            notificationClass = 'alert-success';
-            break;
-        case 'error':
-            notificationTitle = 'Error!';
-            notificationClass = 'alert-danger';
-            break;
-        default:
-            notificationTitle = 'Notification';
-            notificationClass = 'alert-info';
-    }
-
-    $('#notificationTitle').text(notificationTitle);
-    $('#notificationMessage').text(message);
-    $('#notification').removeClass('alert-success alert-danger alert-info').addClass(notificationClass).fadeIn();
-
-    setTimeout(function() {
-        $('#notification').fadeOut(); // Notifikasi menghilang setelah 3 detik
-    }, 3000);
-}
-
+        });
     </script>
+    
+    
+    
+    <style>
+        .alert {
+            transition: opacity 0.5s ease-in-out;
+        }
+        </style>
 
     <!-- Script untuk inisialisasi DataTables -->
     <script>
