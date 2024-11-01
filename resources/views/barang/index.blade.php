@@ -95,6 +95,7 @@
         @endcan
     </div>
 
+    @can('item.create')
     <!-- Modal Tambah Data -->
     <div class="modal fade" id="tambahDataModal" tabindex="-1" aria-labelledby="tambahDataModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -190,7 +191,9 @@
         });
         });
     </script>
+    @endcan
 
+    @can('item.delete')
     <!-- Modal Konfirmasi Hapus -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
         aria-hidden="true">
@@ -241,7 +244,9 @@
             $('#deleteForm').attr('action', `/barang/delete/${itemId}`);
         });
     </script>
+    @endcan
 
+    @can('item.edit')
     <!-- Modal Edit Data -->
     <div class="modal fade" id="editData" tabindex="-1" aria-labelledby="editDataLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -358,6 +363,7 @@
             });
         });
     </script>
+    @endcan
 
     {{-- Data Tabel --}}
     @can('item.view')
@@ -439,9 +445,9 @@
                     }
                     @endcanany
                 ],
-                order: [
-                    [5, 'asc']
-                ],
+                // order: [
+                //     [5, 'asc']
+                // ],
             });
         });
     </script>
