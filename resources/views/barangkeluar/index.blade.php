@@ -94,10 +94,11 @@
 
     <!-- Detail Modal -->
     <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog" style="max-width: 600px;">
-            <div class="modal-content">
+        <div class="modal-dialog" style="max-width: 530px;">
+            <div class="modal-content" style="padding-left: 7px; padding-right: 7px;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 35%; font-weight: bold;">Outbound Item Detail</h5>
+                    <h5 class="modal-title" id="detailModalLabel" style="margin-left: 35%; font-weight: bold;">Outbound Item
+                        Detail</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -186,29 +187,34 @@
                                 'Authorization': 'Bearer ' + '{{ session('token') }}',
                             },
                             success: function(data) {
+                                $('#detailList').empty(); // Clear previous details
+
                                 if (data.length > 0) {
                                     // Populate the modal with fetched data as a list
-                                    data.forEach(item => {
+                                    data.forEach((item, index) => {
+                                        const showHr = data.length > 1 && index < data.length - 1; // Show <hr> only if there are multiple items
+
                                         $('#detailList').append(`
                                             <div class="detail-item">
                                                 <div class="grid grid-cols-10 gap-2">
-                                                <div class="row">
-                                                    <div class="col-3"><strong>Serial Number</strong></div>:
-                                                    <div class="col-8">${item.serial_number}</div>
+                                                    <div class="row">
+                                                        <div class="col-3"><strong>Serial Number</strong></div>:
+                                                        <div class="col-8">${item.serial_number || '—'}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3"><strong>Item Name</strong></div>:
+                                                        <div class="col-8">${item.nama_barang || '—'}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3"><strong>Item Type</strong></div>:
+                                                        <div class="col-8">${item.nama_jenis_barang || '—'}</div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-3"><strong>Supplier Name</strong></div>:
+                                                        <div class="col-8">${item.nama_supplier || '—'}</div>
+                                                    </div>
+                                                    ${showHr ? '<hr>' : ''}
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-3"><strong>Item Name</strong></div>:
-                                                    <div class="col-8">${item.nama_barang}</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-3"><strong>Item Type</strong></div>:
-                                                    <div class="col-8">${item.nama_jenis_barang}</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-3"><strong>Supplier Name</strong></div>:
-                                                    <div class="col-8">${item.nama_supplier}</div>
-                                                </div>
-                                                <hr>
                                             </div>
                                         `);
                                     });
