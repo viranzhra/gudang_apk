@@ -27,7 +27,8 @@ class AuthToken
 
         $userData = $response->json();
         session([
-            'user_name' => $userData['user']['name'],
+            //'user_name' => $userData['user']['name'],
+            'user_name' => $userData['name'],
             'roles' => $userData['roles'],
             'permissions' => $userData['permissions'],
         ]);
