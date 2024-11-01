@@ -205,10 +205,10 @@
             <!-- Sidebar scroll-->
             <div>
                 <div class="brand-logo d-flex align-items-center justify-content-between">
-                    <a href="#" class="text-nowrap logo-img">
+                    <a href="/" class="text-nowrap logo-img">
                         <img src="{{ asset('assets/images/logos/logo_ptjaringsolusi.png') }}"
                             style="width: 100px;
-                            border-radius: 7px;
+                            border-radius: 0;
                             margin-left: 50px;
                             margin-top: 15px;"
                             alt="" />
@@ -561,6 +561,9 @@
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
                                     aria-labelledby="drop2">
                                     <div class="message-body">
+                                        <div class="px-4 py-2">
+                                            <p class="mb-0 fs-3 text-black" style="font-weight: 700">{{ session('user_name') }}</p>
+                                        </div>
                                         <a href="javascript:void(0)"
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-user fs-6"></i>
@@ -583,7 +586,7 @@
                                         </a>
                                         {{-- <a href="./authentication-login.html"
                                             class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</a> --}}
-                                    </div>
+                                    </div>                                
                                 </div>
                             </li>
                         </ul>

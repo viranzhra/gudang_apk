@@ -19,7 +19,7 @@ class BarangController extends Controller
 
     // public function create()
 	// {
-	// 	$response = Http::withToken(session('auth_token'))->get(env('API_URL') . '/barang/create');
+	// 	$response = Http::withToken(session('jwt_token'))->get(env('API_URL') . '/barang/create');
 
 	// 	if ($response->successful()) {
 	// 		$data = $response->json();
@@ -36,7 +36,7 @@ class BarangController extends Controller
 
 	public function store(Request $request): RedirectResponse
 	{
-		$response = Http::withToken(session('auth_token'))->post(env('API_URL') . '/barang', $request->all());
+		$response = Http::withToken(session('jwt_token'))->post(env('API_URL') . '/barang', $request->all());
 
         if ($response->successful()) {
             return redirect('/barang')->with('success', 'Data berhasil ditambahkan!');
@@ -47,7 +47,7 @@ class BarangController extends Controller
 
 	// public function edit($id)
 	// {
-	// 	$response = Http::withToken(session('auth_token'))->get(env('API_URL') . '/barang/' . $id);
+	// 	$response = Http::withToken(session('jwt_token'))->get(env('API_URL') . '/barang/' . $id);
 
     //     if ($response->successful()) {
     //         $data = $response->json();
@@ -65,7 +65,7 @@ class BarangController extends Controller
 
 	public function update($id, Request $request): RedirectResponse
 	{
-		$response = Http::withToken(session('auth_token'))->put(env('API_URL') . '/barang/' . $id, $request->all());
+		$response = Http::withToken(session('jwt_token'))->put(env('API_URL') . '/barang/' . $id, $request->all());
 
         if ($response->successful()) {
             return redirect('/barang')->with('success', 'Data berhasil diperbarui!');
@@ -76,7 +76,7 @@ class BarangController extends Controller
 
 	public function delete($id)
 	{
-		$response = Http::withToken(session('auth_token'))->delete(env('API_URL') . '/barang/' . $id);
+		$response = Http::withToken(session('jwt_token'))->delete(env('API_URL') . '/barang/' . $id);
 
         if ($response->successful()) {
             return redirect('/barang')->with('success', 'Data berhasil dihapus!');
@@ -87,7 +87,7 @@ class BarangController extends Controller
 
 	public function deleteSelected(Request $request)
 	{
-		$response = Http::withToken(session('auth_token'))->post(env('API_URL') . '/barang/delete-selected', [
+		$response = Http::withToken(session('jwt_token'))->post(env('API_URL') . '/barang/delete-selected', [
             'ids' => $request->input('ids')
         ]);
 

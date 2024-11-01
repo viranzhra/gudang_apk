@@ -22,7 +22,7 @@ class AuthToken
 
         if ($response->failed()) {
             session()->forget(['jwt_token', 'user_name', 'roles', 'permissions']);
-            return redirect()->route('login')->withErrors(['error' => 'Sesi berakhir, login kembali.']);
+            return redirect()->route('login')->withErrors(['error' => 'Sesi berakhir, silakan login kembali.']);
         }
 
         $userData = $response->json();
