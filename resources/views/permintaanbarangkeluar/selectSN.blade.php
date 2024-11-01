@@ -24,7 +24,7 @@
     }
 </style>
     <div class="container mt-3 shadow-sm p-4" style="border-radius: 20px;width:768px">
-        <h5 style="font-weight:700;margin-bottom: 30px">Pilih Serial Number</h5>
+        <h5 style="font-weight:700;margin-bottom: 30px">Select Serial Number</h5>
     
         <form action="{{ route('permintaanbarangkeluar.setSN') }}" method="POST">
             @csrf
@@ -38,7 +38,7 @@
                     <div class="ps-3 mb-2">
                         <label for="serial_number_{{ $barangId }}_{{ $i }}" class="form-label">Serial Number {{ $i + 1 }}</label>
                         <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2" required>
-                            <option value="">Pilih Serial Number</option>
+                            <option value="">Select SN</option>
                             {{-- TIDAK SELECTED OTOMATIS 
 
                             @foreach ($serialNumbers as $serialOption)
@@ -60,7 +60,7 @@
             @endforeach
     
             <div class="flex items-center justify-between">
-                <button type="submit" class="btn btn-primary">Simpan</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
         </form>
     </div>

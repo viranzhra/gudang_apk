@@ -157,22 +157,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const contentHtml = `
                         <div class="row g-2 gx-3">
-                            <div class="col-3 fw-bold">Penerima:</div>
+                            <div class="col-3 fw-bold">Customer:</div>
                             <div class="col-9">${namaCustomer || '—'}</div>
-                            <div class="col-3 fw-bold">Keperluan:</div>
+                            <div class="col-3 fw-bold">Purpose:</div>
                             <div class="col-9">${namaKeperluan || '—'}</div>
                             <hr class="my-2">
-                            <div class="col-12 fw-bold">Tanggal</div>
-                            <div class="col-3 fw-bold ps-4">Permintaan:</div>
+                            <div class="col-12 fw-bold">Date</div>
+                            <div class="col-3 fw-bold ps-4">Request:</div>
                             <div class="col-9">${tanggalAwal || '—'}</div>
                             ${extend == 1 ? `
                                 <div class="col-3 fw-bold ps-4">${namaTanggalAkhir || '—'}:</div>
                                 <div class="col-9">${TanggalAkhir}</div>
                             ` : ''}
                             <hr class="my-2">
-                            <div class="col-3 fw-bold">Keterangan:</div>
+                            <div class="col-3 fw-bold">Description:</div>
                             <div class="col-9">${keterangan || '—'}</div>
-                            <div class="col-3 fw-bold">Jumlah:</div>
+                            <div class="col-3 fw-bold">Quantity:</div>
                             <div class="col-9">${jumlah || '—'}</div>
                             <div class="col-3 fw-bold">Status:</div>
                             <div class="col-9">
