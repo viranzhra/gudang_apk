@@ -859,15 +859,13 @@
 
             async function checkExistingSerialNumbers(dataRows) {
                 try {
-                    // Memeriksa apakah dataRows kosong
-                    if (!dataRows || dataRows.length === 0) {
+                    // Memeriksa apakah dataRows kosong atau semua baris kosong
+                    if (!dataRows || dataRows.length === 0 || dataRows.every(row => row.length === 0)) {
                         return new Array(7).fill("Kosong"); // Mengisi dengan "Kosong" untuk 7 kolom
                     }
 
                     // Mengambil data serial numbers yang sudah ada
-                    const serialNumberResponse = await fetch(
-                        'https://doaibutiri.my.id/gudang/api/serialnumber'
-                    );
+                    const serialNumberResponse = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber');
                     if (!serialNumberResponse.ok) {
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
@@ -880,8 +878,7 @@
                         throw new Error(`HTTP error! status: ${barangResponse.status}`);
                     }
                     const barangData = await barangResponse.json();
-                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang
-                    .trim()) : [];
+                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang.trim()) : [];
 
                     // Mengambil data kondisi barang
                     const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
@@ -889,22 +886,24 @@
                         throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
                     }
                     const kondisiData = await kondisiResponse.json();
-                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama.trim()) :
-                        [];
+                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama.trim()) : [];
 
                     // Array untuk menyimpan kesalahan
                     const errors = new Array(dataRows.length).fill(null);
 
                     // Memeriksa setiap baris data
                     dataRows.forEach((row, index) => {
-                        const barangName = row[0] ? row[0].trim() :
-                        ""; // Pastikan trim untuk nama barang
-                        const serialNumber = row[2] ? row[2].toString().trim() :
-                        ""; // Pastikan serial number sebagai string
-                        const kondisiBarang = row[3] ? row[3].trim() :
-                        ""; // Pastikan trim untuk kondisi barang
+                        const barangName = row[0] ? row[0].trim() : ""; // Pastikan trim untuk nama barang
+                        const serialNumber = row[2] ? row[2].toString().trim() : ""; // Pastikan serial number sebagai string
+                        const kondisiBarang = row[3] ? row[3].trim() : ""; // Pastikan trim untuk kondisi barang
 
                         let errorMessages = [];
+
+                        // Validasi jika semua item, serial number, dan status kosong
+                        if (!barangName && !serialNumber && !kondisiBarang) {
+                            errors[index] = `All fields cannot be empty`; // Pesan khusus jika semua field kosong
+                            return; // Keluar dari pemeriksaan untuk baris ini
+                        }
 
                         // Validasi jika item, serial number, atau status kosong
                         if (!barangName) {
