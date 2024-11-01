@@ -12,7 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'auth_token' => \App\Http\Middleware\AuthToken::class,
+            'jwt_token' => \App\Http\Middleware\AuthToken::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
             // 'initialize_permissions' => \App\Http\Middleware\InitializePermissions::class,
         ]);

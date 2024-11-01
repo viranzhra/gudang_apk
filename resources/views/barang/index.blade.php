@@ -140,7 +140,7 @@
                 url: '{{ env('API_URL') }}/barang/create',
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                    'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                 },
                 success: function(data) {
                     var jenisBarangSelect = $('#jenis_barang');
@@ -175,7 +175,7 @@
                 type: "POST",
                 url: url,
                 headers: {
-                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                    'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                 },
                 data: form.serialize(),
                 success: function(response) {
@@ -299,7 +299,7 @@
                 url: '{{ env('API_URL') }}/barang/' + id,
                 method: 'GET',
                 headers: {
-                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                    'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                 },
                 success: function(response) {
                     // Fill jenis barang select
@@ -344,7 +344,7 @@
                 type: "POST",
                 url: url,
                 headers: {
-                    'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                    'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                 },
                 data: form.serialize(),
                 success: function(response) {
@@ -369,7 +369,7 @@
                     url: '{{ env('API_URL') }}/barang',
                     data: function(d) {},
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                        'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                     }
                 },
                 columns: [

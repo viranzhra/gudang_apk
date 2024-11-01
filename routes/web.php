@@ -22,6 +22,16 @@ Route::get('/', function () {
     return redirect('/login');
 });
 
+// Route::middleware('guest')->group(function() {
+//     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
+//     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+//     Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+//     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+// });
+
+// Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
 Route::middleware('guest')->group(function() {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
@@ -32,11 +42,12 @@ Route::middleware('guest')->group(function() {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+
 // Route::middleware(['initialize_permissions', 'auth_token'])->group(function () {
      
 // });
 
-Route::middleware('auth_token')->group(function () {
+Route::middleware('jwt_token')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('roles')->group(function () {

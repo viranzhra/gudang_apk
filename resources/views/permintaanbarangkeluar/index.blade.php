@@ -105,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                        'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                     }
                 })
                 .then(response => response.json())
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 fetch(`{{ env('API_URL') }}/permintaanbarangkeluar/show-detail-sn/${id}`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                        'Authorization': 'Bearer ' + '{{ $jwt_token }}'
                     }
                 })
                 .then(response => response.json())
@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', function() {
         ajax: {
             url: urlDataPermintaan,
             headers: {
-                'Authorization': 'Bearer ' + '{{ session('auth_token') }}'
+                'Authorization': 'Bearer ' + '{{ $jwt_token }}'
             }
         },
         columns: [{
