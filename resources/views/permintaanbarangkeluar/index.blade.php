@@ -2,19 +2,20 @@
 
 @section('content')
 <style>
+.icon-edit {background-color: #01578d;} .icon-delete {background-color: #910a0a;}.btn-action:hover .icon-edit, .btn-action:hover .icon-delete {opacity: 0.8;}
 #notification{position:fixed;top:10px;right:10px;width:300px;padding:15px;border-radius:5px;z-index:9999;display:none;text-align:center;justify-content:flex-start;align-items:center;text-align:left}
 .alert{border-radius: 18px !important}
 /* .alert-success{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;height:80px}.alert-danger{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;height:80px}.alert-info{background-color:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;height:80px} */
 </style>
-    <div class="container mt-3 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; width: 1160px;border-radius: 20px;">
+    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
             <strong id="notificationTitle" style="font-size: 15px">Notification</strong>
             <p id="notificationMessage" style="margin-top: 10px"></p>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center my-3">
-            <h4 style="color: black;">Stock Out Request</h4>
+        <h4 class="mt-3" style="color: #8a8a8a;">Stock Out Request</h4>
+        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
             <div class="d-flex gap-2">
                 <!-- Add Button -->
                 @can('item request.create')
@@ -40,7 +41,7 @@
 
         {{-- Table --}}
         @canany(['item request.viewAll', 'item request.viewFilterbyUser'])
-        <table id="permintaan-table" class="table table-hover table-sm text-dark pt-2" width="100%" style="font-size: 15px;">
+        <table id="permintaan-table" class="table table-bordered table-striped table-hover" width="100%" style="font-size: 14px;">
             <thead class="thead-dark">
                 <tr>
                     <th class="d-flex justify-content-center align-items-center">No</th>
@@ -52,7 +53,7 @@
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody class="text-gray"></tbody>
+            {{-- <tbody class="text-gray"></tbody> --}}
         </table>
         @endcanany
         
@@ -73,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="detailModalLabel">Detail Permintaan</h5>
+                        <h5 class="modal-title" id="detailModalLabel">Request Detail</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body py-2">
@@ -112,8 +113,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     // Periksa apakah data adalah array
                     if (!Array.isArray(data)) {
-                        console.error('Data yang diterima tidak sesuai dengan format yang diharapkan:', data);
-                        alert('Terjadi kesalahan saat memuat detail barang.');
+                        console.error('Data received does not match the expected format:', data);
+                        alert('Error occurred when loading item details.');
                         return;
                     }
 
@@ -175,9 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-9">${jumlah || '—'}</div>
                             <div class="col-3 fw-bold">Status:</div>
                             <div class="col-9">
-                                ${status === 'Ditolak' ? `<span class="badge text-bg-danger">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Alasan:</span></div><p>${alasan}</p></span>` :
+                                ${status === 'Ditolak' ? `<span class="badge text-bg" style="background-color: #910a0a; color: white;">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Reasons:</span></div><p>${alasan}</p></span>` :
                                   status === 'Belum Disetujui' ? `<span class="badge text-bg-warning">${status}</span>` :
-                                  status === 'Disetujui' ? `<span class="badge text-bg-success">${status}</span>` :
+                                  status === 'Disetujui' ? `<span class="badge text-bg" style="background-color: #19850b; color: white;">${status}</span>` :
                                   status ? `<span class="badge text-bg-secondary">${status}</span>` : '—'}
                             </div>
                             ${detailContent}
@@ -192,10 +193,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     @ifcan('item request.confirm')                    
                         const footerContent = status === 'Belum Disetujui' ? `
-                            <button type="button" class="btn btn-success me-2"
+                            <button type="button" class="btn" style="background-color: #19850b; color: white;"
                                 onclick="updateStatus(${id}, 'Diproses')"
                                 data-bs-dismiss="modal">Proses</button>
-                            <button type="button" class="btn btn-danger"
+                            <button type="button" class="btn" style="background-color: #910a0a; color: white;"
                                 onclick="updateStatus(${id}, 'Ditolak')"
                                 data-bs-dismiss="modal">Tolak</button>
                         ` : status === 'Diproses' ? `
@@ -211,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Error fetching detail data:', error);
                     document.getElementById('loadingSpinner').classList.add('d-none');
                     const modalContentElement = document.getElementById('modalContent');
-                    modalContentElement.innerHTML = '<div class="text-center">Terjadi kesalahan saat memuat detail permintaan.</div>';
+                    modalContentElement.innerHTML = '<div class="text-center">Error occurred when loading the request details.</div>';
                     modalContentElement.classList.remove('d-none');
                     setTimeout(function(){modal.hide()},1500);
                 });
@@ -303,11 +304,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 defaultContent: '-',
                 render: function(data, type, row) {
                     if (data === 'Ditolak') {
-                        return '<span class="badge text-bg-danger">' + data + '</span>';
+                        return '<span class="badge text-bg" style="background-color: #910a0a; color: white;">' + data + '</span>';
                     } else if (data === 'Belum Disetujui') {
                         return '<span class="badge text-bg-warning">' + data + '</span>';
                     } else if (data === 'Disetujui') {
-                        return '<span class="badge text-bg-success">' + data + '</span>';
+                        return '<span class="badge text-bg" style="background-color: #19850b; color: white;">' + data + '</span>';
                     } else {
                         return '<span class="badge text-bg-secondary">' + data + '</span>';
                     }
@@ -341,15 +342,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="rejectModalLabel">Alasan Penolakan</h5>
+                                <h5 class="modal-title" id="rejectModalLabel">Reason for Rejection</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
                                 <textarea id="rejectReason" class="form-control" placeholder="Masukkan alasan penolakan..." maxlength="150" rows="3"></textarea>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Batal</button>
-                                <button type="button" class="btn btn-primary" id="submitRejectBtn" onclick="submitRejection(${id})">Simpan</button>
+                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" id="submitRejectBtn" onclick="submitRejection(${id})">Submit</button>
                             </div>
                         </div>
                     </div>
@@ -377,7 +378,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const reason = document.getElementById('rejectReason').value;
 
         if (!reason) {
-            showNotification('error', 'Alasan penolakan harus diisi.');
+            showNotification('error', 'Reasons for rejection must be filled in.');
             return;
         }
 
@@ -569,5 +570,13 @@ document.addEventListener('DOMContentLoaded', function() {
             showNotification('success', '{{ session('success') }}');
         </script>
     @endif
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <!-- DataTables Bootstrap 4 integration -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js">
     
 @endsection

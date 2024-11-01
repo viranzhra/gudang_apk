@@ -25,7 +25,7 @@
     </style>
     <div class="container mt-3 shadow-sm p-4" style="border-radius: 20px;width:768px">
 
-        <h5 style="font-weight:700;margin-bottom: 30px">Buat Permintaan</h5>
+        <h5 style="font-weight:700;margin-bottom: 30px">Create Request</h5>
         @can('item request.create')
         <form method="post" action="{{ route('permintaanbarangkeluar.store') }}" enctype="multipart/form-data">
             @csrf
@@ -42,20 +42,20 @@
  
             <div class="grid md:grid-cols-2 md:gap-6">
                 <div class="relative z-0 w-full mb-3 group">
-                    <label for="customer" class="form-label">Penerima</label>
+                    <label for="customer" class="form-label">Customer</label>
                     <select id="customer" name="customer_id"
                         class="select2 form-control">
-                        <option selected>Pilih penerima</option>
+                        <option selected>Select customer</option>
                         @foreach ($customer as $d)
                             <option value="{{ $d->id }}">{{ $d->nama }}</option>
                         @endforeach
                     </select>
                 </div>
                 <div class="relative z-0 w-full mb-3 group">
-                    <label for="keperluan" class="form-label">Keperluan</label>
+                    <label for="keperluan" class="form-label">Purpose</label>
                     <select id="keperluan" name="keperluan_id"
                         class="select2 form-control">
-                        <option selected>Pilih keperluan</option>
+                        <option selected>Select purpose</option>
                         @foreach ($keperluan as $d)
                             <option value="{{ $d->id }}" data-extend="{{ $d->extend }}" data-batas_hari="{{ $d->batas_hari }}" {{-- data-tanggal-awal="{{ $d->nama_tanggal_awal }}" --}}
                                 data-tanggal-akhir="{{ $d->nama_tanggal_akhir }}">
@@ -66,17 +66,17 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="keterangan" class="form-label">Keterangan</label>
+                <label for="keterangan" class="form-label">Description</label>
                 <textarea type="text" id="keterangan" name="keterangan" class="form-control"></textarea>
             </div>
             <div class="mb-3">
-                <label id="label-tanggal-awal" for="tanggal_awal" class="form-label">Tanggal Permintaan</label>
+                <label id="label-tanggal-awal" for="tanggal_awal" class="form-label">Request Date</label>
                 <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="{{ date('Y-m-d') }}" disabled />
             </div>
 
             <!-- Input Tanggal Akhir (Awalnya Disembunyikan) -->
             <div id="tanggal-akhir-container" class="mb-3 d-none">
-                <label id="label-tanggal-akhir" for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
+                <label id="label-tanggal-akhir" for="tanggal_akhir" class="form-label">End Date</label>
                 <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="{{ date('Y-m-d', strtotime('+1 days')) }}" min="{{ date('Y-m-d', strtotime('+1 days')) }}" max="{{ date('Y-m-d', strtotime('+90 days')) }}" />
             </div>
 
@@ -84,7 +84,7 @@
                 <style>
                     .icon-shape{display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle}.icon-sm{width:2rem;height:2rem}                
                 </style>
-                <label for="quantity-input" class="form-label">Jumlah Permintaan:</label>
+                <label for="quantity-input" class="form-label">Qty:</label>
                 <div class="input-group" style="max-width: 20%;margin-top:8px">
                     <button type="button" id="decrement-button" class="button-minus border rounded-circle icon-shape icon-sm mx-1 lh-0">
                         <iconify-icon icon="bi:dash" width="18" height="18"></iconify-icon>
@@ -108,26 +108,26 @@
                 <hr class="mb-4">
                 <!-- Input Permintaan Template -->
                 <div class="permintaan-input-item" data-index="1">
-                    <h6 class="mb-3">Permintaan 1</h6>
+                    <h6 class="mb-3">Request 1</h6>
                     <div class="mb-3">
-                        <label for="jenis_barang_1" class="form-label">Jenis Barang</label>
+                        <label for="jenis_barang_1" class="form-label">Item Type</label>
                         <select id="jenis_barang_1" name="jenis_barang_ids[]" class="select2 form-control">
-                            <option selected>Pilih jenis barang</option>
+                            <option selected>Select item type</option>
                             @foreach ($jenis_barang as $d)
                                 <option value="{{ $d->id }}">{{ $d->nama }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="barang_1" class="form-label">Barang</label>
+                        <label for="barang_1" class="form-label">Item</label>
                         <select id="barang_1" name="barang_ids[]"
                             class="select2 form-control">
-                            <option selected>Pilih barang</option>
+                            <option selected>Select item</option>
                         </select>
-                        <span id="stok_1" class="d-flex mt-3 text-sm text-gray-600">Stok Tersedia: 0</span>
+                        <span id="stok_1" class="d-flex mt-3 text-sm text-gray-600">Available Stock: 0</span>
                     </div>
                     <div id="head_jumlah_barang_1" class="mb-5 d-none">
-                        <label for="jumlah_barang_1" class="form-label">Jumlah:</label>
+                        <label for="jumlah_barang_1" class="form-label">Qty:</label>
                         <div class="input-group" style="max-width: 20%;margin-top:8px">
                             <button type="button" id="decrement-button-barang-1" class="button-minus border rounded-circle icon-shape icon-sm mx-1 lh-0">
                                 <iconify-icon icon="bi:dash" width="18" height="18"></iconify-icon>
@@ -143,7 +143,7 @@
             </div>
 
 
-            <button type="submit" class="btn btn-primary">Kirim</button>
+            <button type="submit" class="btn btn-primary">Send</button>
 
         </form>
         <script>
