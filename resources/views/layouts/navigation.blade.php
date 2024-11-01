@@ -660,24 +660,24 @@
             });
         });
 
-        $.ajax({
-            url: 'search-endpoint',
-            method: 'GET',
-            success: function(response) {
-                // Update your content
-                $('#search-results').html(response);
+        // $.ajax({
+        //     url: 'search-endpoint',
+        //     method: 'GET',
+        //     success: function(response) {
+        //         // Update your content
+        //         $('#search-results').html(response);
 
-                // Reapply active state
-                document.querySelectorAll('#sidebarnav .sidebar-item a').forEach(function(link) {
-                    if (path === link.getAttribute('href') || path.startsWith(link.getAttribute(
-                            'href'))) {
-                        link.parentElement.classList.add('active');
-                    } else {
-                        link.parentElement.classList.remove('active');
-                    }
-                });
-            }
-        });
+        //         // Reapply active state
+        //         document.querySelectorAll('#sidebarnav .sidebar-item a').forEach(function(link) {
+        //             if (path === link.getAttribute('href') || path.startsWith(link.getAttribute(
+        //                     'href'))) {
+        //                 link.parentElement.classList.add('active');
+        //             } else {
+        //                 link.parentElement.classList.remove('active');
+        //             }
+        //         });
+        //     }
+        // });
     </script>
 
 
