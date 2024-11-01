@@ -477,13 +477,13 @@
                         render: function(data) {
                             return `
                                 <div class="d-flex">
-                                    <button aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                    <button title="Detail" aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
                                         <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                                     </button>
-                                    <button data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
+                                    <button title="Edit" data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
                                         <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
                                     </button>
-                                    <button id="deleteButton-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete">
+                                    <button title="Delete" id="deleteButton-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete">
                                         <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
                                     </button>
                                 </div>

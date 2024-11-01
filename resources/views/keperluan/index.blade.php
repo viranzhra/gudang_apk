@@ -307,7 +307,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="color: black">
-                    Are you sure you want to delete <span id="typeName"></span>?
+                    Are you sure you want to delete <strong id="typeName"></strong>?
                 </div>
                 <div class="modal-footer">
                     <form id="deleteForm" method="POST" action="">

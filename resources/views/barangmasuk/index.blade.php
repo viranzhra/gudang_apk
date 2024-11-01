@@ -170,7 +170,7 @@
         }
 
         .btn-primary:hover {
-            background-color: #0056b3;
+            background-color: #4e4dc1;
             /* Color on hover */
         }
 
@@ -541,7 +541,7 @@
                     </label>
                 </div> --}}
                 <div class="file-upload">
-                    <input type="file" name="file" id="file" required class="form-control"
+                    <input title="File excel" type="file" name="file" id="file" required class="form-control"
                         aria-label="Unggah File Excel">
                     <label for="file" class="custom-file-upload">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
@@ -556,19 +556,20 @@
                     </label>
                 </div>
 
-                <div id="loadingIndicator" style="display: none;">Loading...</div>
+                <div id="loadingIndicator" style="display: none;"><img style="width: 50px; height: 50px;"
+                        src="{{ asset('assets/images/icon/Spinner_load.gif') }}" alt=""></div>
                 <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
                     title="Click to Upload">
                     <iconify-icon id="uploadIcon" icon="mdi:upload"
                         style="font-size: 20px; margin-right: 3px;"></iconify-icon>
-                        Import Data
+                    Import Data
                 </button>
             </form>
 
 
             <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
-                style="height: 40px;">
-                <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                style="height: 40px;" title="Add new data">
+                <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 4px;"></iconify-icon>
                 Add
             </a>
 
@@ -587,7 +588,8 @@
                 <iconify-icon id="uploadIcon" icon="mdi:upload" style="font-size: 20px;"></iconify-icon>
             </button> --}}
             <h5 class="mt-3" style="color: #26116b; text-align: center; padding-top: 20px;">Preview Data</h5>
-            <p id="uploadedFileName" style="text-align: center; color: #555;"></p> <!-- Menampilkan nama file yang diunggah -->
+            <p id="uploadedFileName" style="text-align: center; color: #555;"></p>
+            <!-- Menampilkan nama file yang diunggah -->
             <div class="table-responsive">
                 <table id="previewTable" class="display table table-bordered row-border table-hover"
                     style="table-layout: auto; width: 100%;">
@@ -662,7 +664,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to delete <span id="selectedCount" style="font-weight: bold;"></span> <b>data</b>?</p>
+                    <p>Are you sure you want to delete <span id="selectedCount" style="font-weight: bold;"></span>
+                        <b>data</b>?</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -677,7 +680,8 @@
     </div>
 
     <!-- Modal Info pilih file -->
-    <div class="modal fade" id="fileErrorModal" tabindex="-1" role="dialog" aria-labelledby="fileErrorModalLabel" aria-hidden="true">
+    <div class="modal fade" id="fileErrorModal" tabindex="-1" role="dialog" aria-labelledby="fileErrorModalLabel"
+        aria-hidden="true">
         <div style="width: 400px;" class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -705,9 +709,9 @@
         });
     </script>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -756,8 +760,10 @@
                     // Check file extension
                     if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
                         // Menampilkan nama file yang diunggah
-                        document.getElementById('uploadedFileName').innerHTML = `File Name: <b>${file.name}</b>`;
-                        document.getElementById('previewContainer').style.display = 'block'; // Tampilkan previewContainer
+                        document.getElementById('uploadedFileName').innerHTML =
+                            `File Name: <b>${file.name}</b>`;
+                        document.getElementById('previewContainer').style.display =
+                        'block'; // Tampilkan previewContainer
                         previewData(); // Panggil fungsi previewData ketika file dipilih
                     } else {
                         // Trigger the modal for invalid file types
@@ -855,7 +861,6 @@
                 try {
                     // Memeriksa apakah dataRows kosong
                     if (!dataRows || dataRows.length === 0) {
-                        // Mengembalikan array dengan "Kosong" untuk setiap kolom
                         return new Array(7).fill("Kosong"); // Mengisi dengan "Kosong" untuk 7 kolom
                     }
 
@@ -867,8 +872,7 @@
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
                     const serialNumberData = await serialNumberResponse.json();
-                    const existingNumbers = serialNumberData.map(item => item.serial_number.toString()
-                .trim()); // Menyimpan sebagai string
+                    const existingNumbers = serialNumberData.map(item => item.serial_number.toString().trim());
 
                     // Mengambil data barang
                     const barangResponse = await fetch('https://doaibutiri.my.id/gudang/api/barang');
@@ -902,6 +906,17 @@
 
                         let errorMessages = [];
 
+                        // Validasi jika item, serial number, atau status kosong
+                        if (!barangName) {
+                            errorMessages.push(`Item data cannot be empty`);
+                        }
+                        if (!serialNumber) {
+                            errorMessages.push(`Serial Number data cannot be empty`);
+                        }
+                        if (!kondisiBarang) {
+                            errorMessages.push(`Status data cannot be empty`);
+                        }
+
                         // Cek apakah barang ada
                         if (barangName && !existingBarang.includes(barangName)) {
                             errorMessages.push(`Item not available`);
@@ -929,7 +944,6 @@
                     return dataRows.map(() => `Error checking data: ${error.message}`);
                 }
             }
-
 
             // Fungsi untuk menampilkan atau menyembunyikan tombol upload berdasarkan hasil validasi
             function toggleUploadButton(rowErrors) {
@@ -1197,13 +1211,13 @@
                         render: function(data, type, row) {
                             return `
                             <div class="d-flex">
-                                <button aria-label="Detail" onclick="showDetailModal(${data}, '${row.nama_barang}', '${row.nama_jenis_barang}', '${row.nama_supplier}', '${row.tanggal_barang}', '${row.keterangan_barangmasuk}', ${row.jumlah})" class="btn-detail btn-action" style="border: none;">
+                                <button title="Detail" aria-label="Detail" onclick="showDetailModal(${data}, '${row.nama_barang}', '${row.nama_jenis_barang}', '${row.nama_supplier}', '${row.tanggal_barang}', '${row.keterangan_barangmasuk}', ${row.jumlah})" class="btn-detail btn-action" style="border: none;">
                                     <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                                 </button>
-                                <a href="/barangmasuk/create/${data}" class="btn-action">
+                                <a href="/barangmasuk/create/${data}" class="btn-action" title="Add by id">
                                     <iconify-icon icon="mdi:plus-circle" class="icon-tambah"></iconify-icon>
                                 </a> 
-                                <button id="deleteModal-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete" onclick="openDeleteModal('${data}', this)">
+                                <button title="Delete" id="deleteModal-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete" onclick="openDeleteModal('${data}', this)">
                                     <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
                                 </button>
                             </div>
@@ -1244,64 +1258,69 @@
             }
 
             // Menangani klik tombol hapus terpilih
-$('#deleteSelected').on('click', function() {
-    const selectedItemsCount = $('.select-item:checked').length; // Hitung jumlah item yang terpilih
-    $('#selectedCount').text(selectedItemsCount); // Update teks di modal
-    $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
-});
-
-// Menangani konfirmasi penghapusan
-$('#confirmDeleteButton').on('click', function() {
-    const selectedItems = $('.select-item:checked');
-    const idsToDelete = [];
-
-    // Ambil ID dari checkbox yang terpilih
-    selectedItems.each(function() {
-        idsToDelete.push($(this).val());
-    });
-
-    // Menampilkan ikon loading dan menyembunyikan teks tombol
-    $('#confirmDeleteText').hide(); // Sembunyikan teks tombol
-    $('.loading-icon').show(); // Tampilkan ikon loading
-
-    // Kirim permintaan AJAX untuk menghapus item
-    $.ajax({
-        url: '{{ config('app.api_url') }}/barangmasuk/delete-selected', // Ganti dengan URL endpoint yang sesuai
-        type: 'POST', // Gunakan POST jika DELETE tidak berfungsi di server
-        data: {
-            ids: idsToDelete,
-            _token: $('meta[name="csrf-token"]').attr('content') // Jika menggunakan Laravel
-        },
-        success: function(response) {
-            // Hapus baris yang terpilih dari tabel
-            selectedItems.each(function() {
-                $(this).closest('tr').remove();
+            $('#deleteSelected').on('click', function() {
+                const selectedItemsCount = $('.select-item:checked')
+                .length; // Hitung jumlah item yang terpilih
+                $('#selectedCount').text(selectedItemsCount); // Update teks di modal
+                $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
             });
 
-            // Reload halaman sebelum menampilkan notifikasi
-            setTimeout(() => {
-                // Tampilkan notifikasi sukses
-                showNotification('Selected data was successfully deleted!', 'success');
-                location.reload(); // Reload halaman
-            }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
-        },
-        error: function(xhr) {
-            console.error(xhr.responseText);
-            // Reload halaman sebelum menampilkan notifikasi
-            setTimeout(() => {
-                // Tampilkan notifikasi gagal
-                showNotification('Terjadi kesalahan saat menghapus data: ' + xhr.responseText, 'error');
-                location.reload(); // Reload halaman
-            }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
-        },
-        complete: function() {
-            // Menyembunyikan ikon loading dan menampilkan teks tombol
-            $('.loading-icon').hide(); // Sembunyikan ikon loading
-            $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
-            $('#confirmDeleteModal').modal('hide'); // Sembunyikan modal hanya setelah semua proses selesai
-        }
-    });
-});
+            // Menangani konfirmasi penghapusan
+            $('#confirmDeleteButton').on('click', function() {
+                const selectedItems = $('.select-item:checked');
+                const idsToDelete = [];
+
+                // Ambil ID dari checkbox yang terpilih
+                selectedItems.each(function() {
+                    idsToDelete.push($(this).val());
+                });
+
+                // Menampilkan ikon loading dan menyembunyikan teks tombol
+                $('#confirmDeleteText').hide(); // Sembunyikan teks tombol
+                $('.loading-icon').show(); // Tampilkan ikon loading
+
+                // Kirim permintaan AJAX untuk menghapus item
+                $.ajax({
+                    url: '{{ config('app.api_url') }}/barangmasuk/delete-selected', // Ganti dengan URL endpoint yang sesuai
+                    type: 'POST', // Gunakan POST jika DELETE tidak berfungsi di server
+                    data: {
+                        ids: idsToDelete,
+                        _token: $('meta[name="csrf-token"]').attr(
+                            'content') // Jika menggunakan Laravel
+                    },
+                    success: function(response) {
+                        // Hapus baris yang terpilih dari tabel
+                        selectedItems.each(function() {
+                            $(this).closest('tr').remove();
+                        });
+
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi sukses
+                            showNotification('Selected data was successfully deleted!',
+                                'success');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        // Reload halaman sebelum menampilkan notifikasi
+                        setTimeout(() => {
+                            // Tampilkan notifikasi gagal
+                            showNotification('Terjadi kesalahan saat menghapus data: ' +
+                                xhr.responseText, 'error');
+                            location.reload(); // Reload halaman
+                        }, 3000); // Tampilkan notifikasi selama 3 detik sebelum reload
+                    },
+                    complete: function() {
+                        // Menyembunyikan ikon loading dan menampilkan teks tombol
+                        $('.loading-icon').hide(); // Sembunyikan ikon loading
+                        $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
+                        $('#confirmDeleteModal').modal(
+                        'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                    }
+                });
+            });
 
 
             // Fungsi untuk menampilkan notifikasi
