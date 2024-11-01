@@ -1,10 +1,13 @@
 @extends('layouts.navigation')
 
 @section('content')
+@can('roles.view')
     <div class="container shadow-sm mt-3" style="border-radius: 20px;">
         <div class="d-flex justify-content-between align-items-center">
             <h2>Manage Roles and User Roles</h2>
-            <a href="{{ route('roles.create') }}" class="btn btn-primary">Add Role</a>
+            @can('roles.create')
+                <a href="{{ route('roles.create') }}" class="btn btn-primary">Add Role</a>
+            @endcan
         </div>
 
         <!-- Tabel Data Roles dengan opsi Edit dan Hapus -->
@@ -13,7 +16,9 @@
                 <tr>
                     <th>Role Name</th>
                     <th>Permissions</th>
+                    @canany(['roles.edit', 'roles.delete'])
                     <th>Action</th>
+                    @endcanany
                 </tr>
             </thead>
             <tbody>
@@ -28,14 +33,15 @@
                                 @endif
                             @endforeach
                         </td>
+                        @canany(['roles.edit', 'roles.delete'])
                         <td>
                             <!-- Tombol Edit Role hanya jika user memiliki permission edit -->
-                            {{-- @can('edit') --}}
+                            @can('roles.edit')
                             <a href="{{ route('roles.edit', $role['id']) }}" class="btn btn-warning btn-sm">Edit</a>
-                            {{-- @endcan --}}
+                            @endcan
 
                             <!-- Tombol Hapus Role hanya jika user memiliki permission destroy -->
-                            {{-- @can('destroy') --}}
+                            @can('roles.delete')
                             <form action="{{ route('roles.destroy', $role['id']) }}" method="POST"
                                 style="display: inline-block;">
                                 @csrf
@@ -43,12 +49,14 @@
                                 <button type="submit" class="btn btn-danger btn-sm"
                                     onclick="return confirm('Are you sure you want to delete this role?')">Delete</button>
                             </form>
-                            {{-- @endcan --}}
+                            @endcan
                         </td>
+                        @endcanany
                     </tr>
                 @endforeach 
             </tbody>
         </table>
+        
         <!-- Form untuk Menambahkan Role Baru, hanya jika user memiliki permission create -->
         {{-- @can('create')
             <form action="{{ route('roles.store') }}" method="POST" class="mt-4">
@@ -83,7 +91,9 @@
                 <tr>
                     <th>User</th>
                     <th>Roles</th>
+                    @can('roles.edit')
                     <th>Action</th>
+                    @endcan
                 </tr>
             </thead>
             <tbody>
@@ -91,6 +101,7 @@
                     <tr>
                         <td>{{ $user['name'] }}</td>
                         <td>{{ implode(', ', $user['roles']) }}</td>
+                        @can('roles.edit')
                         <td>
                             <!-- Tombol Edit Role dengan data-user -->
                             <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
@@ -99,11 +110,13 @@
                                 Edit
                             </button>
                         </td>
+                        @endcan
                     </tr>
                 @endforeach
             </tbody>
         </table>
 
+        @can('roles.edit')
         <!-- Modal untuk Edit Role -->
         <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
@@ -157,6 +170,8 @@
                 });
             });
         </script>
+        @endcan
 
     </div>
+@endcan
 @endsection
