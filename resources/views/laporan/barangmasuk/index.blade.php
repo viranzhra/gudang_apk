@@ -154,12 +154,12 @@
     document.addEventListener("DOMContentLoaded", function() {
         // Inisialisasi Flatpickr untuk kedua input tanggal
         flatpickr("#startDate", {
-            dateFormat: "d-m-Y", // format tanggal (tahun-bulan-hari)
+            dateFormat: "Y-m-d", // format tanggal (tahun-bulan-hari)
             maxDate: new Date()  // batas maksimum tanggal adalah hari ini
         });
 
         flatpickr("#endDate", {
-            dateFormat: "d-m-Y",
+            dateFormat: "Y-m-d",
             maxDate: new Date()
         });
     });
@@ -245,7 +245,7 @@ $(document).on('click', '.detail-btn', function() {
         url: 'https://doaibutiri.my.id/gudang/api/laporan/barangmasuk/' + permintaanId, // Fixed the URL concatenation
         type: 'GET',
         headers: {
-            'Authorization': 'Bearer ' + '{{ session("token") }}', // Fixed token reference
+            'Authorization': 'Bearer ' + '{{ $jwt_token }}', // Fixed token reference
         },
         success: function(data) {
             if (data.length > 0) {
@@ -294,7 +294,7 @@ $(document).on('click', '.detail-btn', function() {
         });
 
         setInterval(function(){
-            var startDate = $('#startDate').val();
+            var startDate = $('#s0tartDate').val();
             var endDate = $('#endDate').val();
             exportExcelBtn.href = `/export-barang-masuk?start_date=${startDate}&end_date=${endDate}`;
         }, 500);
