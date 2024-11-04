@@ -491,6 +491,16 @@
                 });
             });
 
+            // Function to show notifications
+            function showNotification(type, message) {
+                const notification = $('#notification');
+                $('#notificationTitle').text(type === 'success' ? 'Success' : 'Error');
+                $('#notificationMessage').text(message);
+                notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
+                    'alert-success' : 'alert-danger');
+                notification.fadeIn().delay().fadeOut(); // Show for 0.5 seconds
+            }
+
             // Add supplier form submission
             $('form[id="addSupplierForm"]').on('submit', function(e) {
                 e.preventDefault();
@@ -511,45 +521,58 @@
 
                 // Sending the data via AJAX to the API
                 $.ajax({
-                    url: '{{ config('app.api_url') }}/suppliers', // Use AJAX to avoid issues with POST
+                    url: '{{ config('app.api_url') }}/suppliers',
                     method: 'POST',
                     data: formData,
                     dataType: 'json',
                     success: function(response) {
                         console.log(response); // Debugging line
-
                         // Set notification message based on controller response
                         if (response.success) {
-                            // If successful, show success message
-                            showNotification('success',
-                                'Successfully added data!'); //response.message
+                            // If successful, store success message
+                            window.notificationMessage = {
+                                type: 'success',
+                                message: 'Successfully added data!'
+                            };
                         } else {
-                            // If not successful, show error message
-                            showNotification('error', response.message ||
-                                'Failed to add supplier.');
+                            // If not successful, store error message
+                            window.notificationMessage = {
+                                type: 'error',
+                                message: response.message || 'Failed to add supplier.'
+                            };
                         }
                     },
                     error: function(xhr) {
                         // Handle AJAX errors
                         let message = xhr.responseJSON?.message ||
                             'An error occurred when adding the supplier.';
-                        showNotification('error', message); // Show error message
+                        window.notificationMessage = {
+                            type: 'error',
+                            message: message
+                        }; // Store error message
                     },
                     complete: function() {
-                        // Add delay to keep spinner visible longer even after the process is complete
+                        // Hide modal after a delay and show notification afterwards
                         setTimeout(function() {
-                            // Hide the modal after a delay
                             $('#tambahData').modal('hide'); // Hide modal
+
+                            // Check if there is a stored notification message and show it
+                            if (window.notificationMessage) {
+                                showNotification(window.notificationMessage.type, window
+                                    .notificationMessage.message);
+                                delete window
+                                .notificationMessage; // Clear the stored message
+                            }
+
                             $('#supplier-table').DataTable().ajax
-                                .reload(); // Reload DataTable if needed
+                        .reload(); // Reload DataTable if needed
 
                             // Re-enable button after the delay
                             $submitButton.prop('disabled', false).html('Save');
-                        }, 1000); // 2000 milliseconds delay (2 seconds)
+                        }, 1000); // 1 second delay before hiding modal and showing notification
                     }
                 });
             });
-
 
             // Reset add form on modal close
             $('#tambahData').on('hidden.bs.modal', function() {
@@ -681,7 +704,7 @@
 
                 setTimeout(function() {
                     $('#notification').fadeOut();
-                }, 3000);
+                }, 2500);
             }
         });
     </script>
