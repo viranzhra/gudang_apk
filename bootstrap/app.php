@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'jwt_token' => \App\Http\Middleware\AuthToken::class,
             'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+            'check' => \App\Http\Middleware\CheckPermission::class,
             // 'initialize_permissions' => \App\Http\Middleware\InitializePermissions::class,
         ]);
     })    
