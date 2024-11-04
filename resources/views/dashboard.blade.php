@@ -338,7 +338,7 @@
                 <div class="card-body position-relative z-1">
                   <span class="badge badge-custom-dark d-inline-flex align-items-center gap-2 fs-3">
                     <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
-                    <span class="fw-normal">Online</span>
+                    <span class="fw-normal">{{ session('roles') }}</span>
                   </span>
                   <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span class="fw-bolder"><br>{{ session('user_name') }}</span>!
                   </h4>

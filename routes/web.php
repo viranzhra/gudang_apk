@@ -42,11 +42,6 @@ Route::middleware('guest')->group(function() {
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-
-// Route::middleware(['initialize_permissions', 'auth_token'])->group(function () {
-     
-// });
-
 Route::middleware('jwt_token')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -169,14 +164,10 @@ Route::middleware('jwt_token')->group(function () {
     Route::post('/keperluan/delete-selected', [KeperluanController::class, 'deleteSelected'])->middleware('check:requirement type.delete');
 
     Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok')->middleware('check:report.view stock');
-    
-    // Route::get('/laporan/stok', [LaporanController::class, 'stok'])->name('laporan.stok.index');
     Route::get('/laporan/barangmasuk', [LaporanController::class, 'barangmasuk'])->name('laporan.barangmasuk.index')->middleware('check:report.view incoming item');
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index')->middleware('check:report.view outbound item');
     Route::get('api/laporan/barangkeluar/export/pdf', [LaporanController::class, 'exportPdf'])->middleware('check:report.export outbound item');
     Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar'])->middleware('check:report.export outbound item');
-
-    // Route::get('api/laporan/barangkeluar/export/excel', [LaporanController::class, 'exportExcel']); 
     Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk'])->middleware('check:report.export incoming item');
 });
 
