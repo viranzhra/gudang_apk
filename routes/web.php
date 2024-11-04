@@ -168,7 +168,7 @@ Route::middleware('jwt_token')->group(function () {
     Route::get('/laporan/barangkeluar', [LaporanController::class, 'barangkeluar'])->name('laporan.barangkeluar.index')->middleware('check:report.view outbound item');
     Route::get('api/laporan/barangkeluar/export/pdf', [LaporanController::class, 'exportPdf'])->middleware('check:report.export outbound item');
     Route::get('/export-barang-keluar', [LaporanController::class, 'exportBarangKeluar'])->middleware('check:report.export outbound item');
-    Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk'])->middleware('check:report.export incoming item');
+    Route::get('/export-barang-masuk', [LaporanController::class, 'exportBarangMasuk']);
 });
 
 // require __DIR__.'/auth.php';

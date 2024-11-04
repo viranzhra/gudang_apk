@@ -31,10 +31,19 @@ class LaporanController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
     
-        $fileName = 'LaporanBarangMasuk_' . $startDate . 'to' . $endDate . '.xlsx';
+        // Tentukan nama file berdasarkan input tanggal
+        if ($startDate || $endDate) {
+            // Format tanggal jika salah satu atau kedua tanggal diisi
+            $formattedStartDate = $startDate ? date('Y-m-d', strtotime($startDate)) : 'start';
+            $formattedEndDate = $endDate ? date('Y-m-d', strtotime($endDate)) : 'end';
+            $fileName = 'LaporanBarangMasuk_' . $formattedStartDate . '_to_' . $formattedEndDate . '.xlsx';
+        } else {
+            // Jika tidak ada tanggal yang dipilih, gunakan nama file 'All'
+            $fileName = 'LaporanBarangMasuk_All.xlsx';
+        }
+
         // Kirim parameter untuk export
-        return Excel::download(new BarangMasukExport($startDate, $endDate), $fileName);
-        
+        return Excel::download(new BarangMasukExport($search, $startDate, $endDate), $fileName);
     }
 
         public function exportBarangKeluar(Request $request)
