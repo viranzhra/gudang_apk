@@ -195,7 +195,8 @@
     </style>
 
 </head>
-
+<style>
+::-webkit-scrollbar{-webkit-appearance:none;width:3px;height:5px}::-webkit-scrollbar-track{background-color:transparent}::-webkit-scrollbar-thumb{background-color:rgb(99 91 255 / 50%);border-radius:10px}::-webkit-scrollbar-thumb:hover{background-color:rgb(99 91 255 / 75%)}::-webkit-scrollbar-thumb:active{background-color:rgb(99 91 255 / 75%)}</style>
 <body>
     <!--  Body Wrapper -->
     <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"

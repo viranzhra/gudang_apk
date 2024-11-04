@@ -41,13 +41,12 @@ class RoleController extends Controller
             'requirement type.delete' => 'Hapus Jenis Keperluan',
             'incoming item.view' => 'Lihat Barang Masuk',
             'incoming item.create' => 'Tambah Barang Masuk',
-            'incoming item.edit' => 'Edit Barang Masuk',
             'incoming item.delete' => 'Hapus Barang Masuk',
             'outbound item.view' => 'Lihat Barang Keluar',
             'outbound item.create' => 'Tambah Barang Keluar',
-            'outbound item.edit' => 'Edit Barang Keluar',
             'outbound item.delete' => 'Hapus Barang Keluar',
-            'item request.view' => 'Lihat Permintaan Barang',
+            'item request.viewAll' => 'Lihat Permintaan Barang (Seluruh)',
+            'item request.viewFilterbyUser' => 'Lihat Permintaan Barang (By User)',
             'item request.create' => 'Tambah Permintaan Barang',
             'item request.confirm' => 'Konfirmasi Permintaan Barang',
             'report.view stock' => 'Lihat Laporan Stok',
@@ -55,24 +54,18 @@ class RoleController extends Controller
             'report.view incoming item' => 'Lihat Laporan Barang Masuk',
             'report.export incoming item' => 'Export Laporan Barang Masuk',
             'report.view outbound item' => 'Lihat Laporan Barang Keluar',
-            'report.export outbound item' => 'Export Laporan Barang Keluar'
+            'report.export outbound item' => 'Export Laporan Barang Keluar',
+            'roles.view' => 'Lihat Data Role',
+            'roles.create' => 'Tambah Data Role',
+            'roles.edit' => 'Edit Data Role',
+            'roles.delete' => 'Hapus Data Role',
         ];    
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $response = Http::get("{$this->apiUrl}/roles");
-
-        if ($response->successful()) {
-            return view('roles.index', [
-                'roles' => $response->json('roles'),
-                'users' => $response->json('users'),
-                'permissions' => $response->json('permissions'),
-                'permissionNames' => $this->permissionNames, // Kirimkan ke view
-            ]);
-        }
-
-        return back()->withErrors(['error' => 'Failed to fetch roles data from API.']);
+        $permissionNames = $this->permissionNames;
+        return view('roles.index', compact('permissionNames'));
     }
 
     public function create()
