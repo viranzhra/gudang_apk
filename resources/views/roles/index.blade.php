@@ -270,6 +270,22 @@
                                 }
                             });
                         });
+
+                        // Handle form submission
+                        document.getElementById('editRoleForm').addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            const form = e.target;
+                            $('#editRoleModal').modal('hide');
+                            
+                            $.ajax({
+                                url: form.action,
+                                method: form.method,
+                                data: $(form).serialize(),
+                                success: function(response) {
+                                    $('#users-table').DataTable().ajax.reload();
+                                }
+                            });
+                        });
                     });
                 </script>
             @endcan
