@@ -27,8 +27,8 @@
             <label for="permissions" class="form-label">Permissions</label>
 
             @foreach ($groupedPermissions as $module => $permissions)
-                <div class="card mb-2">
-                    <div class="card-header" data-bs-toggle="collapse" data-bs-target="#{{ $module }}Permissions" aria-expanded="true">
+                <div class="card mb-2" style="padding-left: 0 !important;">
+                    <div class="card-header">
                         <h5 class="mb-0">Modul {{ ucfirst($module) }}</h5>
                     </div>
                     <div id="{{ $module }}Permissions" class="collapse show">
