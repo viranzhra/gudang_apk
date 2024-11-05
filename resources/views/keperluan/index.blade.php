@@ -382,7 +382,7 @@
 
             let $submitButton = $(this).find('button[type="submit"]');
             $submitButton.prop('disabled', true).html(
-            '<i class="spinner-border spinner-border-sm"></i>'); // Disable button and show spinner
+                '<i class="spinner-border spinner-border-sm"></i>'); // Disable button and show spinner
 
             $.ajax({
                 url: 'https://doaibutiri.my.id/gudang/api/keperluan',
@@ -433,7 +433,7 @@
                 },
                 complete: function() {
                     $submitButton.prop('disabled', false).html(
-                    'Submit'); // Re-enable button after AJAX call
+                        'Submit'); // Re-enable button after AJAX call
                 }
             });
         });
@@ -481,7 +481,7 @@
                 } = JSON.parse(notification);
                 showNotification(type, message); // Tampilkan notifikasi
                 sessionStorage.removeItem(
-                'notification'); // Hapus notifikasi dari sessionStorage setelah ditampilkan
+                    'notification'); // Hapus notifikasi dari sessionStorage setelah ditampilkan
             }
         });
 
@@ -603,10 +603,12 @@
                                     'Selected data was successfully deleted!');
                                 $('#confirmDelete').modal('hide');
                                 $('#KeperluanTable').DataTable().ajax.reload(
-                                    function() {
-                                        // Sembunyikan tombol delete setelah reload
-                                        toggleDeleteButton();
-                                    });
+                            function() {
+                                    // Sembunyikan tombol delete setelah reload
+                                    toggleDeleteButton();
+                                    // Reset checkbox "select all" ke tidak tercentang
+                                    $('#select-all').prop('checked', false);
+                                });
                             } else {
                                 showNotification('error',
                                     'Failed to delete selected requirement type!');
@@ -784,6 +786,10 @@
             // Individual checkboxes
             $(document).on('change', '.select-item', function() {
                 toggleDeleteButton();
+                // Nonaktifkan checkbox "select all" jika tidak ada checkbox individu yang dicentang
+                const anyChecked = $('.select-item:checked').length > 0;
+                $('#select-all').prop('checked', anyChecked); // Cek atau tidak
+                $('#select-all').prop('disabled', !anyChecked); // Nonaktifkan jika tidak ada yang dicentang
             });
 
             // Enable/disable the delete selected button
@@ -796,6 +802,12 @@
                     deleteButton.addClass('d-none');
                 }
             }
+
+            // Ketika halaman dimuat, nonaktifkan checkbox "select all" jika tidak ada checkbox individu
+            $(document).ready(function() {
+                const anyChecked = $('.select-item:checked').length > 0;
+                $('#select-all').prop('disabled', !anyChecked); // Nonaktifkan jika tidak ada yang dicentang
+            });
         });
     </script>
 @endsection
