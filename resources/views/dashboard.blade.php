@@ -1267,7 +1267,7 @@
                       <iconify-icon icon="solar:inbox-in-linear" class="fs-7 text-white"></iconify-icon>
                     </div>
                     <h6 class="fw-normal fs-3 mb-1">Barang Masuk</h6>
-                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_masuk }}</h4>
+                    <h4 id="stok_barangs" class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_masuk }}</h4>
                     <a href="{{ route('barangmasuk.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
                       Details</a>
                   </div>
@@ -2338,6 +2338,9 @@
 
                     // Update stok keseluruhan di HTML
                     document.querySelector('#stok_seluruh').textContent = stokKeseluruhan.toLocaleString();
+
+                    // Update stok barang di HTML Stok Barang
+                    // document.querySelector('#stok_barang').textContent = stokKeseluruhan.toLocaleString();
 
                     // Hitung surplus/defisit dari stok kemarin
                     const stokYesterday = stokPerhari[stokPerhari.length - 2]?.jumlah || 0;

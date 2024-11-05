@@ -36,9 +36,53 @@
     .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
         opacity: 0.8; 
     }
+
+    #notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            justify-content: flex-start;
+            /* Tetap di sebelah kiri */
+            align-items: center;
+            text-align: left;
+            /* Teks tetap rata kiri */
+            /* Hidden by default */
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            height: 80px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            height: 80px;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            height: 80px;
+        }
 </style>
 
 <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+     <!-- Notification Element -->
+     <div id="notification" class="alert" style="display: none;">
+        <strong id="notificationTitle">Notification</strong>
+        <p id="notificationMessage"></p>
+    </div>
     <h4 class="mt-3" style="color: #8a8a8a;">Item Status</h4>
     <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
         <!-- Add Button -->
@@ -54,7 +98,7 @@
         </button>          
     </div>    
 
-    <!-- Notifikasi flash message -->
+    {{-- <!-- Notifikasi flash message -->
     @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -76,7 +120,7 @@
             @endforeach
             </ul>
         </div>
-    @endif
+    @endif --}}
     
     <table class="table table-bordered table-striped table-hover" id="statusbarangtable" width="100%">
         <thead class="thead-dark">
@@ -101,7 +145,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{ route('statusbarang.store') }}" enctype="multipart/form-data">
+                <form id="addForm" method="post" action="{{ route('statusbarang.store') }}" enctype="multipart/form-data">
                     @csrf
                     @if ($errors->any())
                     <div class="alert alert-danger">
@@ -238,10 +282,87 @@ $('#deleteModal').on('show.bs.modal', function(event) {
     $('#itemName').text(itemName);
     $('#deleteForm').attr('action', `/statusbarang/delete/${itemId}`);
 });
+$('#deleteForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // Jika penghapusan berhasil, tampilkan notifikasi sukses
+            showNotification('success', 'Item deleted successfully!');
+            $('#deleteModal').modal('hide'); // Sembunyikan modal
+        },
+        error: function() {
+            // Jika terjadi error, tampilkan notifikasi error
+            showNotification('error', 'Failed to delete the item.');
+        }
+    });
+});
+
+$('#addForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // If addition is successful, show success notification
+            showNotification('success', 'Data added successfully!');
+            $('#tambahDataModal').modal('hide'); // Hide modal
+        },
+        error: function() {
+            // If error occurs, show error notification
+            showNotification('error', 'Failed to add the item.');
+        }
+    });
+});
+
+$('#editForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // If addition is successful, show success notification
+            showNotification('success', 'Data edit successfully!');
+            $('#editData').modal('hide'); // Hide modal
+        },
+        error: function() {
+            // If error occurs, show error notification
+            showNotification('error', 'Failed to edit the item.');
+        }
+    });
+});
 </script>
 
 <!-- Script untuk inisialisasi DataTables -->
 <script>
+    // Function to show notifications
+            function showNotification(type, message) {
+                        const notification = $('#notification');
+                        $('#notificationTitle').text(type === 'success' ? 'Success' : 'Error');
+                        $('#notificationMessage').text(message);
+                        notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
+                            'alert-success' : 'alert-danger');
+                        notification.fadeIn().delay(3000).fadeOut().promise().done(function() {
+                            location.reload();
+                        }); // Show for 3 seconds then reload
+                    }
+
     $(document).ready(function() {
         $('#statusbarangtable').DataTable({
             processing: true,
@@ -334,15 +455,15 @@ $('#deleteModal').on('show.bs.modal', function(event) {
                     fetch('/statusbarang/deleteSelected', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'Authorization': 'Bearer ' + '{{ session('token') }}',
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             ids: selected
                         })
                     }).then(response => {
                         if (response.ok) {
-                            location.reload();
+                                showNotification('success', 'Anda berhasil menghapus data!');
                         } else {
                             alert('Gagal menghapus data.');
                         }

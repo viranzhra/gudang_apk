@@ -309,22 +309,45 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Failed to fetch customer data:', xhr.responseText);
-                    alert('Failed to fetch customer data.');
+                    // alert('Failed to fetch customer data.');
                 }
             });
         });
     </script>
 
+    {{-- validasi input telepon --}}
     <script>
         document.getElementById('telepon').addEventListener('input', function() {
             // menghapus spasi, tanda kurung, dan tanda plus pada input form telepon
             this.value = this.value.replace(/[()\+\s]/g, '');
         });
 
-        document.getElementById('edit-phone').addEventListener('input', function() {
-            // menghapus spasi, tanda kurung, dan tanda plus pada input form telepon
-            this.value = this.value.replace(/[()\+\s]/g, '');
+        // document.getElementById('edit-phone').addEventListener('input', function() {
+        //     // menghapus spasi, tanda kurung, dan tanda plus pada input form telepon
+        //     this.value = this.value.replace(/[()\+\s]/g, '');
+        // });
+
+        const phoneInput = document.getElementById('edit-phone');
+        const teleponHelp = document.getElementById('teleponHelp');
+
+        // Menghapus karakter yang tidak diinginkan saat mengklik input
+        phoneInput.addEventListener('focus', function() {
+            this.value = this.value.replace(/[()\+\s]/g, ''); // Hapus karakter yang tidak diinginkan
+            teleponHelp.style.color = ''; // Kembalikan warna teks ke default saat fokus
         });
+
+        // // Memeriksa dan mengubah warna teks ketika input berubah
+        // phoneInput.addEventListener('input', function() {
+        //     // Hapus karakter yang tidak diinginkan dari input
+        //     this.value = this.value.replace(/[()\+\s]/g, '');
+
+        //     // Memeriksa apakah input mengandung karakter yang tidak diinginkan
+        //     if (/[()\+\s]/.test(this.value)) {
+        //         teleponHelp.style.color = 'red'; // Ubah warna menjadi merah jika ada karakter yang tidak diinginkan
+        //     } else {
+        //         teleponHelp.style.color = ''; // Kembalikan warna default jika tidak ada karakter yang tidak diinginkan
+        //     }
+        // });
     </script>
 
     {{-- konfirmasi hapus --}}
@@ -466,7 +489,8 @@
                         data: 'alamat',
                         render: function(data, type, row) {
                             if (type === 'display' && data) {
-                                const truncatedText = data.length > 35 ? data.substring(0, 35) + '...' : data; // Batasi menjadi 35 karakter
+                                const truncatedText = data.length > 30 ? data.substring(0, 30) +
+                                    '...' : data; // Batasi menjadi 35 karakter
                                 return truncatedText; // Kembalikan teks yang sudah dipotong
                             }
                             return data; // Kembalikan data asli untuk tipe lainnya

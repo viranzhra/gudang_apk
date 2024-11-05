@@ -89,8 +89,8 @@
         }
     </style>
 
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
-        <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
+<div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+    <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
 
         <div class="filter-export">
             <!-- Date Range Filter -->
@@ -238,17 +238,6 @@
                     }
                 }
             ],
-            language: {
-                emptyTable: "Tidak ada data yang tersedia",
-                search: "Cari:",
-                lengthMenu: "",
-                paginate: {
-                    first: "Pertama",
-                    last: "Terakhir",
-                    next: "Selanjutnya",
-                    previous: "Sebelumnya"
-                }
-            }
         });
 
         // Filter button click event to reload the DataTable based on date range
