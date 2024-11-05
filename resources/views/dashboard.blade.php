@@ -1268,7 +1268,7 @@
                     </div>
                     <h6 class="fw-normal fs-3 mb-1">Barang Masuk</h6>
                     <h4 id="stok_barangs" class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_masuk }}</h4>
-                    <a href="{{ route('laporan.stok') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                    <a href="{{ route('barangmasuk.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
                       Details</a>
                   </div>
                 </div>
