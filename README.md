@@ -15,9 +15,11 @@ Sistem Manajemen Inventaris Gudang - Barang Masuk dan Barang Keluar
 
 ## Tech Stack
 
-**Client:** Bootstrap, Jquery, Sweetalert2, Select2, dataTables, Chart.js, tawk.to
+**Client:** Blade Templating Engine, Bootstrap, Jquery, Sweetalert2, Select2, dataTables, Chart.js, tawk.to
 
-**Server:** PHP 8.2.x, Laravel 11.x
+**Server:** PHP 8.2.x, Laravel 11.x, PostgreSQL 16.x, RESTful API
+
+**Other:** Composer, Node.js and NPM, Git for version control, Postman for API testing
 
   
 ## List Menu

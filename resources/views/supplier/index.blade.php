@@ -561,11 +561,11 @@
                                 showNotification(window.notificationMessage.type, window
                                     .notificationMessage.message);
                                 delete window
-                                .notificationMessage; // Clear the stored message
+                                    .notificationMessage; // Clear the stored message
                             }
 
                             $('#supplier-table').DataTable().ajax
-                        .reload(); // Reload DataTable if needed
+                                .reload(); // Reload DataTable if needed
 
                             // Re-enable button after the delay
                             $submitButton.prop('disabled', false).html('Save');
@@ -655,19 +655,23 @@
                 ]
             });
 
-            // select-all checkbox
+            // Select-all checkbox
             $(document).on('change', '#select-all', function() {
                 const isChecked = $(this).is(':checked');
                 $('.select-item').prop('checked', isChecked);
                 toggleDeleteButton();
             });
 
-            // individual checkboxes
+            // Individual checkboxes
             $(document).on('change', '.select-item', function() {
                 toggleDeleteButton();
+                // Nonaktifkan checkbox "select all" jika tidak ada checkbox individu yang dicentang
+                const anyChecked = $('.select-item:checked').length > 0;
+                $('#select-all').prop('checked', anyChecked); // Cek atau tidak
+                $('#select-all').prop('disabled', !anyChecked); // Nonaktifkan jika tidak ada yang dicentang
             });
 
-            // Fungsi untuk mengaktifkan atau menonaktifkan tombol hapus berdasarkan item yang dipilih
+            // Enable/disable the delete selected button
             function toggleDeleteButton() {
                 const selected = $('.select-item:checked').length;
                 const deleteButton = $('#deleteSelected');
@@ -677,6 +681,12 @@
                     deleteButton.addClass('d-none');
                 }
             }
+
+            // Ketika halaman dimuat, nonaktifkan checkbox "select all" jika tidak ada checkbox individu
+            $(document).ready(function() {
+                const anyChecked = $('.select-item:checked').length > 0;
+                $('#select-all').prop('disabled', !anyChecked); // Nonaktifkan jika tidak ada yang dicentang
+            });
 
             // Notification function
             function showNotification(type, message) {
