@@ -268,7 +268,7 @@ $(document).on('click', '.detail-btn', function() {
                                                 <div class="grid grid-cols-10 gap-2">
                                                 <div class="row">
                                                     <div class="col-3"><strong>Serial Number</strong></div>:
-                                                    <div class="col-8">${item.serial_number}</div>
+                                                    <div class="col-8">${item.serial_number} - <span style="color: ${item.warna_status_barang};">${item.status_barang}</span></div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3"><strong>Item Name</strong></div>:
@@ -281,12 +281,6 @@ $(document).on('click', '.detail-btn', function() {
                                                 <div class="row">
                                                     <div class="col-3"><strong>Supplier Name</strong></div>:
                                                     <div class="col-8">${item.nama_supplier}</div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-3"><strong>Item Status</strong></div>:
-                                                    <div class="col-8"><span style="color: ${item.warna_status_barang};">
-                                    ${item.status_barang}
-                                </span></div>
                                                 </div>
                                                 <hr>
                                             </div>

@@ -162,6 +162,9 @@
     <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
     <!-- Date -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/locale/id.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <!-- Script for initializing DataTables and Datepicker -->
@@ -218,9 +221,16 @@
                     {
                         data: 'nama_keperluan'
                     },
+                    // {
+                    //     data: 'tanggal_awal'
+                    // },
                     {
-                        data: 'tanggal_awal'
-                    },
+    data: 'tanggal_awal',
+    render: function(data, type, row) {
+        moment.locale('id'); // Set locale to Indonesian
+        return moment(data).format('dddd, DD MMMM YYYY'); // Format to Indonesian date
+    }
+},
                     {
                         data: null,
                         orderable: false,

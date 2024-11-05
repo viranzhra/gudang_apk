@@ -71,13 +71,23 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
 
     public function styles(Worksheet $sheet)
     {
-        // Set header style
-        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:H1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $sheet->getStyle('A1:H1')->getFill()->getStartColor()->setARGB('ADD8E6'); // Light blue for header
+            // Set header style
+        $sheet->getStyle('A1:G1')->getFont()->setBold(true)->setSize(14); // Increase font size for the header
+        $sheet->getStyle('A1:G1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+        $sheet->getStyle('A1:G1')->getFill()->getStartColor()->setARGB('ADD8E6'); // Light blue for header
+
+        // Center-align the header content horizontally and vertically
+        $sheet->getStyle('A1:G1')->getAlignment()->setHorizontal('center');
+        $sheet->getStyle('A1:G1')->getAlignment()->setVertical('center'); // Center vertically
+        $sheet->getRowDimension(1)->setRowHeight(25);
+
+
+        // Add border to the header row
+        $sheet->getStyle('A1:G1')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
 
         // Set column width
-        foreach (range('A', 'H') as $columnID) {
+        foreach (range('A', 'G') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
@@ -98,8 +108,11 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
             }
 
             // Apply background color to the row
-            $sheet->getStyle("A{$row}:H{$row}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-            $sheet->getStyle("A{$row}:H{$row}")->getFill()->getStartColor()->setARGB($fillColor);
+            $sheet->getStyle("A{$row}:G{$row}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $sheet->getStyle("A{$row}:G{$row}")->getFill()->getStartColor()->setARGB($fillColor);
+
+            // Apply border to each cell in the row
+            $sheet->getStyle("A{$row}:G{$row}")->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
         }
     }
 }
