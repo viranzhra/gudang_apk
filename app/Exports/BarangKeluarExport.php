@@ -23,7 +23,7 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
 
     public function collection()
     {
-        // Ambil data dari API dengan filter tanggal
+        // Fetch data from API with date filter
         $response = Http::withOptions(['verify' => false])
             ->get('https://doaibutiri.my.id/gudang/api/laporan/barangkeluar', [
                 'search' => $this->search,
@@ -32,7 +32,7 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
             ]);
 
         if (!$response->successful()) {
-            throw new \Exception('Gagal mengambil data dari API.');
+            throw new \Exception('Failed to retrieve data from the API.');
         }
 
         $data = $response->json()['data'] ?? [];
@@ -42,14 +42,13 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
             $details = json_decode($item['detail'], true);
             foreach ($details as $detail) {
                 $exportData->push([
-                    'SerialNumber' => $detail['serial_number'] ?? 'N/A',
-                    'ItemName' => $detail['nama_barang'] ?? 'N/A',
-                    'ItemType' => $detail['nama_jenis_barang'] ?? 'N/A',
-                    'SupplierName' => $detail['nama_supplier'] ?? 'N/A',
-                    'CustomerName' => $item['nama_customer'] ?? 'N/A',
-                    'Amount' => $item['jumlah'] ?? 'N/A',
-                    'Purposes' => $item['nama_keperluan'] ?? 'N/A',
-                    'Date' => $item['tanggal'] ?? 'N/A',
+                    'SerialNumber' => $detail['serial_number'] ?? '-',
+                    'ItemName' => $detail['nama_barang'] ?? '-',
+                    'ItemType' => $detail['nama_jenis_barang'] ?? '-',
+                    'SupplierName' => $detail['nama_supplier'] ?? '-',
+                    'CustomerName' => $item['nama_customer'] ?? '-',
+                    'Purposes' => $item['nama_keperluan'] ?? '-',
+                    'Date' => $item['tanggal'] ?? '-',
                 ]);
             }
         }
@@ -65,7 +64,6 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
             'Item Type',
             'Supplier Name',
             'Customer Name',
-            'Amount',
             'Purposes',
             'Date'
         ];
@@ -73,31 +71,35 @@ class BarangKeluarExport implements FromCollection, WithHeadings, WithStyles
 
     public function styles(Worksheet $sheet)
     {
-        // // Format tanggal kop laporan
-        // $formattedStartDate = $this->startDate ? date('Y-m-d', strtotime($this->startDate)) : 'awal';
-        // $formattedEndDate = $this->endDate ? date('Y-m-d', strtotime($this->endDate)) : 'akhir';
- 
-        // // Tambahkan kop laporan di baris pertama
-        // $sheet->setCellValue('A1', 'Laporan pengeluaran barang tanggal ' . $formattedStartDate . ' hingga ' . $formattedEndDate);
-        // $sheet->mergeCells('A1:H1'); // Menggabungkan sel untuk kop laporan
-        // $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
-        // $sheet->getStyle('A1')->getAlignment()->setHorizontal('center');
-
-        // Mengatur gaya untuk header
+        // Set header style
         $sheet->getStyle('A1:H1')->getFont()->setBold(true);
         $sheet->getStyle('A1:H1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
-        $sheet->getStyle('A1:H1')->getFill()->getStartColor()->setARGB('ADD8E6'); // Warna biru muda (Light Blue)
+        $sheet->getStyle('A1:H1')->getFill()->getStartColor()->setARGB('ADD8E6'); // Light blue for header
 
-        // Menambahkan border ke header
-        $sheet->getStyle('A1:H1')->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        // Menambahkan border untuk seluruh data (A2 hingga H terakhir)
-        $lastRow = $sheet->getHighestRow();
-        $sheet->getStyle('A1:H' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        // Mengatur lebar kolom
+        // Set column width
         foreach (range('A', 'H') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Set background colors for rows based on customer
+        $lastRow = $sheet->getHighestRow();
+        $previousCustomer = null;
+        $colors = ['FFE6E6', 'E6FFE6', 'E6E6FF']; // Light Red, Light Green, Light Blue
+        $colorIndex = 0;
+
+        for ($row = 2; $row <= $lastRow; $row++) {
+            $currentCustomer = $sheet->getCell("E{$row}")->getValue(); // CustomerName column
+
+            // Change color if customer changes
+            if ($currentCustomer !== $previousCustomer) {
+                $fillColor = $colors[$colorIndex % count($colors)]; // Rotate through colors
+                $colorIndex++;
+                $previousCustomer = $currentCustomer;
+            }
+
+            // Apply background color to the row
+            $sheet->getStyle("A{$row}:H{$row}")->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID);
+            $sheet->getStyle("A{$row}:H{$row}")->getFill()->getStartColor()->setARGB($fillColor);
         }
     }
 }
