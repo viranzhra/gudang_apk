@@ -463,7 +463,14 @@
                         data: 'nama'
                     },
                     {
-                        data: 'alamat'
+                        data: 'alamat',
+                        render: function(data, type, row) {
+                            if (type === 'display' && data) {
+                                const truncatedText = data.length > 35 ? data.substring(0, 35) + '...' : data; // Batasi menjadi 35 karakter
+                                return truncatedText; // Kembalikan teks yang sudah dipotong
+                            }
+                            return data; // Kembalikan data asli untuk tipe lainnya
+                        }
                     },
                     {
                         data: 'telepon'
