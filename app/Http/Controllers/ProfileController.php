@@ -2,59 +2,44 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Http;
 
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Menampilkan form edit profil
      */
-    public function edit(Request $request): View
+    public function edit()
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
-    }
+        $response = Http::withToken(session('jwt_token'))
+            ->get(env('API_URL') . '/user');
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
-    {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($response->successful()) {
+            $user = $response->json();
+            return view('profile.edit', compact('user'));
+        } else {
+            return redirect()->route('dashboard')->withErrors(['error' => 'Tidak dapat mengambil data pengguna.']);
         }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
     /**
-     * Delete the user's account.
+     * Proses pembaruan profil
      */
-    public function destroy(Request $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
-        ]);
+        $response = Http::withToken(session('jwt_token'))
+            ->put(env('API_URL') . '/user/update', [
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password,
+                'password_confirmation' => $request->password_confirmation,
+            ]);
 
-        $user = $request->user();
-
-        Auth::logout();
-
-        $user->delete();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        if ($response->successful()) {
+            return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui.');
+        } else {
+            return back()->withErrors($response->json());
+        }
     }
 }
