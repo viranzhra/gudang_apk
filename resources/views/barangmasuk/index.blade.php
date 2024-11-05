@@ -665,7 +665,8 @@
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to delete <span id="selectedCount" style="font-weight: bold;"></span>
-                        <b>data</b>?</p>
+                        <b>data</b>?
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn" style="background-color: #910a0a; color: white;"
@@ -763,7 +764,7 @@
                         document.getElementById('uploadedFileName').innerHTML =
                             `File Name: <b>${file.name}</b>`;
                         document.getElementById('previewContainer').style.display =
-                        'block'; // Tampilkan previewContainer
+                            'block'; // Tampilkan previewContainer
                         previewData(); // Panggil fungsi previewData ketika file dipilih
                     } else {
                         // Trigger the modal for invalid file types
@@ -865,7 +866,8 @@
                     }
 
                     // Mengambil data serial numbers yang sudah ada
-                    const serialNumberResponse = await fetch('https://doaibutiri.my.id/gudang/api/serialnumber');
+                    const serialNumberResponse = await fetch(
+                        'https://doaibutiri.my.id/gudang/api/serialnumber');
                     if (!serialNumberResponse.ok) {
                         throw new Error(`HTTP error! status: ${serialNumberResponse.status}`);
                     }
@@ -878,7 +880,8 @@
                         throw new Error(`HTTP error! status: ${barangResponse.status}`);
                     }
                     const barangData = await barangResponse.json();
-                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang.trim()) : [];
+                    const existingBarang = barangData.data ? barangData.data.map(item => item.nama_barang
+                        .trim()) : [];
 
                     // Mengambil data kondisi barang
                     const kondisiResponse = await fetch('https://doaibutiri.my.id/gudang/api/statusbarang');
@@ -886,22 +889,27 @@
                         throw new Error(`HTTP error! status: ${kondisiResponse.status}`);
                     }
                     const kondisiData = await kondisiResponse.json();
-                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama.trim()) : [];
+                    const existingKondisi = kondisiData.data ? kondisiData.data.map(item => item.nama.trim()) :
+                        [];
 
                     // Array untuk menyimpan kesalahan
                     const errors = new Array(dataRows.length).fill(null);
 
                     // Memeriksa setiap baris data
                     dataRows.forEach((row, index) => {
-                        const barangName = row[0] ? row[0].trim() : ""; // Pastikan trim untuk nama barang
-                        const serialNumber = row[2] ? row[2].toString().trim() : ""; // Pastikan serial number sebagai string
-                        const kondisiBarang = row[3] ? row[3].trim() : ""; // Pastikan trim untuk kondisi barang
+                        const barangName = row[0] ? row[0].trim() :
+                            ""; // Pastikan trim untuk nama barang
+                        const serialNumber = row[2] ? row[2].toString().trim() :
+                            ""; // Pastikan serial number sebagai string
+                        const kondisiBarang = row[3] ? row[3].trim() :
+                            ""; // Pastikan trim untuk kondisi barang
 
                         let errorMessages = [];
 
                         // Validasi jika semua item, serial number, dan status kosong
                         if (!barangName && !serialNumber && !kondisiBarang) {
-                            errors[index] = `All fields cannot be empty`; // Pesan khusus jika semua field kosong
+                            errors[index] =
+                                `All fields cannot be empty`; // Pesan khusus jika semua field kosong
                             return; // Keluar dari pemeriksaan untuk baris ini
                         }
 
@@ -1089,17 +1097,89 @@
                             return;
                         }
 
-                        const detailContent = data.map((detail, index) => `
-                            <hr class="col-span-10 my-3">
-                            <div class="row">
-                                <div class="col-3"><strong>Item ${index + 1}</strong></div>
-                                :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}"><b>${detail.status_barang}</b></span></div>
-                            </div>
-                            <div class="row">
-                                <div class="col-3"><strong>Completeness</strong></div>
-                                :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
-                            </div>
-                        `).join('');
+                        const itemsPerPage = 4; // jumlah yang ingin ditampilkan
+                        const totalPages = Math.ceil(data.length / itemsPerPage);
+                        let currentPage = 1;
+
+                        // Function to render detail content based on current page
+                        const renderDetailContent = (page) => {
+                            const indexOfLastItem = page * itemsPerPage;
+                            const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+                            const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+
+                            return currentItems.map((detail, index) => `
+                                <hr class="col-span-10 my-3">
+                                <div class="row">
+                                    <div class="col-3"><strong>Item ${index + 1 + indexOfFirstItem}</strong></div>
+                                    <div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}"><b>${detail.status_barang}</b></span></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-3"><strong>Completeness</strong></div>
+                                    <div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+                                </div>
+                            `).join('');
+                        };
+
+                        const updateModalContent = (page) => {
+                            currentPage = page; // Update the current page state
+                            const detailContent = renderDetailContent(page);
+                            document.getElementById('detailContent').innerHTML = detailContent;
+
+                            // Render pagination buttons only if there are multiple pages
+                            const paginationButtons = totalPages > 1 ? `
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button style="height: 30px;"
+                                        class="btn ${currentPage === 1 ? 'btn-light' : 'btn-primary'} btn-sm mx-1" 
+                                        onclick="changePage(${currentPage - 1})" 
+                                        ${currentPage === 1 ? 'disabled' : ''}>
+                                        Previous
+                                    </button>
+                                    ${totalPages <= 2 
+                                        ? Array.from({ length: totalPages }, (_, index) => `
+                                            <button style="height: 30px;" 
+                                                class="btn ${currentPage === index + 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
+                                                onclick="changePage(${index + 1})">
+                                                ${index + 1}
+                                            </button>
+                                        `).join('') 
+                                        : `
+                                            <button style="height: 30px;" 
+                                                class="btn ${currentPage === 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
+                                                onclick="changePage(1)">
+                                                1
+                                            </button>
+                                            <button style="height: 30px;" 
+                                                class="btn ${currentPage === 2 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
+                                                onclick="changePage(2)">
+                                                2
+                                            </button>
+                                            <span class="btn btn-light btn-sm mx-1">...</span>
+                                            <button style="height: 30px;" 
+                                                class="btn ${currentPage === totalPages ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
+                                                onclick="changePage(${totalPages})">
+                                                ${totalPages}
+                                            </button>
+                                        `}
+                                    <button style="height: 30px;"
+                                        class="btn ${currentPage === totalPages ? 'btn-light' : 'btn-primary'} btn-sm mx-1" 
+                                        onclick="changePage(${currentPage + 1})" 
+                                        ${currentPage === totalPages ? 'disabled' : ''}>
+                                        Next
+                                    </button>
+                                </div>
+                            ` : '';
+
+                            // Update the pagination buttons section
+                            const paginationContainer = document.getElementById('paginationButtons');
+                            paginationContainer.innerHTML = paginationButtons;
+                            paginationContainer.className = totalPages > 1 ? 'mt-3' : 'd-none'; // Show/hide based on page count
+                        };
+
+                        // Function to change page
+                        window.changePage = (page) => {
+                            currentPage = page;
+                            updateModalContent(page);
+                        };
 
                         const modalContent = `
                             <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
@@ -1139,7 +1219,8 @@
                                                     <div class="col-3"><strong>Quantity</strong></div>:
                                                     <div class="col-8">${jumlah || 0}</div>
                                                 </div>
-                                                ${detailContent}
+                                                <div id="detailContent">${renderDetailContent(currentPage)}</div>
+                                                <div id="paginationButtons" class="mt-3"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -1148,12 +1229,100 @@
                         `;
 
                         document.body.insertAdjacentHTML('beforeend', modalContent);
+                        updateModalContent(currentPage); // Initial render of details and pagination
                         new bootstrap.Modal(document.getElementById('detailModal')).show();
                     })
                     .catch(error => {
                         console.error('Error fetching details:', error);
                         showNotification('error', 'Error loading item details.'); // Tampilkan notifikasi
                     });
+
+
+                // fetch(`{{ config('app.api_url') }}/barangmasuk/${id}`, {
+                //         method: 'GET',
+                //         headers: {
+                //             'Authorization': 'Bearer ' + '{{ session('token') }}'
+                //         }
+                //     })
+                //     .then(response => {
+                //         if (!response.ok) {
+                //             throw new Error('Network response was not ok');
+                //         }
+                //         return response.json();
+                //     })
+                //     .then(data => {
+                //         if (!Array.isArray(data)) {
+                //             console.error('Unexpected data format:', data);
+                //             showNotification('error',
+                //                 'Error loading item details.'); // Tampilkan notifikasi
+                //             return;
+                //         }
+
+                //         const detailContent = data.map((detail, index) => `
+            //             <hr class="col-span-10 my-3">
+            //             <div class="row">
+            //                 <div class="col-3"><strong>Item ${index + 1}</strong></div>
+            //                 :<div class="col-8">${detail.serial_number} — <span style="color:${detail.warna_status_barang}"><b>${detail.status_barang}</b></span></div>
+            //             </div>
+            //             <div class="row">
+            //                 <div class="col-3"><strong>Completeness</strong></div>
+            //                 :<div class="col-8">${detail.kelengkapan_barang || '—'}</div>
+            //             </div>
+            //         `).join('');
+
+                //         const modalContent = `
+            //             <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+            //                 <div class="modal-dialog">
+            //                     <div class="modal-content">
+            //                         <div class="modal-header">
+            //                             <h5 class="modal-title" id="detailModalLabel" style="margin-left: 30%; font-weight: bold;">Incoming Item Detail</h5>
+            //                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            //                         </div>
+            //                         <div class="modal-body">
+            //                             <div class="grid grid-cols-10 gap-2">
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Item</strong></div>:
+            //                                     <div class="col-8">${namaBarang || '—'}</div>
+            //                                 </div>
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Type</strong></div>:
+            //                                     <div class="col-8">
+            //                                         ${namaJenisBarang !== null && namaJenisBarang !== '' && namaJenisBarang !== 'null' ? namaJenisBarang : '—'}
+            //                                     </div>
+            //                                 </div>
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Supplier</strong></div>:
+            //                                     <div class="col-8">${namaSupplier || '—'}</div>
+            //                                 </div>
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Entry Date</strong></div>:
+            //                                     <div class="col-8">${tanggalBarang || '—'}</div>
+            //                                 </div>
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Description</strong></div>:
+            //                                     <div class="col-8">
+            //                                         ${keteranganBarang !== null && keteranganBarang !== '' && keteranganBarang !== 'null' ? keteranganBarang : '—'}
+            //                                     </div>
+            //                                 </div>
+            //                                 <div class="row mb-3">
+            //                                     <div class="col-3"><strong>Quantity</strong></div>:
+            //                                     <div class="col-8">${jumlah || 0}</div>
+            //                                 </div>
+            //                                 ${detailContent}
+            //                             </div>
+            //                         </div>
+            //                     </div>
+            //                 </div>
+            //             </div>
+            //         `;
+
+                //         document.body.insertAdjacentHTML('beforeend', modalContent);
+                //         new bootstrap.Modal(document.getElementById('detailModal')).show();
+                //     })
+                //     .catch(error => {
+                //         console.error('Error fetching details:', error);
+                //         showNotification('error', 'Error loading item details.'); // Tampilkan notifikasi
+                //     });
             }
 
             // Inisialisasi DataTable
@@ -1259,7 +1428,7 @@
             // Menangani klik tombol hapus terpilih
             $('#deleteSelected').on('click', function() {
                 const selectedItemsCount = $('.select-item:checked')
-                .length; // Hitung jumlah item yang terpilih
+                    .length; // Hitung jumlah item yang terpilih
                 $('#selectedCount').text(selectedItemsCount); // Update teks di modal
                 $('#confirmDeleteModal').modal('show'); // Tampilkan modal konfirmasi
             });
@@ -1316,7 +1485,7 @@
                         $('.loading-icon').hide(); // Sembunyikan ikon loading
                         $('#confirmDeleteText').show(); // Tampilkan teks tombol kembali
                         $('#confirmDeleteModal').modal(
-                        'hide'); // Sembunyikan modal hanya setelah semua proses selesai
+                            'hide'); // Sembunyikan modal hanya setelah semua proses selesai
                     }
                 });
             });
