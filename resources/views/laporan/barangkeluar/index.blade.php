@@ -289,19 +289,19 @@
                                                 <div class="grid grid-cols-10 gap-2">
                                                 <div class="row">
                                                     <div class="col-3"><strong>Serial Number</strong></div>:
-                                                    <div class="col-8">${item.serial_number}</div>
+                                                    <div class="col-8">${item.serial_number || '-'}</div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3"><strong>Item Name</strong></div>:
-                                                    <div class="col-8">${item.nama_barang}</div>
+                                                    <div class="col-8">${item.nama_barang || '-'}</div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3"><strong>Item Type</strong></div>:
-                                                    <div class="col-8">${item.nama_jenis_barang}</div>
+                                                    <div class="col-8">${item.nama_jenis_barang || '-'}</div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-3"><strong>Supplier Name</strong></div>:
-                                                    <div class="col-8">${item.nama_supplier}</div>
+                                                    <div class="col-8">${item.nama_supplier || '-'}</div>
                                                 </div>
                                                 <hr>
                                             </div>
