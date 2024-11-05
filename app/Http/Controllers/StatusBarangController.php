@@ -94,16 +94,16 @@ class StatusBarangController extends Controller
 		$ids = $request->input('ids');
 		foreach ($ids as $id) {
 			$statusBarang = StatusBarang::find($id);
-			$barangMasuk = BarangMasuk::where('status_barang_id', $id)->get();
+			// $barangMasuk = BarangMasuk::where('status_barang_id', $id)->get();
 
-			foreach ($barangMasuk as $item) {
-				$barang = Barang::find($item->barang_id);
-				if ($barang) {
-					$barang->jumlah -= $item->jumlah;
-					$barang->save();
-				}
-				$item->delete();
-			}
+			// foreach ($barangMasuk as $item) {
+			// 	$barang = Barang::find($item->barang_id);
+			// 	if ($barang) {
+			// 		$barang->jumlah -= $item->jumlah;
+			// 		$barang->save();
+			// 	}
+			// 	$item->delete();
+			// }
 
 			$statusBarang->delete();
 		}

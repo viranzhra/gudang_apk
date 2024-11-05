@@ -452,7 +452,7 @@ $('#editForm').on('submit', function(e) {
 
             if (selected.length > 0) {
                 if (confirm('Apakah Anda yakin ingin menghapus data yang dipilih?')) {
-                    fetch('/statusbarang/deleteSelected', {
+                    fetch('{{ config('app.api_url') }}/statusbarang/delete-selected', {
                         method: 'POST',
                         headers: {
                             'Authorization': 'Bearer ' + '{{ session('token') }}',
