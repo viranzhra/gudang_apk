@@ -395,25 +395,25 @@
                         // Simpan pesan sukses di sessionStorage
                         sessionStorage.setItem('notification', JSON.stringify({
                             type: 'success',
-                            message: 'Data berhasil ditambahkan.'
+                            message: 'Successfully added data!'
                         }));
 
                         // Reload halaman setelah modal ditutup
                         location.reload(); // Reload halaman
-
                         $('#tambahData').modal('hide'); // Menutup modal
+
                     } else {
                         // Simpan pesan error di sessionStorage
                         sessionStorage.setItem('notification', JSON.stringify({
                             type: 'error',
-                            message: response.message || 'Gagal menambahkan data keperluan.'
+                            message: response.message || 'Failed to add requirement type.'
                         }));
                         $('#tambahData').modal('hide'); // Menutup modal
                         location.reload(); // Reload halaman
                     }
                 },
                 error: function(xhr) {
-                    let errorMessage = 'Terjadi kesalahan.';
+                    let errorMessage = 'An error occurred when adding the requirement type.';
 
                     // Check if there's an error message from the server
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
