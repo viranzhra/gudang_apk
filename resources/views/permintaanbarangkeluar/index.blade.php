@@ -572,10 +572,11 @@ document.addEventListener('DOMContentLoaded', function() {
             showNotification('success', '{{ session('success') }}');
         </script>
     @endif
-
+    
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <!-- DataTables Bootstrap 4 integration -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
     
 @endsection
