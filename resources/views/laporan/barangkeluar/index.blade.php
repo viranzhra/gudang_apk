@@ -83,10 +83,6 @@
             width: 200px; /* Adjust the width as needed */
             /* Optional: add min-width if needed for responsiveness */
         }
-
-        .filter-date {
-            align-items: center; /* Align items vertically in the center */
-        }
     </style>
 
     <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">

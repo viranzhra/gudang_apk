@@ -116,7 +116,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form class="" method="post" action="{{ route('keperluan.store') }}"
+                    <form id="addForm" method="post" action="{{ route('keperluan.store') }}"
                         enctype="multipart/form-data">
                         @csrf
                         @if ($errors->any())
@@ -160,11 +160,25 @@
                                 </div>
                             </div>
 
-                            <script>
+                            {{-- <script>
                                 document.getElementById('extend').addEventListener('change', function() {
                                     this.value = this.checked ? '1' : '0';
                                     document.getElementById('tanggalInputs').style.display = this.checked ? 'block' : 'none';
                                     document.getElementById('nama_tanggal_akhir').required = this.checked;
+                                });
+                            </script> --}}
+
+                            <script>
+                                // Handle checkbox change for extending dates
+                                document.getElementById('extend').addEventListener('change', function() {
+                                    this.value = this.checked ? '1' : '0'; // Set value based on checkbox state
+                                    document.getElementById('tanggalInputs').style.display = this.checked ? 'block' :
+                                        'none'; // Show/hide inputs
+                                    // Clear the values of the inputs when hiding
+                                    if (!this.checked) {
+                                        document.getElementById('nama_tanggal_akhir').value = ''; // Clear Extension Name
+                                        document.getElementById('batas_hari').value = 1; // Reset Time Limit
+                                    }
                                 });
                             </script>
                             <script>
@@ -350,72 +364,78 @@
 
     <script>
         // Menghandle pengiriman form
-        $('#addForm').on('submit', function(e) {
-            e.preventDefault(); // Mencegah reload halaman
+        $('form[id="addForm"]').on('submit', function(e) {
+            e.preventDefault(); // Prevent default form submission
 
-            // Menyiapkan data untuk dikirim
+            // Prepare data for submission
             var formData = {
-                _token: '{{ csrf_token() }}', // Pastikan CSRF token disertakan
+                _token: '{{ csrf_token() }}',
                 nama: $('#nama').val(),
-                nama_tanggal_akhir: $('#extend').is(':checked') ? $('#end_date').val() :
-                '', // Kirim string kosong jika tidak dicentang
-                extend: $('#extend').is(':checked') // Mengubah menjadi boolean secara otomatis
+                nama_tanggal_akhir: $('#extend').is(':checked') ? $('#nama_tanggal_akhir').val() : 'null',
+                extend: $('#extend').is(':checked') ? '1' : '0'
             };
 
-            console.log("Data yang dikirim:", formData); // Debug: cek data yang dikirim
+            // Only add batas_hari if extend is checked and value is not empty
+            if ($('#extend').is(':checked') && $('#batas_hari').val()) {
+                formData.batas_hari = $('#batas_hari').val();
+            }
 
-            // AJAX request untuk mengirim data
+            let $submitButton = $(this).find('button[type="submit"]');
+            $submitButton.prop('disabled', true).html(
+            '<i class="spinner-border spinner-border-sm"></i>'); // Disable button and show spinner
+
             $.ajax({
-                url: 'https://doaibutiri.my.id/gudang/api/keperluan', // Pastikan URL API yang benar
+                url: 'https://doaibutiri.my.id/gudang/api/keperluan',
                 method: 'POST',
-                contentType: 'application/json', // Mengirim data sebagai JSON
-                dataType: 'json', // Mengharapkan respons dalam format JSON
-                data: JSON.stringify(formData), // Mengubah formData menjadi string JSON
+                contentType: 'application/json',
+                dataType: 'json',
+                data: JSON.stringify(formData),
                 success: function(response) {
-                    console.log("Response dari server:", response); // Debug: log response dari server
-
-                    // Tampilkan notifikasi jika sukses
                     if (response.success) {
-                        showNotification('success', 'Successfully add data.');
-                        $('#tambahData').modal('hide'); // Tutup modal
-                        $('#addForm')[0].reset(); // Reset form setelah pengiriman
-                        $('#KeperluanTable').DataTable().ajax.reload(); // Reload DataTable
+                        // Simpan pesan sukses di sessionStorage
+                        sessionStorage.setItem('notification', JSON.stringify({
+                            type: 'success',
+                            message: 'Data berhasil ditambahkan.'
+                        }));
+
+                        // Reload halaman setelah modal ditutup
+                        location.reload(); // Reload halaman
+
+                        $('#tambahData').modal('hide'); // Menutup modal
                     } else {
-                        showNotification('error', response.message ||
-                            'Failed to add requirement type.');
+                        // Simpan pesan error di sessionStorage
+                        sessionStorage.setItem('notification', JSON.stringify({
+                            type: 'error',
+                            message: response.message || 'Gagal menambahkan data keperluan.'
+                        }));
+                        $('#tambahData').modal('hide'); // Menutup modal
+                        location.reload(); // Reload halaman
                     }
                 },
                 error: function(xhr) {
-                    // Tampilkan notifikasi jika terjadi error
-                    console.error('Status:', xhr.status); // Log status code
-                    console.error('Response Text:', xhr.responseText); // Log response text
+                    let errorMessage = 'Terjadi kesalahan.';
 
+                    // Check if there's an error message from the server
                     if (xhr.responseJSON && xhr.responseJSON.errors) {
-                        // Tampilkan pesan error spesifik dari server
-                        let errors = xhr.responseJSON.errors;
-                        let message = errors.extend ? errors.extend[0] :
-                            'An error occurred when adding data.';
-                        showNotification('error', message);
-                    } else {
-                        showNotification('error', 'Network or server error.');
+                        errorMessage = xhr.responseJSON.errors.nama ? xhr.responseJSON.errors.nama[0] :
+                            errorMessage;
+                    } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                        errorMessage = xhr.responseJSON.message;
                     }
+
+                    // Simpan pesan error di sessionStorage
+                    sessionStorage.setItem('notification', JSON.stringify({
+                        type: 'error',
+                        message: errorMessage
+                    }));
+                    $('#tambahData').modal('hide'); // Menutup modal
+                    location.reload(); // Reload halaman
+                },
+                complete: function() {
+                    $submitButton.prop('disabled', false).html(
+                    'Submit'); // Re-enable button after AJAX call
                 }
             });
-        });
-
-        // Menyembunyikan input extension_name saat halaman pertama kali dimuat
-        $(document).ready(function() {
-            $('#extension_name').hide(); // Sembunyikan input extension_name saat pertama kali dimuat
-        });
-
-        // Menangani perubahan checkbox extend pada form tambah data
-        $('#extend').change(function() {
-            if ($(this).is(':checked')) {
-                $('#extension_name').show(); // Tampilkan kolom extension_name jika checkbox dicentang
-            } else {
-                $('#extension_name').hide(); // Sembunyikan kolom extension_name jika checkbox tidak dicentang
-                $('#extension_name').val(''); // Kosongkan input extension_name
-            }
         });
 
         // Fungsi untuk menampilkan notifikasi
@@ -439,12 +459,42 @@
 
             $('#notificationTitle').text(notificationTitle);
             $('#notificationMessage').text(message);
-            $('#notification').removeClass('alert-success alert-danger alert-info').addClass(notificationClass).fadeIn();
+            $('#notification').removeClass('alert-success alert-danger alert-info')
+                .addClass(notificationClass)
+                .fadeIn();
 
             setTimeout(function() {
                 $('#notification').fadeOut();
             }, 3000); // Notifikasi menghilang setelah 3 detik
         }
+
+        // Menyembunyikan input batas_hari saat halaman pertama kali dimuat
+        $(document).ready(function() {
+            $('#extension_name').hide(); // Sembunyikan input batas_hari saat pertama kali dimuat
+
+            // Cek apakah ada notifikasi yang disimpan di sessionStorage
+            const notification = sessionStorage.getItem('notification');
+            if (notification) {
+                const {
+                    type,
+                    message
+                } = JSON.parse(notification);
+                showNotification(type, message); // Tampilkan notifikasi
+                sessionStorage.removeItem(
+                'notification'); // Hapus notifikasi dari sessionStorage setelah ditampilkan
+            }
+        });
+
+        // Menangani perubahan checkbox extend pada form tambah data
+        $('#extend').change(function() {
+            if ($(this).is(':checked')) {
+                $('#extension_name').show(); // Tampilkan kolom batas_hari jika checkbox dicentang
+            } else {
+                $('#extension_name').hide(); // Sembunyikan kolom batas_hari jika checkbox tidak dicentang
+                $('#nama_tanggal_akhir').val(''); // Kosongkan input nama_tanggal_akhir
+                $('#batas_hari').val(''); // Kosongkan input batas_hari
+            }
+        });
     </script>
 
     <!-- Script untuk inisialisasi DataTables -->
@@ -553,10 +603,10 @@
                                     'Selected data was successfully deleted!');
                                 $('#confirmDelete').modal('hide');
                                 $('#KeperluanTable').DataTable().ajax.reload(
-                            function() {
-                                    // Sembunyikan tombol delete setelah reload
-                                    toggleDeleteButton();
-                                });
+                                    function() {
+                                        // Sembunyikan tombol delete setelah reload
+                                        toggleDeleteButton();
+                                    });
                             } else {
                                 showNotification('error',
                                     'Failed to delete selected requirement type!');
