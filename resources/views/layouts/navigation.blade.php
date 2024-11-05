@@ -503,7 +503,7 @@
                                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                                 }
                             </style>
-                            <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
+                            {{-- <li class="nav-item dropdown nav-icon-hover-bg rounded-circle">
                                 <a class="nav-link position-relative" href="javascript:void(0)" id="drop2"
                                     aria-haspopup="true" aria-expanded="false">
                                     <iconify-icon icon="solar:bell-bing-line-duotone" class="fs-6"></iconify-icon>
@@ -552,7 +552,7 @@
                                             Notifications</a>
                                     </div>
                                 </div>
-                            </li>
+                            </li> --}}
                             <li class="nav-item dropdown">
                                 <a class="nav-link " href="javascript:void(0)" id="drop2"
                                     data-bs-toggle="dropdown" aria-expanded="false">
