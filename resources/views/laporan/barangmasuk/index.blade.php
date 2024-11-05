@@ -265,7 +265,7 @@ $(document).on('click', '.detail-btn', function() {
 
     // Fetch details from the server
     $.ajax({
-        url: 'https://doaibutiri.my.id/gudang/api/laporan/barangmasuk/' + permintaanId, // Fixed the URL concatenation
+        url: `https://doaibutiri.my.id/gudang/api/laporan/barangmasuk/${permintaanId}`, // Fixed the URL concatenation
         type: 'GET',
         headers: {
             'Authorization': 'Bearer ' + '{{ $jwt_token }}', // Fixed token reference
@@ -274,22 +274,35 @@ $(document).on('click', '.detail-btn', function() {
             if (data.length > 0) {
                 // Populate the modal with fetched data as a list
                 data.forEach(item => {
-                    $('#detailList').append(`
-                        <div class="detail-item">
-                                    <p>Item Name: <strong>${item.nama_barang}</strong></p>
-                                    <p>Item Type: <strong>${item.nama_jenis_barang}</strong></p>
-                                    <p>Supplier Name: <strong>${item.nama_supplier}</strong></p>
-                            <h6>Serial Number: <strong>${item.serial_number}</strong></h6>
-                            <p>Status Barang: 
-                                <strong style="color: ${item.warna_status_barang};">
+                                $('#detailList').append(`
+                                <div class="detail-item">
+                                                <div class="grid grid-cols-10 gap-2">
+                                                <div class="row">
+                                                    <div class="col-3"><strong>Serial Number</strong></div>:
+                                                    <div class="col-8">${item.serial_number}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3"><strong>Item Name</strong></div>:
+                                                    <div class="col-8">${item.nama_barang}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3"><strong>Item Type</strong></div>:
+                                                    <div class="col-8">${item.nama_jenis_barang}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3"><strong>Supplier Name</strong></div>:
+                                                    <div class="col-8">${item.nama_supplier}</div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-3"><strong>Item Status</strong></div>:
+                                                    <div class="col-8"><span style="color: ${item.warna_status_barang};">
                                     ${item.status_barang}
-                                </strong>
-                            </p>
-                            <p>Kelengkapan Barang: <strong>${item.kelengkapan_barang}</strong></p>
-                            <hr>
-                        </div>
-                    `);
-                });
+                                </span></div>
+                                                </div>
+                                                <hr>
+                                            </div>
+                            `);
+                            });
             } else {
                 $('#detailList').append('<p class="text-center">No details available</p>');
             }
