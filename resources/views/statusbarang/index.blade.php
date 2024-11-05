@@ -145,7 +145,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="post" action="{{ route('statusbarang.store') }}" enctype="multipart/form-data">
+                <form id="addForm" method="post" action="{{ route('statusbarang.store') }}" enctype="multipart/form-data">
                     @csrf
                     @if ($errors->any())
                     <div class="alert alert-danger">
@@ -282,19 +282,86 @@ $('#deleteModal').on('show.bs.modal', function(event) {
     $('#itemName').text(itemName);
     $('#deleteForm').attr('action', `/statusbarang/delete/${itemId}`);
 });
+$('#deleteForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // Jika penghapusan berhasil, tampilkan notifikasi sukses
+            showNotification('success', 'Item deleted successfully!');
+            $('#deleteModal').modal('hide'); // Sembunyikan modal
+        },
+        error: function() {
+            // Jika terjadi error, tampilkan notifikasi error
+            showNotification('error', 'Failed to delete the item.');
+        }
+    });
+});
+
+$('#addForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // If addition is successful, show success notification
+            showNotification('success', 'Data added successfully!');
+            $('#tambahDataModal').modal('hide'); // Hide modal
+        },
+        error: function() {
+            // If error occurs, show error notification
+            showNotification('error', 'Failed to add the item.');
+        }
+    });
+});
+
+$('#editForm').on('submit', function(e) {
+    e.preventDefault(); // Mencegah form dari pengiriman default
+    
+    const form = $(this);
+    const actionUrl = form.attr('action');
+
+    $.ajax({
+        url: actionUrl,
+        type: 'POST',
+        data: form.serialize(),
+        success: function(response) {
+            // If addition is successful, show success notification
+            showNotification('success', 'Data edit successfully!');
+            $('#editData').modal('hide'); // Hide modal
+        },
+        error: function() {
+            // If error occurs, show error notification
+            showNotification('error', 'Failed to edit the item.');
+        }
+    });
+});
 </script>
 
 <!-- Script untuk inisialisasi DataTables -->
 <script>
     // Function to show notifications
-    function showNotification(type, message) {
-                const notification = $('#notification');
-                $('#notificationTitle').text(type === 'success' ? 'Success' : 'Error');
-                $('#notificationMessage').text(message);
-                notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
-                    'alert-success' : 'alert-danger');
-                notification.fadeIn().delay().fadeOut(); // Show for 0.5 seconds
-            }
+            function showNotification(type, message) {
+                        const notification = $('#notification');
+                        $('#notificationTitle').text(type === 'success' ? 'Success' : 'Error');
+                        $('#notificationMessage').text(message);
+                        notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
+                            'alert-success' : 'alert-danger');
+                        notification.fadeIn().delay(3000).fadeOut().promise().done(function() {
+                            location.reload();
+                        }); // Show for 3 seconds then reload
+                    }
 
     $(document).ready(function() {
         $('#statusbarangtable').DataTable({
@@ -388,8 +455,8 @@ $('#deleteModal').on('show.bs.modal', function(event) {
                     fetch('/statusbarang/deleteSelected', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'Authorization': 'Bearer ' + '{{ session('token') }}',
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
                             ids: selected
