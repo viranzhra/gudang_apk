@@ -61,7 +61,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    window.showDetailModal = function(id, namaCustomer, namaKeperluan, tanggalAwal, extend,
+    window.showDetailModal = function(id, namaCustomer, namaKeperluan, namaPeminta, tanggalAwal, extend,
         namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status, alasan) {
         // Hapus modal sebelumnya jika ada
         const existingModal = document.getElementById('detailModal');
@@ -161,6 +161,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-9">${namaCustomer || '—'}</div>
                             <div class="col-3 fw-bold">Purpose:</div>
                             <div class="col-9">${namaKeperluan || '—'}</div>
+                            <div class="col-3 fw-bold">Requested by:</div>
+                            <div class="col-9">${namaPeminta || '—'}</div>
                             <hr class="my-2">
                             <div class="col-12 fw-bold">Date</div>
                             <div class="col-3 fw-bold ps-4">Request:</div>
@@ -321,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 render: function(data, type, row) {
                     return `
                         <div class="flex gap-x-2">
-                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}', '${row.alasan || ''}')">
+                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.requested_by || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}', '${row.alasan || ''}')">
                                 <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                             </button>
                         </div>
