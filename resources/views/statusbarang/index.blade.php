@@ -36,9 +36,53 @@
     .btn-action:hover .icon-edit, .btn-action:hover .icon-delete {
         opacity: 0.8; 
     }
+
+    #notification {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 9999;
+            display: none;
+            text-align: center;
+            justify-content: flex-start;
+            /* Tetap di sebelah kiri */
+            align-items: center;
+            text-align: left;
+            /* Teks tetap rata kiri */
+            /* Hidden by default */
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            height: 80px;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            height: 80px;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            height: 80px;
+        }
 </style>
 
 <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+     <!-- Notification Element -->
+     <div id="notification" class="alert" style="display: none;">
+        <strong id="notificationTitle">Notification</strong>
+        <p id="notificationMessage"></p>
+    </div>
     <h4 class="mt-3" style="color: #8a8a8a;">Item Status</h4>
     <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
         <!-- Add Button -->
@@ -54,7 +98,7 @@
         </button>          
     </div>    
 
-    <!-- Notifikasi flash message -->
+    {{-- <!-- Notifikasi flash message -->
     @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
@@ -76,7 +120,7 @@
             @endforeach
             </ul>
         </div>
-    @endif
+    @endif --}}
     
     <table class="table table-bordered table-striped table-hover" id="statusbarangtable" width="100%">
         <thead class="thead-dark">
@@ -242,6 +286,16 @@ $('#deleteModal').on('show.bs.modal', function(event) {
 
 <!-- Script untuk inisialisasi DataTables -->
 <script>
+    // Function to show notifications
+    function showNotification(type, message) {
+                const notification = $('#notification');
+                $('#notificationTitle').text(type === 'success' ? 'Success' : 'Error');
+                $('#notificationMessage').text(message);
+                notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
+                    'alert-success' : 'alert-danger');
+                notification.fadeIn().delay().fadeOut(); // Show for 0.5 seconds
+            }
+
     $(document).ready(function() {
         $('#statusbarangtable').DataTable({
             processing: true,
@@ -342,7 +396,7 @@ $('#deleteModal').on('show.bs.modal', function(event) {
                         })
                     }).then(response => {
                         if (response.ok) {
-                            location.reload();
+                                showNotification('success', 'Anda berhasil menghapus data!');
                         } else {
                             alert('Gagal menghapus data.');
                         }
