@@ -113,6 +113,7 @@
                         <th><input type="checkbox" id="select-all"></th>
                         <th class="d-flex justify-content-center align-items-center">No</th>
                         <th>Customer</th>
+                        <th>Email</th>
                         <th>Address</th>
                         <th>Phone</th>
                         <th>Description</th>
@@ -139,6 +140,10 @@
                         <div class="mb-3">
                             <label for="nama" class="form-label">Customer</label>
                             <input type="text" id="nama" name="nama" class="form-control" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="text" id="email" name="email" class="form-control" required />
                         </div>
                         <div class="mb-3">
                             <label for="alamat" class="form-label">Address</label>
@@ -178,6 +183,10 @@
                         <div class="mb-3">
                             <label for="edit-name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="edit-name" name="nama" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit-email" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="edit-email" name="email" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-address" class="form-label">Address</label>
@@ -241,6 +250,10 @@
                         <div class="col-8"><span class="detail-nama"></span></div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-3"><strong>Email:</strong></div>
+                        <div class="col-8"><span class="detail-email"></span></div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-3"><strong>Address:</strong></div>
                         <div class="col-8"><span class="detail-alamat"></span></div>
                     </div>
@@ -299,6 +312,7 @@
                 success: function(data) {
                     // sesuaikan dengan yang di modal
                     $('.detail-nama').text(data.nama);
+                    $('.detail-email').text(data.telepon);
                     $('.detail-alamat').text(data.alamat);
                     $('.detail-telepon').text(data.telepon);
                     $('.detail-keterangan').text(data.keterangan);
@@ -420,6 +434,7 @@
                     success: function(data) {
                         $('#edit-id').val(data.id);
                         $('#edit-name').val(data.nama);
+                        $('#edit-email').val(data.email);
                         $('#edit-address').val(data.alamat);
                         $('#edit-phone').val(data.telepon);
                         $('#edit-description').val(data.keterangan);
@@ -484,6 +499,9 @@
                     },
                     {
                         data: 'nama'
+                    },
+                    {
+                        data: 'email'
                     },
                     {
                         data: 'alamat',
