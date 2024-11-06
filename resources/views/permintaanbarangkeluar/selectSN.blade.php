@@ -1,28 +1,6 @@
 @extends('layouts.navigation')
 
 @section('content')
-<!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-<style>
-    .select2-container .select2-selection--single {
-        background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-        border-radius: .5rem;
-        height: 40px;
-        display: flex;
-        align-items: center
-    }
-
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        padding-left: 10px
-    }
-
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        top: unset;
-        right: 10px
-    }
-</style>
     <div class="container mt-3 shadow-sm p-4" style="border-radius: 20px;width:768px">
         <h5 style="font-weight:700;margin-bottom: 30px">Select Serial Number</h5>
     
@@ -37,22 +15,17 @@
                     @for ($i = 0; $i < $serialNumbers[0]->jumlah; $i++)
                     <div class="ps-3 mb-2">
                         <label for="serial_number_{{ $barangId }}_{{ $i }}" class="form-label">Serial Number {{ $i + 1 }}</label>
-                        <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2" required>
+                        <select id="serial_number_{{ $barangId }}_{{ $i }}" name="serial_number_ids[{{ $barangId }}][]" class="form-control select2" data-barang-id="{{ $barangId }}" required>
                             <option value="">Select SN</option>
-                            {{-- TIDAK SELECTED OTOMATIS 
-
-                            @foreach ($serialNumbers as $serialOption)
-                                <option value="{{ $serialOption->serial_number_id }}">{{ $serialOption->serial_number }}</option>
-                            @endforeach 
-                            
-                            --}}
                             @foreach ($serialNumbers as $key => $serialOption)
                                 <option value="{{ $serialOption->serial_number_id }}" {{ $key === $i ? 'selected' : '' }}>{{ $serialOption->serial_number }}</option>
                             @endforeach
                         </select>
                         @error('serial_number_ids.' . $barangId . '.' . $i)
-                            <span class="text-red-500 text-sm">{{ $message }}</span>
-                        @enderror
+                            <span class="small" style="color:red">{{ $message }}</span>
+                        @else
+                            <span class="small error-message" style="color:red"></span>
+                        @enderror                    
                     </div>
                     @endfor
                 </div>
@@ -60,7 +33,8 @@
             @endforeach
     
             <div class="flex items-center justify-between">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <!-- Tambahkan ID pada tombol Submit untuk manipulasi -->
+                <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
             </div>
         </form>
     </div>
@@ -68,7 +42,75 @@
     <script>
         $(document).ready(function() {
             $('.select2').select2();
+
+            // Fungsi untuk validasi duplikasi SN per produk dan validasi input kosong
+            function validateForm() {
+                var isValid = true;
+                var barangIds = [];
+                var allSelects = $('select[name^="serial_number_ids"]');
+
+                // Kumpulkan semua barangId
+                allSelects.each(function() {
+                    var barangId = $(this).data('barang-id');
+                    if (!barangIds.includes(barangId)) {
+                        barangIds.push(barangId);
+                    }
+                });
+
+                // Validasi per barangId
+                barangIds.forEach(function(barangId) {
+                    var selects = $('select[data-barang-id="' + barangId + '"]');
+                    var values = [];
+                    var duplicates = {};
+
+                    // Hapus pesan error sebelumnya
+                    selects.each(function() {
+                        $(this).parent().find('.error-message').text('');
+                    });
+
+                    // Validasi setiap select input
+                    selects.each(function() {
+                        var val = $(this).val();
+                        if (!val) {
+                            // Jika ada select yang belum dipilih
+                            isValid = false;
+                            $(this).parent().find('.error-message').text('Please select a Serial Number.');
+                        } else {
+                            if (values.includes(val)) {
+                                duplicates[val] = true;
+                                isValid = false;
+                            } else {
+                                values.push(val);
+                            }
+                        }
+                    });
+
+                    // Tampilkan pesan error jika ada duplikasi
+                    if (Object.keys(duplicates).length > 0) {
+                        selects.each(function() {
+                            var val = $(this).val();
+                            if (duplicates[val]) {
+                                $(this).parent().find('.error-message').text('Duplicate Serial Number selected.');
+                            }
+                        });
+                    }
+                });
+
+                // Tampilkan atau sembunyikan tombol Submit
+                if (isValid) {
+                    $('#submitBtn').show();
+                } else {
+                    $('#submitBtn').hide();
+                }
+            }
+
+            // Event listener untuk perubahan pada select input
+            $('select[name^="serial_number_ids"]').on('change', function() {
+                validateForm();
+            });
+
+            // Validasi awal saat halaman dimuat
+            validateForm();
         });
     </script>
-    
 @endsection
