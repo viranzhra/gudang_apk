@@ -150,6 +150,7 @@
                 <thead>
                     <tr>
                         <th>User</th>
+                        <th>Email</th>
                         <th>Roles</th>
                         @can('roles.edit')
                             <th>Action</th>
@@ -174,6 +175,10 @@
                         columns: [{
                                 data: 'name',
                                 name: 'name'
+                            },
+                            {
+                                data: 'email',
+                                name: 'email'
                             },
                             {
                                 data: 'roles',
