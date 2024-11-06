@@ -143,7 +143,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="text" id="email" name="email" class="form-control" required />
+                            <input type="text" id="email" name="user_email" class="form-control" required />
                         </div>
                         <div class="mb-3">
                             <label for="alamat" class="form-label">Address</label>
@@ -186,7 +186,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit-email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="edit-email" name="email" required>
+                            <input type="text" class="form-control" id="edit-email" name="user_email" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-address" class="form-label">Address</label>
@@ -501,7 +501,7 @@
                         data: 'nama'
                     },
                     {
-                        data: 'email'
+                        data: 'user_email'
                     },
                     {
                         data: 'alamat',
