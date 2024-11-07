@@ -107,22 +107,24 @@
                 Delete Selected
             </button>
         </div>
-
-        <table class="table table-bordered table-striped table-hover" id="supplier-table" width="100%">
-            <thead class="thead-dark">
-                <tr>
-                    <th><input type="checkbox" id="select-all"></th>
-                    <th class="d-flex justify-content-center align-items-center">No</th>
-                    <th>Supplier</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+        
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover" id="supplier-table" width="100%">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><input type="checkbox" id="select-all"></th>
+                        <th class="d-flex justify-content-center align-items-center">No</th>
+                        <th>Supplier</th>
+                        <th>Address</th>
+                        <th>Phone</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- modal tambah data -->
