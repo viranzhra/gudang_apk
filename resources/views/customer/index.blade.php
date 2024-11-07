@@ -143,7 +143,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email</label>
-                            <input type="text" id="email" name="user_email" class="form-control" required />
+                            <input type="email" id="email" name="user_email" class="form-control" required />
                         </div>
                         <div class="mb-3">
                             <label for="alamat" class="form-label">Address</label>
@@ -186,7 +186,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="edit-email" class="form-label">Email</label>
-                            <input type="text" class="form-control" id="edit-email" name="user_email" required>
+                            <input type="text" class="form-control" id="edit-email" name="email" required>
                         </div>
                         <div class="mb-3">
                             <label for="edit-address" class="form-label">Address</label>
@@ -312,7 +312,7 @@
                 success: function(data) {
                     // sesuaikan dengan yang di modal
                     $('.detail-nama').text(data.nama);
-                    $('.detail-email').text(data.telepon);
+                    $('.detail-email').text(data.email);
                     $('.detail-alamat').text(data.alamat);
                     $('.detail-telepon').text(data.telepon);
                     $('.detail-keterangan').text(data.keterangan);
@@ -450,7 +450,7 @@
             // untuk edit data
             $('#editCustomerForm').on('submit', function(e) {
                 e.preventDefault();
-                var id = $('#edit-id').val();
+                var id = $('#edit-id').val() - 1;
                 var formData = $(this).serialize();
                 $.ajax({
                     url: `{{ config('app.api_url') }}/customers/${id}`,
@@ -472,7 +472,7 @@
     <!-- Script untuk inisialisasi DataTables -->
     <script>
         $(document).ready(function() {
-            // inisialisasi DataTable
+            // Inisialisasi DataTable
             $('#customer-table').DataTable({
                 processing: true,
                 serverSide: true,
@@ -498,50 +498,54 @@
                         }
                     },
                     {
-                        data: 'nama'
+                        data: 'nama',
+                        name: 'customer.nama',
                     },
                     {
-                        data: 'user_email'
+                        data: 'email'
                     },
                     {
                         data: 'alamat',
+                        name: 'customer.alamat',
                         render: function(data, type, row) {
                             if (type === 'display' && data) {
                                 const truncatedText = data.length > 30 ? data.substring(0, 30) +
-                                    '...' : data; // Batasi menjadi 35 karakter
-                                return truncatedText; // Kembalikan teks yang sudah dipotong
+                                    '...' : data; // Batasi menjadi 30 karakter
+                                return truncatedText;
                             }
                             return data; // Kembalikan data asli untuk tipe lainnya
                         }
                     },
                     {
-                        data: 'telepon'
+                        data: 'telepon',
+                        name: 'customer.telepon',
                     },
                     {
-                        data: 'keterangan'
+                        data: 'keterangan',
+                        name: 'customer.keterangan',
                     },
                     {
                         data: 'id',
                         orderable: false,
                         render: function(data) {
                             return `
-                                <div class="d-flex">
-                                    <button title="Detail" aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
-                                        <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
-                                    </button>
-                                    <button title="Edit" data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
-                                        <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
-                                    </button>
-                                    <button title="Delete" id="deleteButton-${data}" data-id="${data}" class="btn-action btn-delete" aria-label="Delete">
-                                        <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                                    </button>
-                                </div>
+                            <div class="d-flex">
+                                <button title="Detail" aria-label="Detail" data-id="${data}" class="btn-detail btn-action" style="border: none;">
+                                    <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
+                                </button>
+                                <button title="Edit" data-id="${data}" class="btn-edit btn-action" aria-label="Edit">
+                                    <iconify-icon icon="mdi:edit" class="icon-edit"></iconify-icon>
+                                </button>
+                                <button title="Delete" data-id="${data}" class="btn-delete btn-action" aria-label="Delete">
+                                    <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                                </button>
+                            </div>
                         `;
                         }
                     }
                 ],
                 order: [
-                    [2, 'asc']
+                    [2, 'asc'] // Mengurutkan berdasarkan kolom 'nama'
                 ]
             });
 
@@ -624,14 +628,15 @@
                     // Simpan daftar ID yang akan dihapus
                     $('#confirmDeleteButton').data('ids', selected);
                 } else {
-                    showNotification('error', 'Tidak ada data yang dipilih.');
+                    showNotification('error', 'No data selected.');
                 }
             });
 
-            // konfirmasi button hapus yang terpilih
+            // Konfirmasi penghapusan data terpilih
             $(document).on('click', '#confirmDeleteButton', function() {
                 const selected = $(this).data('ids');
 
+                // Lakukan request untuk menghapus data terpilih
                 fetch('{{ config('app.api_url') }}/customers/delete-selected', {
                     method: 'POST',
                     headers: {
@@ -643,18 +648,29 @@
                     })
                 }).then(response => {
                     if (response.ok) {
-                        showNotification('success', 'Selected data was successfully deleted!');
-                        $('#customer-table').DataTable().ajax.reload(); // Reload DataTable
+                        // Set status penghapusan berhasil ke sessionStorage
+                        sessionStorage.setItem('deleteStatus', 'success');
+                        
+                        // Reload halaman
+                        location.reload();
                     } else {
-                        showNotification('error', 'Gagal menghapus data.');
+                        showNotification('error', 'Failed to delete selected data.');
                     }
                     $('#confirmDeleteModal').modal('hide');
-                    // Sembunyikan tombol "Hapus Terpilih"
-                    $('#deleteSelected').hide();
                 }).catch(() => {
-                    showNotification('error', 'Terjadi kesalahan saat menghapus data.');
+                    showNotification('error', 'An error occurred while deleting data.');
                     $('#confirmDeleteModal').modal('hide');
                 });
+            });
+
+            // Cek status penghapusan setelah halaman di-reload
+            $(window).on('load', function() {
+                if (sessionStorage.getItem('deleteStatus') === 'success') {
+                    showNotification('success', 'Selected data was successfully deleted!');
+                    
+                    // Hapus status penghapusan setelah menampilkan notifikasi
+                    sessionStorage.removeItem('deleteStatus');
+                }
             });
 
             // Handle form submission for adding data
@@ -703,7 +719,7 @@
                 }).fail(function(jqXHR, textStatus, errorThrown) {
                     console.error('Error:', jqXHR.responseText);
                     showNotification('error',
-                        'Terjadi kesalahan saat menambahkan customer.'); // Menampilkan pesan error
+                        'An error occurred while adding customer data.'); // Menampilkan pesan error
                 }).always(function() {
                     // Enable kembali tombol submit dan kembalikan teks aslinya
                     $submitButton.prop('disabled', false).html('Save');
@@ -736,7 +752,7 @@
             $('#editCustomerForm').on('submit', function(e) {
                 e.preventDefault();
                 let formData = $(this).serialize();
-                let id = $('#edit-id').val();
+                let id = $('#edit-id').val() - 1;
                 $.ajax({
                     url: `{{ config('app.api_url') }}/customers/${id}`,
                     type: 'PUT',
@@ -747,12 +763,12 @@
                             $('#editDataModal').modal('hide');
                             $('#customer-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal memperbarui customer.');
+                            showNotification('error', 'Failed to update customer data.');
                         }
                     },
                     error: function() {
                         showNotification('error',
-                            'Terjadi kesalahan saat memperbarui customer.');
+                            'An error occurred while updating customer data.');
                     }
                 });
             });
@@ -773,11 +789,11 @@
                             $('#deleteModal').modal('hide');
                             $('#customer-table').DataTable().ajax.reload();
                         } else {
-                            showNotification('error', 'Gagal menghapus customer.');
+                            showNotification('error', 'Failed to delete customer data.');
                         }
                     },
                     error: function() {
-                        showNotification('error', 'Terjadi kesalahan saat menghapus customer.');
+                        showNotification('error', 'An error occurred while deleting customer data.');
                     }
                 });
             });
