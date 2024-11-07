@@ -28,17 +28,6 @@
             </div>
         </div>
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <strong>Ups!</strong> Terjadi kesalahan:
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
         {{-- Table --}}
         @canany(['item request.viewAll', 'item request.viewFilterbyUser'])
         <table id="permintaan-table" class="table table-bordered table-striped table-hover" width="100%" style="font-size: 14px;">
@@ -563,7 +552,11 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 
     <!-- Alert -->
-    @if (session('error'))
+    @if ($errors->any())
+        <script>
+            showNotification('error', '{{ $errors->first() }}');
+        </script>
+    @elseif (session('error'))
         <script>
             showNotification('error', '{{ session('error') }}');
         </script>
@@ -571,8 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <script>
             showNotification('success', '{{ session('success') }}');
         </script>
-    @endif
-    
+    @endif    
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <!-- DataTables Bootstrap 4 integration -->

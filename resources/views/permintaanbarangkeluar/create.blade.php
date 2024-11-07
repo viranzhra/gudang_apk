@@ -49,19 +49,21 @@
             @endif
  
             <div class="grid md:grid-cols-2 md:gap-6">
+                @canall(['item request.create', 'item request.viewAll', 'item request.confirm'])
                 <div class="relative z-0 w-full mb-3 group">
                     <label for="customer" class="form-label">Customer</label>
-                    <select id="customer" name="customer_id"
+                        <select id="customer" name="customer_id"
                         class="select2 form-control">
                         <option value="">Select customer</option>
                         @foreach ($customer as $d)
                             <option value="{{ $d->id }}">{{ $d->nama }}</option>
                         @endforeach
-                    </select>
+                        </select>
                     @error('customer_id')
                         <span class="error-message">{{ $message }}</span>
                     @enderror
                 </div>
+                @endcanall
                 <div class="relative z-0 w-full mb-3 group">
                     <label for="keperluan" class="form-label">Purpose</label>
                     <select id="keperluan" name="keperluan_id"
@@ -541,7 +543,16 @@
 
             // Initialize items based on the default quantity
             updatePermintaanInputs();
-            $('.select2').select2();
+            // $('.select2').select2();
+
+            if ($('#customer').length) {
+                $('#customer').select2();
+            }
+
+            if ($('#keperluan').length) {
+                $('#keperluan').select2();
+            }
+
             initializeSelect2(1);
 
             // Validasi awal saat halaman dimuat

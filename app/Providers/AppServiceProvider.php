@@ -59,5 +59,24 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('endcanall', function () {
             return "<?php endif; ?>";
         });    
+
+        app()->singleton('permission', function () {
+            return new class {
+                public function can($permission)
+                {
+                    return in_array($permission, session('permissions', []));
+                }
+    
+                public function canAny(array $permissions)
+                {
+                    return !empty(array_intersect($permissions, session('permissions', [])));
+                }
+    
+                public function canAll(array $permissions)
+                {
+                    return empty(array_diff($permissions, session('permissions', [])));
+                }
+            };
+        });
     }
 }
