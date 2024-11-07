@@ -201,7 +201,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     const generateBAButton = status === 'Disetujui' ? `
                         <a type="button" class="btn d-flex align-items-center justify-content-center"
-                            href="/permintaanbarangkeluar/generateBAST/${id}" style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px">
+                            href="/permintaanbarangkeluar/generateBAST/${id}" style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px"
+                            onclick="this.querySelector('iconify-icon').setAttribute('icon', 'line-md:downloading-loop')">
                             <iconify-icon icon="line-md:download-loop" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
                             Report
                         </a>
