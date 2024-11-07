@@ -15,6 +15,11 @@
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
     <style>
         .container {
             width: 80%;
@@ -192,6 +197,10 @@
         .btn-action:hover .icon-delete {
             opacity: 0.8;
         }
+
+        .icon-shape{display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle}.icon-sm{width:2rem;height:2rem}
+        
+        .select2-container .select2-selection--single{background-color:rgb(249 250 251 / var(--tw-bg-opacity));border-radius:.5rem;height:40px;display:flex;align-items:center}.select2-container .select2-selection--single .select2-selection__rendered{padding-left:10px}.select2-container--default .select2-selection--single .select2-selection__arrow{top:unset;right:10px}
     </style>
 
 </head>
@@ -638,7 +647,7 @@
                         var s1 = document.createElement("script"),
                             s0 = document.getElementsByTagName("script")[0];
                         s1.async = true;
-                        s1.src = 'https://embed.tawk.to/671f0e014304e3196ad95191/1ib8kteba';
+                        s1.src = 'shttps://embed.tawk.to/671f0e014304e3196ad95191/1ib8kteba';
                         s1.charset = 'UTF-8';
                         s1.setAttribute('crossorigin', '*');
                         s0.parentNode.insertBefore(s1, s0);

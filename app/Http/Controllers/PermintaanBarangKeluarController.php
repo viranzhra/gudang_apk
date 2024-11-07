@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\App;
 
 class PermintaanBarangKeluarController extends Controller
 {
@@ -32,9 +33,15 @@ class PermintaanBarangKeluarController extends Controller
                 $barang = collect($data['barang'])->map(function ($item) {
                     return (object) $item;
                 });
-                $customer = collect($data['customer'])->map(function ($item) {
+
+                $customer = isset($data['customer']) ? collect($data['customer'])->map(function ($item) {
                     return (object) $item;
-                });
+                }) : null;
+
+                // if (App::make('permission')->canAny(['item request.create', 'item request.viewFilterbyUser'])) {
+                //     $customer = (object) $data['customer'];
+                // }
+
                 $keperluan = collect($data['keperluan'])->map(function ($item) {
                     return (object) $item;
                 });
@@ -134,12 +141,14 @@ class PermintaanBarangKeluarController extends Controller
 
         if ($response->status() === 422) {
             $responseData = $response->json();
-            if (isset($responseData['message']) && strpos($responseData['message'], 'Serial number sudah terpakai') !== false) {
-                return back()->withErrors($responseData['message'])->withInput();
+            if (isset($responseData['message'])) {
+                if (is_array($responseData['message'])) {
+                    return back()->withErrors($responseData['message'])->withInput();
+                }
             }
         }
 
-        return back()->withErrors('Gagal menambahkan data permintaan barang keluar.')->withInput();
+        return redirect('/permintaanbarangkeluar')->withErrors('Gagal menambahkan data permintaan barang keluar.')->withInput();
     }
 
     public function delete($id)
