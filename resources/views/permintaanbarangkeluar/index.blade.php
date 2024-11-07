@@ -198,6 +198,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         ` : '';
                         document.getElementById('modalFooterContent').innerHTML = footerContent;
                     @endifcan
+
+                    const generateBAButton = status === 'Disetujui' ? `
+                        <a type="button" class="btn d-flex align-items-center justify-content-center"
+                            href="/permintaanbarangkeluar/generateBAST/${id}" style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px">
+                            <iconify-icon icon="line-md:download-loop" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                            Report
+                        </a>
+                    ` : '';
+                    document.getElementById('modalFooterContent').innerHTML += generateBAButton;                
                 })
                 .catch(error => {
                     console.error('Error fetching detail data:', error);

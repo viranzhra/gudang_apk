@@ -16,6 +16,7 @@ use App\Http\Controllers\SerialNumberController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\BASTController;
 use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
@@ -143,6 +144,8 @@ Route::middleware('jwt_token')->group(function () {
     Route::get('/permintaanbarangkeluar/delete/{id}', [PermintaanBarangKeluarController::class, 'delete'])->name('permintaanbarangkeluar.delete');
     Route::get('/permintaanbarangkeluar/selectSN/{id}', [PermintaanBarangKeluarController::class, 'selectSN'])->name('permintaanbarangkeluar.selectSN')->middleware('check:item request.confirm');
     Route::post('/permintaanbarangkeluar/setSN', [PermintaanBarangKeluarController::class, 'setSN'])->name('permintaanbarangkeluar.setSN')->middleware('check:item request.confirm');
+
+    Route::get('/permintaanbarangkeluar/generateBAST/{id}', [BASTController::class, 'index'])->name('generateBAST');
 
     Route::get('/barangkeluar', [BarangKeluarController::class, 'index'])->name('barangkeluar.index')->middleware('check:outbound item.view');
     Route::get('/barangkeluar/show', [BarangKeluarController::class, 'show'])->name('barangkeluar.show')->middleware('check:outbound item.view');
