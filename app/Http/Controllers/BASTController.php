@@ -11,7 +11,12 @@ class BASTController extends Controller
     public function index($id)
     {
         // Mendapatkan data permintaan barang keluar
-        $response = Http::withToken(session('jwt_token'))->get(config('app.api_url') . "/permintaanbarangkeluar");
+        if (!app('permission')->can('item request.viewAll')) {
+            $response = Http::withToken(session('jwt_token'))->get(config('app.api_url') . "/permintaanbarangkeluar/onlyfor");
+        } else {
+            $response = Http::withToken(session('jwt_token'))->get(config('app.api_url') . "/permintaanbarangkeluar");
+        }
+        
         $permintaan_barang_keluar = $response->json();
         $allData = $permintaan_barang_keluar['data'];
         $filteredData = collect($allData)->firstWhere('id', $id);
