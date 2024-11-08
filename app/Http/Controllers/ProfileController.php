@@ -17,7 +17,7 @@ class ProfileController extends Controller
 
         if ($response->successful()) {
             $user = $response->json();
-            return view('profile.edit', compact('user'));
+            return view('profile.user_profile', compact('user'));
         } else {
             return redirect()->route('dashboard')->withErrors(['error' => 'Tidak dapat mengambil data pengguna.']);
         }
@@ -37,7 +37,7 @@ class ProfileController extends Controller
             ]);
 
         if ($response->successful()) {
-            return redirect()->route('profile.edit')->with('success', 'Profil berhasil diperbarui.');
+            return redirect()->route('profile.edit')->with('success', 'Profile updated successfully.');
         } else {
             return back()->withErrors($response->json());
         }

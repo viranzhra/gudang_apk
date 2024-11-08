@@ -198,6 +198,17 @@
             opacity: 0.8;
         }
 
+        .dropdown-item.active {
+            background-color: #635bff; /* Light gray background */
+            color: #ffffff; /* Blue text color */
+            font-weight: bold;
+            border-radius: 5px; /* Optional rounded corners */
+        }
+
+        /* .dropdown-item:hover {
+            background-color: none;
+        } */
+
         .icon-shape{display:inline-flex;align-items:center;justify-content:center;text-align:center;vertical-align:middle}.icon-sm{width:2rem;height:2rem}
 
         .select2-container .select2-selection--single{background-color:rgb(249 250 251 / var(--tw-bg-opacity));border-radius:.5rem;height:40px;display:flex;align-items:center}.select2-container .select2-selection--single .select2-selection__rendered{padding-left:10px}.select2-container--default .select2-selection--single .select2-selection__arrow{top:unset;right:10px}
@@ -575,11 +586,18 @@
                                         <div class="px-4 py-2">
                                             <p class="mb-0 fs-3 text-black" style="font-weight: 700">{{ session('user_name') }}</p>
                                         </div>
-                                        <a href="javascript:void(0)"
+                                        {{-- <a href="javascript:void(0)"
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-user fs-6"></i>
                                             <p class="mb-0 fs-3">My Profile</p>
-                                        </a>
+                                        </a> --}}
+                                        <!-- My Profile Link with Active State -->
+                                        <div class="d-flex justify-content-center">
+                                            <a href="/profile" style="width: 167px;" class="d-flex align-items-center gap-2 dropdown-item dropdown-item-small {{ request()->is('profile') ? 'active' : '' }}">
+                                                <i class="ti ti-user fs-6"></i>
+                                                <p class="mb-0 fs-3">My Profile</p>
+                                            </a>
+                                        </div>                                        
                                         {{-- <a href="javascript:void(0)"
                                             class="d-flex align-items-center gap-2 dropdown-item">
                                             <i class="ti ti-mail fs-6"></i>
