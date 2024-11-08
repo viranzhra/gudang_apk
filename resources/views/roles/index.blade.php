@@ -114,7 +114,7 @@
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $.ajax({
-                                url: `{{ route('roles.destroy', '') }}/${roleId}`,
+                                url: `{{ env('API_URL') }}/roles/${roleId}`,
                                 type: 'POST',
                                 data: {
                                     _method: 'DELETE',
