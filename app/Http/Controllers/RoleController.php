@@ -49,6 +49,7 @@ class RoleController extends Controller
             'item request.viewFilterbyUser' => 'Lihat Permintaan Barang (By User)',
             'item request.create' => 'Tambah Permintaan Barang',
             'item request.confirm' => 'Konfirmasi Permintaan Barang',
+            'item request.generate BA' => 'Cetak BA',
             'report.view stock' => 'Lihat Laporan Stok',
             'report.export stock' => 'Export Laporan Stok',
             'report.view incoming item' => 'Lihat Laporan Barang Masuk',

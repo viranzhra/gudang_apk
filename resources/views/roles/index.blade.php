@@ -31,6 +31,8 @@
                     $('#roles-table').DataTable({
                         processing: true,
                         serverSide: true,
+                        pageLength: 5,
+                        lengthMenu: [5, 10, 25, 50, 100], 
                         ajax: {
                             url: '{{ env('API_URL') }}/roles',
                             headers: {
@@ -165,12 +167,13 @@
                     $('#users-table').DataTable({
                         processing: true,
                         serverSide: true,
+                        pageLength: 5,
+                        lengthMenu: [5, 10, 25, 50, 100],                        
                         ajax: {
-                            url: '{{ env('API_URL') }}/roles',
+                            url: '{{ env('API_URL') }}/roles/assign',
                             headers: {
                                 'Authorization': 'Bearer ' + '{{ $jwt_token }}'
-                            },
-                            dataSrc: 'users'
+                            }
                         },
                         columns: [{
                                 data: 'name',
@@ -204,7 +207,7 @@
                             @endcan
                         ]
                     });
-                });
+                });            
             </script>
 
             <!-- Modal untuk Edit Role -->
