@@ -50,7 +50,7 @@
                                 render: function(data, type, row) {
                                     if (!data || data.length === 0) return '';
 
-                                    const displayLimit = 3;
+                                    const displayLimit = 2;
                                     const permissions = data.slice(0, displayLimit).map(permission =>
                                         permissionNames[permission] || permission);
                                     const joinedPermissions = permissions.join(', ');

@@ -31,6 +31,7 @@ class AuthToken
             'user_name' => $userData['name'],
             'roles' => $userData['roles'],
             'permissions' => $userData['permissions'],
+            'photo' => $userData['photo'] ?? null,
         ]);
 
         View::share('jwt_token', $token);
