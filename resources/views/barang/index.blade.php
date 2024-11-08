@@ -473,9 +473,9 @@
                             }
                         @endcanany
                     ],
-                    // order: [
-                    //     [5, 'asc']
-                    // ],
+                    order: [
+                        [2, 'asc']
+                    ],
                 });
             });
         </script>

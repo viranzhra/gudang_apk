@@ -146,6 +146,30 @@
                             <input type="email" id="email" name="email" class="form-control" required />
                         </div>
                         <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <input type="password" id="password" value="customer123" class="form-control" disabled />
+                                <style>.btn-outline-secondary{background-color:var(--bs-secondary-bg);--bs-btn-hover-bg:none;--bs-btn-active-bg:none;border:var(--bs-border-width) solid #e0e6eb;--bs-btn-hover-border-color:#e0e6eb;--bs-btn-active-border-color:#e0e6eb;-webkit-box-shadow:inset 0 1px 2px rgba(0, 0, 0, 0.075);box-shadow:inset 0 1px 2px rgba(0, 0, 0, 0.075)}</style>
+                                <button class="btn btn-outline-secondary" style="" type="button" id="togglePassword">
+                                    <iconify-icon icon="mdi:eye" id="eyeIcon" style="color: black;"></iconify-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('togglePassword').addEventListener('click', function() {
+                                const passwordInput = document.getElementById('password');
+                                const eyeIcon = document.getElementById('eyeIcon');
+
+                                if (passwordInput.type === 'password') {
+                                    passwordInput.type = 'text';
+                                    eyeIcon.setAttribute('icon', 'mdi:eye-off');
+                                } else {
+                                    passwordInput.type = 'password';
+                                    eyeIcon.setAttribute('icon', 'mdi:eye');
+                                }
+                            });
+                        </script>
+                        <div class="mb-3">
                             <label for="alamat" class="form-label">Address</label>
                             <input type="text" id="alamat" name="alamat" class="form-control" required />
                         </div>
@@ -651,7 +675,7 @@
                     if (response.ok) {
                         // Set status penghapusan berhasil ke sessionStorage
                         sessionStorage.setItem('deleteStatus', 'success');
-                        
+
                         // Reload halaman
                         location.reload();
                     } else {
@@ -668,7 +692,7 @@
             $(window).on('load', function() {
                 if (sessionStorage.getItem('deleteStatus') === 'success') {
                     showNotification('success', 'Selected data was successfully deleted!');
-                    
+
                     // Hapus status penghapusan setelah menampilkan notifikasi
                     sessionStorage.removeItem('deleteStatus');
                 }
@@ -794,7 +818,8 @@
                         }
                     },
                     error: function() {
-                        showNotification('error', 'An error occurred while deleting customer data.');
+                        showNotification('error',
+                            'An error occurred while deleting customer data.');
                     }
                 });
             });
