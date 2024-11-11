@@ -39,7 +39,9 @@
                                         <div class="form-check form-switch">
                                             <input type="checkbox" name="permissions[]" value="{{ $permission['name'] }}"
                                                 class="form-check-input" id="permission-{{ $permission['id'] }}"
-                                                {{ in_array($permission['name'], old('permissions', $rolePermissions ?? [])) ? 'checked' : '' }}>
+                                                {{ in_array($permission['name'], old('permissions', $rolePermissions ?? [])) ? 'checked' : '' }}
+                                                onclick="handlePermissionCheck(this, '{{ $permission['name'] }}')"
+                                                >
                                             <label class="form-check-label" for="permission-{{ $permission['id'] }}">
                                                 {{ $permissionNames[$permission['name']] ?? ucfirst(str_replace("{$module}.", '', $permission['name'])) }}
                                             </label>
@@ -49,6 +51,23 @@
                             </div>
                         </div>
                     @endforeach
+
+                    <script>
+                        function handlePermissionCheck(checkbox, permissionName) {
+                            if (permissionName === 'item request.viewAll' || permissionName === 'item request.viewFilterbyUser') {
+                                const viewAll = document.querySelector('input[value="item request.viewAll"]');
+                                const viewFilter = document.querySelector('input[value="item request.viewFilterbyUser"]');
+                                
+                                if (checkbox.checked) {
+                                    if (permissionName === 'item request.viewAll') {
+                                        viewFilter.checked = false;
+                                    } else {
+                                        viewAll.checked = false;
+                                    }
+                                }
+                            }
+                        }
+                    </script>
 
                 </div>
 

@@ -139,6 +139,7 @@ Route::middleware('jwt_token')->group(function () {
     Route::get('/permintaanbarangkeluar/get-by-barang/{id}', [PermintaanBarangKeluarController::class, 'getSerialNumberByBarang']);
     Route::post('/permintaanbarangkeluar/store', [PermintaanBarangKeluarController::class, 'store'])->name('permintaanbarangkeluar.store')->middleware('check:item request.create');
     Route::post('/permintaanbarangkeluar/update-status', [PermintaanBarangKeluarController::class, 'updateStatus'])->middleware('check:item request.confirm');
+    Route::post('/permintaanbarangkeluar/insert-project-po', [PermintaanBarangKeluarController::class, 'insertProjectPO'])->middleware('check:item request.generate BA');
     //Route::get('/permintaanbarangkeluar/edit/{id}', [PermintaanBarangKeluarController::class, 'edit'])->name('permintaanbarangkeluar.edit');
     Route::put('/permintaanbarangkeluar/update/{id}', [PermintaanBarangKeluarController::class, 'update'])->name('permintaanbarangkeluar.update')->middleware('check:item request.confirm');
     Route::get('/permintaanbarangkeluar/delete/{id}', [PermintaanBarangKeluarController::class, 'delete'])->name('permintaanbarangkeluar.delete');

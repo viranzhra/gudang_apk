@@ -398,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitStatusUpdate(id, 'Rejected', reason);
     }
 
-    function submitStatusUpdate(id, status, reason = null, project = null, po = null) {
+    function submitStatusUpdate(id, status, reason = null) {
         fetch('/permintaanbarangkeluar/update-status', {
             method: 'POST',
             headers: {
@@ -409,8 +409,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 id: id,
                 status: status,
                 reason: reason,
-                project: project,
-                po: po
             })
         })
         .then(response => response.json())
@@ -419,14 +417,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (existingModal) {
                 const bsModal = bootstrap.Modal.getInstance(existingModal);
                 bsModal.hide();
-            }
-
-            const projectPOModal = document.getElementById('projectPOModal');
-            if (projectPOModal) {
-                const bsModal = bootstrap.Modal.getInstance(projectPOModal);
-                bsModal.hide();
-                const table = $('#permintaan-table').DataTable();
-                table.ajax.reload();
             }
 
             if (data.success) {
@@ -498,7 +488,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const project = document.getElementById('projectInput').value;
         const po = document.getElementById('poInput').value;
         
-        fetch('/permintaanbarangkeluar/update-status', {
+        fetch('/permintaanbarangkeluar/insert-project-po', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -506,7 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 id: id,
-                status: 'InsertProjectPO',
                 project: project,
                 po: po
             })

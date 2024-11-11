@@ -182,6 +182,26 @@ class PermintaanBarangKeluarController extends Controller
         );
     }
 
+    public function insertProjectPO(Request $request)
+    {
+        $response = Http::withToken(session('jwt_token'))->post(config('app.api_url') . '/permintaanbarangkeluar/insert-project-po', $request->all());
+
+        if ($response->successful()) {
+            return response()->json([
+                'success' => true,
+                'message' => $response->json()['message'],
+            ]);
+        }
+
+        return response()->json(
+            [
+                'success' => false,
+                'message' => $response->json()['message'],
+            ],
+            $response->status(),
+        );
+    }
+
     public function selectSN($id)
     {
         $response = Http::withToken(session('jwt_token'))->get(config('app.api_url') . '/permintaanbarangkeluar/selectSN/' . $id);
