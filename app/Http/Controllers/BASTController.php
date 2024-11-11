@@ -31,19 +31,29 @@ class BASTController extends Controller
         $templateProcessor = new TemplateProcessor(public_path('templates/bast.docx'));
 
         // Mengisi data umum ke template
-        $tgl_bln = date('dm', strtotime($filteredData['updated_at']));
+        // $tgl_bln = date('dm', strtotime($filteredData['updated_at']));
+        $tgl_bln = date('dm');
         $templateProcessor->setValue('${tgl_bln}', $tgl_bln);     
 
-        $bln_rmw = date('m', strtotime($filteredData['updated_at']));
+        // $bln_rmw = date('m', strtotime($filteredData['updated_at']));
+        $bln_rmw = date('m');
         $romawi = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
         $bln_rmw = $romawi[intval($bln_rmw) - 1];
         $templateProcessor->setValue('${bln_rmw}', $bln_rmw);     
 
-        $tahun = date('Y', strtotime($filteredData['updated_at']));
+        // $tahun = date('Y', strtotime($filteredData['updated_at']));
+        $tahun = date('Y');
         $templateProcessor->setValue('${tahun}', $tahun);
 
-        $tanggal_keluar = date('d F Y', strtotime($filteredData['updated_at']));
+        // $tanggal_keluar = date('d F Y', strtotime($filteredData['updated_at']));
+        $tanggal_keluar = date('d F Y');
         $templateProcessor->setValue('${tanggal_keluar}', $tanggal_keluar);
+
+        $project = $filteredData['ba_project'] ?? null;
+        $templateProcessor->setValue('${project}', $project);
+
+        $no_po = $filteredData['ba_no_po'] ?? null;
+        $templateProcessor->setValue('${no_po}', $no_po);
 
         // Membuat data untuk tabel yang akan di-clone
         $tableRows = [];

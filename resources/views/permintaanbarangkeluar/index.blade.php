@@ -51,7 +51,7 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     window.showDetailModal = function(id, namaCustomer, namaKeperluan, namaPeminta, tanggalAwal, extend,
-        namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status, alasan) {
+        namaTanggalAkhir, TanggalAkhir, keterangan, jumlah, status, alasan, ba_project, ba_no_po) {
         // Hapus modal sebelumnya jika ada
         const existingModal = document.getElementById('detailModal');
         if (existingModal) {
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div id="modalFooterContent"></div>
+                        <div id="modalFooterContent" style="display:flex;gap:12px"></div>
                         <button type="button" class="d-none btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                     </div>
                 </div>
@@ -201,6 +201,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     @ifcan('item request.generate BA')
                     const generateBAButton = status === 'Approved' ? `
+                        <button type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
+                                onclick="updateStatus(${id}, 'InsertProjectPO', '${ba_project}', '${ba_no_po}')"
+                                data-bs-dismiss="modal">
+                            <iconify-icon icon="ic:round-post-add" style="font-size: 18px; margin-right: 5px;"></iconify-icon> Project & Po</button>
                         <a type="button" class="btn d-flex align-items-center justify-content-center"
                             href="/permintaanbarangkeluar/generateBAST/${id}" style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px"
                             onclick="this.querySelector('iconify-icon').setAttribute('icon', 'line-md:downloading-loop')">
@@ -324,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 render: function(data, type, row) {
                     return `
                         <div class="flex gap-x-2">
-                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.requested_by || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}', '${row.alasan || ''}')">
+                            <button aria-label="Detail" class="btn-detail btn-action" style="border: none;" onclick="showDetailModal(${data || ''}, '${row.nama_customer || ''}', '${row.nama_keperluan || ''}', '${row.requested_by || ''}', '${row.tanggal_awal || ''}', '${row.extend || ''}', '${row.nama_tanggal_akhir || ''}', '${row.tanggal_akhir || ''}', '${row.keterangan || ''}', '${row.jumlah || ''}', '${row.status || ''}', '${row.alasan || ''}', '${row.ba_project || ''}', '${row.ba_no_po || ''}')">
                                 <iconify-icon icon="mdi:file-document-outline" class="icon-detail"></iconify-icon>
                             </button>
                         </div>
@@ -338,7 +342,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-    function updateStatus(id, status) {
+    function updateStatus(id, status, ba_project = null, ba_no_po = null) {
         if (status === 'Rejected') {
             const modalHtml = `
                 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
@@ -372,6 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Tampilkan modal
             const rejectModal = new bootstrap.Modal(document.getElementById('rejectModal'));
             rejectModal.show();
+        } else if (status === 'InsertProjectPO') {
+            showProjectPOModal(id, ba_project,  ba_no_po);;
         } else {
             submitStatusUpdate(id, status);
         }
@@ -392,7 +398,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitStatusUpdate(id, 'Rejected', reason);
     }
 
-    function submitStatusUpdate(id, status, reason = null) {
+    function submitStatusUpdate(id, status, reason = null, project = null, po = null) {
         fetch('/permintaanbarangkeluar/update-status', {
             method: 'POST',
             headers: {
@@ -402,7 +408,9 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({
                 id: id,
                 status: status,
-                reason: reason
+                reason: reason,
+                project: project,
+                po: po
             })
         })
         .then(response => response.json())
@@ -411,6 +419,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (existingModal) {
                 const bsModal = bootstrap.Modal.getInstance(existingModal);
                 bsModal.hide();
+            }
+
+            const projectPOModal = document.getElementById('projectPOModal');
+            if (projectPOModal) {
+                const bsModal = bootstrap.Modal.getInstance(projectPOModal);
+                bsModal.hide();
+                const table = $('#permintaan-table').DataTable();
+                table.ajax.reload();
             }
 
             if (data.success) {
@@ -422,6 +438,94 @@ document.addEventListener('DOMContentLoaded', function() {
                         location.reload();
                     }, 3000);
                 }
+            } else {
+                showNotification('error', data.message);
+                setTimeout(function() {
+                    location.reload();
+                }, 3000);
+            }
+        })
+        .catch(error => {
+            showNotification('error', error.message);
+            setTimeout(function() {
+                location.reload();
+            }, 3000);
+        });
+    }
+
+    function showProjectPOModal(id, ba_project = null, ba_no_po = null) {
+        const modalHtml = `
+            <div class="modal fade" id="projectPOModal" tabindex="-1" aria-labelledby="projectPOModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="projectPOModalLabel">Insert Project and No PO</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="projectInput" class="form-label">Project</label>
+                                <input type="text" class="form-control" id="projectInput" placeholder="Enter project" value="${ba_project || ''}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="poInput" class="form-label">No PO</label>
+                                <input type="text" class="form-control" id="poInput" placeholder="Enter PO number" value="${ba_no_po || ''}">
+                            </div>
+                        </div>
+                        <div class="modal-footer d-flex" id="modalFooter">
+                            <button id="submitProjectPOBtn" type="button" class="btn btn-primary" onclick="submitProjectPO(${id})">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const existingModal = document.getElementById('projectPOModal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        const projectPOModal = new bootstrap.Modal(document.getElementById('projectPOModal'));
+        projectPOModal.show();
+    }
+
+    function submitProjectPO(id) {
+        const submitProjectPOBtn = document.getElementById('submitProjectPOBtn');
+        submitProjectPOBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        submitProjectPOBtn.disabled = true;
+
+        const project = document.getElementById('projectInput').value;
+        const po = document.getElementById('poInput').value;
+        
+        fetch('/permintaanbarangkeluar/update-status', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                id: id,
+                status: 'InsertProjectPO',
+                project: project,
+                po: po
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const modalFooter = document.getElementById('modalFooter');
+                modalFooter.innerHTML = `
+                    <a type="button" class="btn d-flex align-items-center justify-content-center" 
+                        href="/permintaanbarangkeluar/generateBAST/${id}" 
+                        style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px"
+                        onclick="this.querySelector('iconify-icon').setAttribute('icon', 'line-md:downloading-loop')">
+                        <iconify-icon icon="line-md:download-loop" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                        Report
+                    </a>
+                `;
+                const table = $('#permintaan-table').DataTable();
+                table.ajax.reload();
             } else {
                 showNotification('error', data.message);
                 setTimeout(function() {
