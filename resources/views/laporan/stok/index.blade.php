@@ -122,7 +122,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'https://doaibutiri.my.id/gudang/api/laporan/stok', // Use Laravel route helper
+                url: '{{ env('API_URL') }}/laporan/stok', // Use Laravel route helper
                 type: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + '{{ session('token') }}'
@@ -194,7 +194,7 @@ $(document).on('click', '.view-btn', function() {
 
         // Make AJAX request to get the stock details
         $.ajax({
-            url: `https://doaibutiri.my.id/gudang/api/laporan/stok/${barangId}`, // Update to the correct route
+            url: `{{ env('API_URL') }}/laporan/stok/${barangId}`, // Update to the correct route
             type: 'GET',
             success: function(response) {
                 // Loop through the response and append each serial number and status to the modal

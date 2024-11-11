@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="col-9">
                                         ${detail.nama_barang || '—'} — 
                                         ${'<b>' + detail.total_barang + '</b>' || '—'}
-                                        ${status === 'Disetujui' ? `
+                                        ${status === 'Approved' ? `
                                         <div class="dropdown d-inline-block ms-2">
                                             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="dropdownSerialNumber${detail.barang_id}" data-bs-toggle="dropdown" aria-expanded="false" onclick="window.loadSerialNumbers(${id}, ${detail.barang_id}, this)">
                                                 Serial Numbers
@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <div class="col-3 font-weight-bold">Item Type</div>
                                     <div class="col-9">${detail.nama_jenis_barang || '—'}</div>
                                 </div>
-                                <div class="row ${status === 'Disetujui' ? 'mt-2' : ''}">
+                                <div class="row ${status === 'Approved' ? 'mt-2' : ''}">
                                     <div class="col-3 font-weight-bold">Supplier</div>
                                     <div class="col-9">${detail.nama_supplier || '—'}</div>
                                 </div>
@@ -167,9 +167,9 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-9">${jumlah || '—'}</div>
                             <div class="col-3 fw-bold">Status:</div>
                             <div class="col-9">
-                                ${status === 'Ditolak' ? `<span class="badge text-bg" style="background-color: #910a0a; color: white;">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Reasons:</span></div><p>${alasan}</p></span>` :
-                                  status === 'Belum Disetujui' ? `<span class="badge text-bg-warning">${status}</span>` :
-                                  status === 'Disetujui' ? `<span class="badge text-bg" style="background-color: #19850b; color: white;">${status}</span>` :
+                                ${status === 'Rejected' ? `<span class="badge text-bg" style="background-color: #910a0a; color: white;">${status}</span><br><span style="display:flex;gap:4px;width:100%;margin-top:10px"><div><span class="badge text-bg-light" style="padding:6px">Reasons:</span></div><p>${alasan}</p></span>` :
+                                  status === 'Pending' ? `<span class="badge text-bg-warning">${status}</span>` :
+                                  status === 'Approved' ? `<span class="badge text-bg" style="background-color: #19850b; color: white;">${status}</span>` :
                                   status ? `<span class="badge text-bg-secondary">${status}</span>` : '—'}
                             </div>
                             ${detailContent}
@@ -183,24 +183,24 @@ document.addEventListener('DOMContentLoaded', function() {
                     modalContentElement.classList.remove('d-none');
 
                     @ifcan('item request.confirm')                    
-                        const footerContent = status === 'Belum Disetujui' ? `
+                        const footerContent = status === 'Pending' ? `
                             <button type="button" class="btn" style="background-color: #19850b; color: white;"
-                                onclick="updateStatus(${id}, 'Diproses')"
-                                data-bs-dismiss="modal">Proses</button>
+                                onclick="updateStatus(${id}, 'Processing')"
+                                data-bs-dismiss="modal">Process</button>
                             <button type="button" class="btn" style="background-color: #910a0a; color: white;"
-                                onclick="updateStatus(${id}, 'Ditolak')"
-                                data-bs-dismiss="modal">Tolak</button>
-                        ` : status === 'Diproses' ? `
+                                onclick="updateStatus(${id}, 'Rejected')"
+                                data-bs-dismiss="modal">Reject</button>
+                        ` : status === 'Processing' ? `
                             <button type="button" class="btn btn-primary"
                                 onclick="window.location.href='/permintaanbarangkeluar/selectSN/${id}'">
-                                Pilih SN
+                                Select SN
                             </button>
                         ` : '';
                         document.getElementById('modalFooterContent').innerHTML = footerContent;
                     @endifcan
 
                     @ifcan('item request.generate BA')
-                    const generateBAButton = status === 'Disetujui' ? `
+                    const generateBAButton = status === 'Approved' ? `
                         <a type="button" class="btn d-flex align-items-center justify-content-center"
                             href="/permintaanbarangkeluar/generateBAST/${id}" style="background-color: #19850b; color: white;width: 90px; height: 40px;padding:20px"
                             onclick="this.querySelector('iconify-icon').setAttribute('icon', 'line-md:downloading-loop')">
@@ -306,11 +306,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 name: 'permintaan_barang_keluar.status',
                 defaultContent: '-',
                 render: function(data, type, row) {
-                    if (data === 'Ditolak') {
+                    if (data === 'Rejected') {
                         return '<span class="badge text-bg" style="background-color: #910a0a; color: white;">' + data + '</span>';
-                    } else if (data === 'Belum Disetujui') {
+                    } else if (data === 'Pending') {
                         return '<span class="badge text-bg-warning">' + data + '</span>';
-                    } else if (data === 'Disetujui') {
+                    } else if (data === 'Approved') {
                         return '<span class="badge text-bg" style="background-color: #19850b; color: white;">' + data + '</span>';
                     } else {
                         return '<span class="badge text-bg-secondary">' + data + '</span>';
@@ -339,7 +339,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
     function updateStatus(id, status) {
-        if (status === 'Ditolak') {
+        if (status === 'Rejected') {
             const modalHtml = `
                 <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <textarea id="rejectReason" class="form-control" placeholder="Masukkan alasan penolakan..." maxlength="150" rows="3"></textarea>
+                                <textarea id="rejectReason" class="form-control" placeholder="Enter reason for rejection..." maxlength="150" rows="3"></textarea>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
         submitBtn.disabled = true;
 
-        submitStatusUpdate(id, 'Ditolak', reason);
+        submitStatusUpdate(id, 'Rejected', reason);
     }
 
     function submitStatusUpdate(id, status, reason = null) {
@@ -414,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (data.success) {
-                if (status === 'Diproses') {
+                if (status === 'Processing') {
                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
                 } else {
                     showNotification('success', data.message);
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //                 //     location.reload();
 //                 // });
 
-//                 if (status === 'Diproses') {
+//                 if (status === 'Processing') {
 //                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
 //                 } else {
 //                     showNotification('success', data.message);
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
 //         },
 //         body: JSON.stringify({
 //             id: id,
-//             status: 'Ditolak',
+//             status: 'Rejected',
 //             reason: reason
 //         })
 //     })

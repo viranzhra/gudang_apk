@@ -196,7 +196,7 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'https://doaibutiri.my.id/gudang/api/laporan/barangmasuk', // API URL
+                url: '{{ env('API_URL') }}/laporan/barangmasuk', // API URL
                 type: 'GET',
                 data: function(d) {
                     // Kirim rentang tanggal dan input pencarian sebagai parameter
@@ -254,7 +254,7 @@ $(document).on('click', '.detail-btn', function() {
 
     // Fetch details from the server
     $.ajax({
-        url: `https://doaibutiri.my.id/gudang/api/laporan/barangmasuk/${permintaanId}`, // Fixed the URL concatenation
+        url: `{{ env('API_URL') }}/laporan/barangmasuk/${permintaanId}`, // Fixed the URL concatenation
         type: 'GET',
         headers: {
             'Authorization': 'Bearer ' + '{{ $jwt_token }}', // Fixed token reference

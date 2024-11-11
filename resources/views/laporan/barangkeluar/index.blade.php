@@ -189,7 +189,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: 'https://doaibutiri.my.id/gudang/api/laporan/barangkeluar',
+                    url: '{{ env('API_URL') }}/laporan/barangkeluar',
                     type: 'GET',
                     data: function(d) {
                         d.search = $('input[type="search"]').val();
@@ -275,7 +275,7 @@
 
                 // Fetch details from the server
                 $.ajax({
-                    url: `https://doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId}`,
+                    url: `{{ env('API_URL') }}/laporan/barangkeluar/${permintaanId}`,
                     type: 'GET',
                     headers: {
                         'Authorization': 'Bearer ' + '{{ session('token') }}',
