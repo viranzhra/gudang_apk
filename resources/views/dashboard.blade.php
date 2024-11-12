@@ -6,7 +6,7 @@
         ::-webkit-scrollbar {
             -webkit-appearance: none;
             width: 3px;
-            height: 5px; 
+            height: 5px;
         }
 
         ::-webkit-scrollbar-track {
@@ -254,8 +254,8 @@
 
         /* Latar belakang saat hover */
         /* .nav-btn:hover {
-                                                                background-color: #e7ebec;
-                                                                } */
+                                                                    background-color: #e7ebec;
+                                                                    } */
 
         .nav-btn.active {
             color: #007bff;
@@ -333,38 +333,45 @@
                 </div>
             </div>
             {{-- Welcome Card 2 --}}
-            <style>.card:hover .card-body::before{opacity:0 !important}</style>
+            <style>
+                .card:hover .card-body::before {
+                    opacity: 0 !important
+                }
+            </style>
             <div class="card text-white bg-primary-gt overflow-hidden" style="height:225px;border-radius: 20px !important">
                 <div class="card-body position-relative z-1">
-                  <span class="badge badge-custom-dark d-inline-flex align-items-center gap-2 fs-3">
-                    <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
-                    <span class="fw-normal">{{ session('roles') }}</span>
-                  </span>
-                  <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span class="fw-bolder"><br>{{ session('user_name') }}</span>!
-                  </h4>
-                  <h6 class="opacity-75 fw-normal text-white mb-0 d-none"></h6>
+                    <span class="badge badge-custom-dark d-inline-flex align-items-center gap-2 fs-3">
+                        <iconify-icon icon="solar:check-circle-outline" class="fs-5"></iconify-icon>
+                        <span class="fw-normal">{{ session('roles') }}</span>
+                    </span>
+                    <h4 class="text-white fw-normal mt-5 pt-7 mb-1">Hey, <span
+                            class="fw-bolder"><br>{{ session('user_name') }}</span>!
+                    </h4>
+                    <h6 class="opacity-75 fw-normal text-white mb-0 d-none"></h6>
                 </div>
-              </div>
-            
+            </div>
+
             <div class="row">
                 <!-- -------------------------------------------- -->
                 <!-- Stok -->
                 <!-- -------------------------------------------- -->
                 <div class="col"> <!-- default col-md-6 -->
-                    <div class="card bg-primary-subtle overflow-hidden shadow-none" style="height:195px;padding:0;border-radius: 20px !important">
+                    <div class="card bg-primary-subtle overflow-hidden shadow-none"
+                        style="height:195px;padding:0;border-radius: 20px !important">
                         <div class="card-body p-4">
                             <div class="d-flex align-items-center justify-content-between mb-9">
                                 <div>
-                                <h5 class="card-title">Stok Barang</h5>
-                                  <div class="hstack gap-2">
-                                    <h5 id="stok_seluruh" class="card-title fw-semibold mb-0 fs-7">0</h5>
-                                    <span id="stok_surdef" class="fs-11 text-dark-light fw-semibold"></span>
-                                  </div>
+                                    <h5 class="card-title">Stok Barang</h5>
+                                    <div class="hstack gap-2">
+                                        <h5 id="stok_seluruh" class="card-title fw-semibold mb-0 fs-7">0</h5>
+                                        <span id="stok_surdef" class="fs-11 text-dark-light fw-semibold"></span>
+                                    </div>
                                 </div>
                                 <span class="round-48 d-flex align-items-center justify-content-center bg-white rounded">
-                                  <iconify-icon icon="solar:pie-chart-3-line-duotone" class="text-primary fs-6"></iconify-icon>
+                                    <iconify-icon icon="solar:pie-chart-3-line-duotone"
+                                        class="text-primary fs-6"></iconify-icon>
                                 </span>
-                              </div>
+                            </div>
                         </div>
                         <div id="stok" style="min-height: 70px;position:relative;bottom:8px"></div>
                     </div>
@@ -506,20 +513,21 @@
                         <div class="card-body">
                             <h5 class="card-title fw-semibold">Item Requests</h5>
                             {{-- <p class="card-subtitle mb-0 lh-base">Last updated just now</p> --}}
-        
+
                             <div class="row mt-4">
                                 <div class="col"> {{-- col-md-6 --}}
                                     <div class="vstack gap-9 mt-2">
                                         <div class="hstack align-items-center gap-3">
                                             <div
                                                 class="d-flex align-items-center justify-content-center round-48 rounded bg-success-subtle flex-shrink-0">
-                                                <iconify-icon icon="solar:recive-twice-square-linear" class="fs-7 text-success"></iconify-icon>
+                                                <iconify-icon icon="solar:recive-twice-square-linear"
+                                                    class="fs-7 text-success"></iconify-icon>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0 text-nowrap">{{ $permintaan_diterima }} orders</h6>
+                                                <h6 class="mb-0 text-nowrap">{{ $req_approved }} orders</h6>
                                                 <span>Approved</span>
                                             </div>
-        
+
                                         </div>
                                         <div class="hstack align-items-center gap-3">
                                             <div
@@ -528,21 +536,22 @@
                                                     class="fs-7 text-warning"></iconify-icon>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0">{{ $permintaan_pending }} orders</h6>
+                                                <h6 class="mb-0">{{ $req_pending }} orders</h6>
                                                 <span>Pending</span>
                                             </div>
-        
+
                                         </div>
                                         <div class="hstack align-items-center gap-3">
                                             <div
                                                 class="d-flex align-items-center justify-content-center round-48 rounded bg-danger-subtle">
-                                                <iconify-icon icon="solar:notification-lines-remove-broken" class="fs-7 text-danger"></iconify-icon>
+                                                <iconify-icon icon="solar:notification-lines-remove-broken"
+                                                    class="fs-7 text-danger"></iconify-icon>
                                             </div>
                                             <div>
-                                                <h6 class="mb-0">{{ $permintaan_ditolak }} orders</h6>
+                                                <h6 class="mb-0">{{ $req_rejected }} orders</h6>
                                                 <span>Rejected</span>
                                             </div>
-        
+
                                         </div>
                                     </div>
                                 </div>
@@ -557,7 +566,7 @@
                                     </div>
                                 </div> --}}
                             </div>
-        
+
                         </div>
                     </div>
                     <!-- -------------------------------------------- -->
@@ -1242,64 +1251,94 @@
     <script src="https://bootstrapdemos.adminmart.com/matdash/dist/assets/libs/apexcharts/dist/apexcharts.min.js"></script>
     <script src="{{ asset('assets/js/dashboard_chart.js') }}"></script>
 
-    {{-- Total Data --}}
-    <div class="col-12">
-        <div class="card" style="border-radius: 20px !important">
-          <div class="card-body p-4 pb-0 simplebar-mouse-entered" data-simplebar="init"><div class="simplebar-wrapper" style="margin: -24px -24px 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" tabindex="0" role="region" aria-label="scrollable content" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 24px 24px 0px;">
-            <div class="row flex-nowrap">
-              <div class="col">
-                <div class="card primary-gradient">
-                  <div class="card-body text-center px-9 pb-4">
-                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-primary flex-shrink-0 mb-3 mx-auto">
-                      <iconify-icon icon="solar:box-linear" class="fs-7 text-white"></iconify-icon>
-                    </div>
-                    <h6 class="fw-normal fs-3 mb-1">Total Barang</h6>
-                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang }}</h4>
-                    <a href="{{ route('barang.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
-                      Details</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="card warning-gradient">
-                  <div class="card-body text-center px-9 pb-4">
-                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-warning flex-shrink-0 mb-3 mx-auto">
-                      <iconify-icon icon="solar:inbox-in-linear" class="fs-7 text-white"></iconify-icon>
-                    </div>
-                    <h6 class="fw-normal fs-3 mb-1">Barang Masuk</h6>
-                    <h4 id="stok_barangs" class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_masuk }}</h4>
-                    <a href="{{ route('barangmasuk.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
-                      Details</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="card secondary-gradient">
-                  <div class="card-body text-center px-9 pb-4">
-                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-secondary flex-shrink-0 mb-3 mx-auto">
-                      <iconify-icon icon="solar:inbox-out-linear" class="fs-7 text-white"></iconify-icon>
-                    </div>
-                    <h6 class="fw-normal fs-3 mb-1">Barang Keluar</h6>
-                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_barang_keluar }}</h4>
-                    <a href="{{ route('barangkeluar.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
-                      Details</a>
-                  </div>
-                </div>
-              </div>
-              <div class="col">
-                <div class="card danger-gradient">
-                  <div class="card-body text-center px-9 pb-4">
-                    <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-danger flex-shrink-0 mb-3 mx-auto">
-                      <iconify-icon icon="solar:notification-unread-lines-broken" class="fs-7 text-white"></iconify-icon>
-                    </div>
-                    <h6 class="fw-normal fs-3 mb-1">Total Permintaan</h6>
-                    <h4 class="mb-3 d-flex align-items-center justify-content-center gap-1">{{ $total_permintaan }}</h4>
-                    <a href="{{ route('permintaanbarangkeluar.index') }}" class="btn btn-white fs-2 fw-semibold text-nowrap">View
-                      Details</a>
-                  </div>
-                </div>
-              </div>
-              {{-- <div class="col">
+    @canall(['item.view', 'item.create', 'item.edit', 'item.delete'])
+        {{-- Total Data --}}
+        <div class="col-12">
+            <div class="card" style="border-radius: 20px !important">
+                <div class="card-body p-4 pb-0 simplebar-mouse-entered" data-simplebar="init">
+                    <div class="simplebar-wrapper" style="margin: -24px -24px 0px;">
+                        <div class="simplebar-height-auto-observer-wrapper">
+                            <div class="simplebar-height-auto-observer"></div>
+                        </div>
+                        <div class="simplebar-mask">
+                            <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
+                                <div class="simplebar-content-wrapper" tabindex="0" role="region"
+                                    aria-label="scrollable content" style="height: auto; overflow: hidden;">
+                                    <div class="simplebar-content" style="padding: 24px 24px 0px;">
+                                        <div class="row flex-nowrap">
+                                            <div class="col">
+                                                <div class="card primary-gradient">
+                                                    <div class="card-body text-center px-9 pb-4">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-center round-48 rounded text-bg-primary flex-shrink-0 mb-3 mx-auto">
+                                                            <iconify-icon icon="solar:box-linear"
+                                                                class="fs-7 text-white"></iconify-icon>
+                                                        </div>
+                                                        <h6 class="fw-normal fs-3 mb-1">Total Barang</h6>
+                                                        <h4
+                                                            class="mb-3 d-flex align-items-center justify-content-center gap-1">
+                                                            {{ $total_barang }}</h4>
+                                                        <a href="{{ route('barang.index') }}"
+                                                            class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                                                            Details</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="card warning-gradient">
+                                                    <div class="card-body text-center px-9 pb-4">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-center round-48 rounded text-bg-warning flex-shrink-0 mb-3 mx-auto">
+                                                            <iconify-icon icon="solar:inbox-in-linear"
+                                                                class="fs-7 text-white"></iconify-icon>
+                                                        </div>
+                                                        <h6 class="fw-normal fs-3 mb-1">Barang Masuk</h6>
+                                                        <h4 id="stok_barangs"
+                                                            class="mb-3 d-flex align-items-center justify-content-center gap-1">
+                                                            {{ $total_barang_masuk }}</h4>
+                                                        <a href="{{ route('barangmasuk.index') }}"
+                                                            class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                                                            Details</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="card secondary-gradient">
+                                                    <div class="card-body text-center px-9 pb-4">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-center round-48 rounded text-bg-secondary flex-shrink-0 mb-3 mx-auto">
+                                                            <iconify-icon icon="solar:inbox-out-linear"
+                                                                class="fs-7 text-white"></iconify-icon>
+                                                        </div>
+                                                        <h6 class="fw-normal fs-3 mb-1">Barang Keluar</h6>
+                                                        <h4
+                                                            class="mb-3 d-flex align-items-center justify-content-center gap-1">
+                                                            {{ $total_barang_keluar }}</h4>
+                                                        <a href="{{ route('barangkeluar.index') }}"
+                                                            class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                                                            Details</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="card danger-gradient">
+                                                    <div class="card-body text-center px-9 pb-4">
+                                                        <div
+                                                            class="d-flex align-items-center justify-content-center round-48 rounded text-bg-danger flex-shrink-0 mb-3 mx-auto">
+                                                            <iconify-icon icon="solar:notification-unread-lines-broken"
+                                                                class="fs-7 text-white"></iconify-icon>
+                                                        </div>
+                                                        <h6 class="fw-normal fs-3 mb-1">Total Permintaan</h6>
+                                                        <h4
+                                                            class="mb-3 d-flex align-items-center justify-content-center gap-1">
+                                                            {{ $total_permintaan }}</h4>
+                                                        <a href="{{ route('permintaanbarangkeluar.index') }}"
+                                                            class="btn btn-white fs-2 fw-semibold text-nowrap">View
+                                                            Details</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {{-- <div class="col">
                 <div class="card success-gradient">
                   <div class="card-body text-center px-9 pb-4">
                     <div class="d-flex align-items-center justify-content-center round-48 rounded text-bg-success flex-shrink-0 mb-3 mx-auto">
@@ -1313,14 +1352,27 @@
                   </div>
                 </div>
               </div> --}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="simplebar-placeholder" style="width: 1140px; height: 278px;"></div>
+                    </div>
+                    <div class="simplebar-track simplebar-horizontal" style="visibility: hidden;">
+                        <div class="simplebar-scrollbar" style="width: 0px; display: none;"></div>
+                    </div>
+                    <div class="simplebar-track simplebar-vertical" style="visibility: hidden;">
+                        <div class="simplebar-scrollbar" style="height: 0px; display: none;"></div>
+                    </div>
+                </div>
             </div>
-          </div></div></div></div><div class="simplebar-placeholder" style="width: 1140px; height: 278px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
         </div>
-      </div>
+    @endcanall
 
-    <div class="row d-none" style="margin-bottom:-16px">
+        <div class="row d-none" style="margin-bottom:-16px">
 
-        {{-- <div class="card text-bg-primary" style="border-radius: 20px !important">
+            {{-- <div class="card text-bg-primary" style="border-radius: 20px !important">
         <div class="card-body">
           <div class="row">
             <div class="col-sm-7">
@@ -1358,119 +1410,120 @@
         </div>
       </div> --}}
 
-        {{-- <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
+            {{-- <div class="card" style="box-shadow: #cdced4 0.25rem 0.25rem 0.75rem; height: 85px;">
             <div class="card-body">
                 <h4 style="color: #5a5c69; font-size: 20px;">Hallo, {{ session('user_name') }}!</h4>
             </div>
         </div> --}}
 
-        <!-- Barang -->
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-6 mb-4">
-                        <span class="round-48 d-flex align-items-center justify-content-center rounded bg-danger-subtle">
-                            <iconify-icon icon="solar:box-linear" class="fs-6 text-danger"></iconify-icon>
-                        </span>
-                        <h6 class="mb-0 fs-4">Barang</h6>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <h3>{{ $total_barang }}</h3>
-                            <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+            <!-- Barang -->
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card" style="border-radius: 20px !important">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-6 mb-4">
+                            <span class="round-48 d-flex align-items-center justify-content-center rounded bg-danger-subtle">
+                                <iconify-icon icon="solar:box-linear" class="fs-6 text-danger"></iconify-icon>
+                            </span>
+                            <h6 class="mb-0 fs-4">Barang</h6>
                         </div>
-                        <div class="col-6">
-                            <div id="total-barang"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Barang Masuk -->
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-6 mb-4">
-                        <span class="round-48 d-flex align-items-center justify-content-center rounded bg-warning-subtle">
-                            <iconify-icon icon="solar:inbox-in-linear" class="fs-6 text-warning"></iconify-icon>
-                        </span>
-                        <h6 class="mb-0 fs-4">Barang Masuk</h6>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <h3>{{ $total_barang_masuk }}</h3>
-                            <span class="fs-11 text-success fw-semibold d-none">+18%</span>
-                        </div>
-                        <div class="col-6">
-                            <div id="total-barangmasuk"></div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>{{ $total_barang }}</h3>
+                                <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+                            </div>
+                            <div class="col-6">
+                                <div id="total-barang"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Barang Keluar -->
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-6 mb-4">
-                        <span class="round-48 d-flex align-items-center justify-content-center rounded bg-success-subtle">
-                            <iconify-icon icon="solar:inbox-out-linear" class="fs-6 text-success"></iconify-icon>
-                        </span>
-                        <h6 class="mb-0 fs-4">Barang Keluar</h6>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <h3>{{ $total_barang_keluar }}</h3>
-                            <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+            <!-- Barang Masuk -->
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card" style="border-radius: 20px !important">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-6 mb-4">
+                            <span class="round-48 d-flex align-items-center justify-content-center rounded bg-warning-subtle">
+                                <iconify-icon icon="solar:inbox-in-linear" class="fs-6 text-warning"></iconify-icon>
+                            </span>
+                            <h6 class="mb-0 fs-4">Barang Masuk</h6>
                         </div>
-                        <div class="col-6">
-                            <div id="total-barangkeluar"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Permintaan Barang Keluar -->
-        <div class="col-xl-3 col-md-6 mb-3">
-            <div class="card" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="d-flex align-items-center gap-6 mb-4">
-                        <span class="round-48 d-flex align-items-center justify-content-center rounded bg-primary-subtle">
-                            <iconify-icon icon="solar:notification-unread-lines-broken"
-                                class="fs-6 text-primary"></iconify-icon>
-                        </span>
-                        <h6 class="mb-0 fs-4">Permintaan</h6>
-                    </div>
-                    <div class="row">
-                        <div class="col-6">
-                            <h3>{{ $total_permintaan }}</h3>
-                            <span class="fs-11 text-success fw-semibold d-none">+18%</span>
-                        </div>
-                        <div class="col-6">
-                            <div id="total-permintaan"></div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>{{ $total_barang_masuk }}</h3>
+                                <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+                            </div>
+                            <div class="col-6">
+                                <div id="total-barangmasuk"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Barang Keluar -->
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card" style="border-radius: 20px !important">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-6 mb-4">
+                            <span class="round-48 d-flex align-items-center justify-content-center rounded bg-success-subtle">
+                                <iconify-icon icon="solar:inbox-out-linear" class="fs-6 text-success"></iconify-icon>
+                            </span>
+                            <h6 class="mb-0 fs-4">Barang Keluar</h6>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>{{ $total_barang_keluar }}</h3>
+                                <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+                            </div>
+                            <div class="col-6">
+                                <div id="total-barangkeluar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permintaan Barang Keluar -->
+            <div class="col-xl-3 col-md-6 mb-3">
+                <div class="card" style="border-radius: 20px !important">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-6 mb-4">
+                            <span class="round-48 d-flex align-items-center justify-content-center rounded bg-primary-subtle">
+                                <iconify-icon icon="solar:notification-unread-lines-broken"
+                                    class="fs-6 text-primary"></iconify-icon>
+                            </span>
+                            <h6 class="mb-0 fs-4">Permintaan</h6>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <h3>{{ $total_permintaan }}</h3>
+                                <span class="fs-11 text-success fw-semibold d-none">+18%</span>
+                            </div>
+                            <div class="col-6">
+                                <div id="total-permintaan"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-    </div>
+        <div class="row">
 
-    <div class="row">
-
-        <!-- Grafik Barang Masuk -->
-        <div class="col d-flex align-items-strech"> {{-- col-lg-8 --}}
-            <div class="card w-100" style="border-radius: 20px !important">
-                <div class="card-body">
-                    <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
-                        <div class="mb-3 mb-sm-0">
-                            <h5 class="card-title fw-semibold">Incoming & Outbound Item</h5>
-                            <p class="card-subtitle mb-0 lh-base">Based on the last 6 months</p>
-                        </div>
-                        {{-- <div>
+            @canall(['incoming item.view', 'outbound item.view'])
+            <!-- Grafik Barang Masuk -->
+            <div class="col d-flex align-items-strech"> {{-- col-lg-8 --}}
+                <div class="card w-100" style="border-radius: 20px !important">
+                    <div class="card-body">
+                        <div class="d-sm-flex d-block align-items-center justify-content-between mb-9">
+                            <div class="mb-3 mb-sm-0">
+                                <h5 class="card-title fw-semibold">Incoming & Outbound Item</h5>
+                                <p class="card-subtitle mb-0 lh-base">Based on the last 6 months</p>
+                            </div>
+                            {{-- <div>
                             <select class="form-select">
                                 <option value="1">March 2024</option>
                                 <option value="2">April 2024</option>
@@ -1478,14 +1531,15 @@
                                 <option value="4">June 2024</option>
                             </select>
                         </div> --}}
+                        </div>
+                        {{-- <style>.apexcharts-bar-series.apexcharts-plot-series .apexcharts-series path{clip-path: inset(0 0 5% 0 round 20px);}</style> --}}
+                        <div id="coming-out"></div>
                     </div>
-                    {{-- <style>.apexcharts-bar-series.apexcharts-plot-series .apexcharts-series path{clip-path: inset(0 0 5% 0 round 20px);}</style> --}}
-                    <div id="coming-out"></div>
                 </div>
             </div>
-        </div>
+            @endcanall
 
-        {{-- <div class="col-lg-4 d-flex align-items-stretch">
+            {{-- <div class="col-lg-4 d-flex align-items-stretch">
             <div class="card w-100" style="border-radius: 20px !important">
                 <!-- -------------------------------------------- -->
                     <!-- Sales Overview -->
@@ -1504,42 +1558,49 @@
                         </div>
             </div>
         </div> --}}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Mengambil data dari API
-                fetch('{{ config('app.api_url') }}/dashboard/daily-activity')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        const activityList = document.querySelector('.timeline-widget');
-                        activityList.innerHTML = '';
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                        // Mengambil data dari API
+                        fetch('{{ config('app.api_url') }}/dashboard/daily-activity', {
+                            method: 'GET',
+                            headers: {
+                                'Authorization': 'Bearer ' + '{{ $jwt_token }}'
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            const activityList = document.querySelector('.timeline-widget');
+                            activityList.innerHTML = '';
 
-                        if (data.length === 0) {
-                            const emptyMessage = document.createElement('li');
-                            emptyMessage.className = 'timeline-item d-flex position-relative overflow-hidden';
-                            emptyMessage.innerHTML = `
+                            if (data.length === 0) {
+                                const emptyMessage = document.createElement('li');
+                                emptyMessage.className = 'timeline-item d-flex position-relative overflow-hidden';
+                                emptyMessage.innerHTML = `
                                 <div class="timeline-desc fs-3 text-dark mt-n1">
                                     No activities found today.
                                 </div>
                             `;
-                            activityList.appendChild(emptyMessage);
-                        } else {
-                            data.forEach(activity => {
-                                const listItem = document.createElement('li');
-                                listItem.className = 'timeline-item d-flex position-relative overflow-hidden';
+                                activityList.appendChild(emptyMessage);
+                            } else {
+                                data.forEach(activity => {
+                                    const listItem = document.createElement('li');
+                                    listItem.className =
+                                        'timeline-item d-flex position-relative overflow-hidden';
 
-                                let formattedDescription = activity.description;
-                                if (activity.badge_color === "bg-success" || activity.badge_color === "bg-danger") {
-                                    formattedDescription = activity.description.replace(/\n/g, '<br>');
-                                }
-                                const truncatedDescription = truncateText(formattedDescription, 20);
-                                const fullDescription = formattedDescription;
+                                    let formattedDescription = activity.description;
+                                    if (activity.badge_color === "bg-success" || activity.badge_color ===
+                                        "bg-danger") {
+                                        formattedDescription = activity.description.replace(/\n/g, '<br>');
+                                    }
+                                    const truncatedDescription = truncateText(formattedDescription, 20);
+                                    const fullDescription = formattedDescription;
 
-                                listItem.innerHTML = `
+                                    listItem.innerHTML = `
                                 <div class="timeline-time mt-n1 text-muted flex-shrink-0 text-end">${activity.time}</div>
                                 <div class="timeline-badge-wrap d-flex flex-column align-items-center">
                                     <span class="timeline-badge ${activity.badge_color} flex-shrink-0 mt-2"></span>
@@ -1552,40 +1613,39 @@
                                 </div>
                             `;
 
-                                activityList.appendChild(listItem);
+                                    activityList.appendChild(listItem);
 
-                                if (truncatedDescription !== fullDescription) {
-                                    const expandBtn = listItem.querySelector('.expand-btn');
-                                    const truncatedText = listItem.querySelector('.truncated-text');
-                                    const fullText = listItem.querySelector('.full-text');
+                                    if (truncatedDescription !== fullDescription) {
+                                        const expandBtn = listItem.querySelector('.expand-btn');
+                                        const truncatedText = listItem.querySelector('.truncated-text');
+                                        const fullText = listItem.querySelector('.full-text');
 
-                                    expandBtn.addEventListener('click', function() {
-                                        if (truncatedText.style.display !== 'none') {
-                                            truncatedText.style.display = 'none';
-                                            fullText.style.display = 'inline';
-                                            expandBtn.innerHTML = '<b>Show less</b>';
-                                        } else {
-                                            truncatedText.style.display = 'inline';
-                                            fullText.style.display = 'none';
-                                            expandBtn.innerHTML = '...';
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('There has been a problem with your fetch operation:', error);
-                    });
-            });
+                                        expandBtn.addEventListener('click', function() {
+                                            if (truncatedText.style.display !== 'none') {
+                                                truncatedText.style.display = 'none';
+                                                fullText.style.display = 'inline';
+                                                expandBtn.innerHTML = '<b>Show less</b>';
+                                            } else {
+                                                truncatedText.style.display = 'inline';
+                                                fullText.style.display = 'none';
+                                                expandBtn.innerHTML = '...';
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('There has been a problem with your fetch operation:', error);
+                        });
+                });
+                function truncateText(text, maxLength) {
+                    if (text.length <= maxLength) return text;
+                    return text.substr(0, maxLength) + '';
+                }
+            </script>
 
-            function truncateText(text, maxLength) {
-                if (text.length <= maxLength) return text;
-                return text.substr(0, maxLength) + '';
-            }
-        </script>
-
-        {{-- <!-- Grafik Barang Keluar -->
+            {{-- <!-- Grafik Barang Keluar -->
         <div class="col-lg-6 d-flex align-items-strech">
             <div class="card w-100" style="border-radius: 20px !important">
                 <div class="card-body">
@@ -1606,9 +1666,9 @@
                 </div>
             </div>
         </div> --}}
-    </div>
+        </div>
 
-    {{-- <section class="py-3 py-md-5">
+        {{-- <section class="py-3 py-md-5">
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-lg-9 col-xl-8">
@@ -1773,8 +1833,8 @@
 }();
 </script> --}}
 
-    {{-- Item History --}}
-    {{-- <div class="card" style="border-radius: 20px !important">
+        {{-- Item History --}}
+        {{-- <div class="card" style="border-radius: 20px !important">
         <div class="card-body">
             <h4 class="mb-4" style="color: #8a8a8a;">Item History</h4>
             <div class="search-container">
@@ -1848,743 +1908,745 @@
         </div>
     </div> --}}
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // const btnMasuk = document.getElementById('btn-masuk');
-            // const btnKeluar = document.getElementById('btn-keluar');
-            // const riwayatMasuk = document.getElementById('riwayat-masuk');
-            // const riwayatKeluar = document.getElementById('riwayat-keluar');
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // const btnMasuk = document.getElementById('btn-masuk');
+                // const btnKeluar = document.getElementById('btn-keluar');
+                // const riwayatMasuk = document.getElementById('riwayat-masuk');
+                // const riwayatKeluar = document.getElementById('riwayat-keluar');
 
-            // btnMasuk.addEventListener('click', function() {
-            //     riwayatMasuk.style.display = 'block';
-            //     riwayatKeluar.style.display = 'none';
-            //     btnMasuk.classList.add('active');
-            //     btnKeluar.classList.remove('active');
-            // });
+                // btnMasuk.addEventListener('click', function() {
+                //     riwayatMasuk.style.display = 'block';
+                //     riwayatKeluar.style.display = 'none';
+                //     btnMasuk.classList.add('active');
+                //     btnKeluar.classList.remove('active');
+                // });
 
-            // btnKeluar.addEventListener('click', function() {
-            //     riwayatMasuk.style.display = 'none';
-            //     riwayatKeluar.style.display = 'block';
-            //     btnKeluar.classList.add('active');
-            //     btnMasuk.classList.remove('active');
-            // });
+                // btnKeluar.addEventListener('click', function() {
+                //     riwayatMasuk.style.display = 'none';
+                //     riwayatKeluar.style.display = 'block';
+                //     btnKeluar.classList.add('active');
+                //     btnMasuk.classList.remove('active');
+                // });
 
-            ////////
+                ////////
 
-            // Data dari controller (dikirim ke Blade)
-            let dates = @json($dates);
-            let countsBarang = @json($counts_barang);
-            let countsBarangMasuk = @json($counts_barang_masuk);
-            let countsBarangKeluar = @json($counts_barang_keluar);
-            let countsPermintaan = @json($counts_permintaan);
+                // Data dari controller (dikirim ke Blade)
+                let dates = @json($dates);
+                let countsBarang = @json($counts_barang);
+                let countsBarangMasuk = @json($counts_barang_masuk);
+                let countsBarangKeluar = @json($counts_barang_keluar);
+                let countsPermintaan = @json($counts_permintaan);
 
-            /* Barang */
-            var barang = {
-                chart: {
-                    id: "sparkline1",
-                    type: "line",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 60,
-                    sparkline: {
-                        enabled: true,
-                    },
-                    group: "sparkline1",
-                },
-                series: [{
-                    name: "Barang",
-                    color: "var(--bs-danger)",
-                    data: countsBarang, // Data dari API
-                }],
-                stroke: {
-                    curve: "smooth",
-                    width: 2,
-                },
-                markers: {
-                    size: 0,
-                },
-                tooltip: {
-                    theme: "dark",
-                    fixed: {
-                        enabled: true,
-                        position: "right",
-                    },
-                    x: {
-                        formatter: function(val, opts) {
-                            // Menampilkan tanggal pada tooltip
-                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
-                        }
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                }
-            };
-            new ApexCharts(document.querySelector("#total-barang"), barang).render();
-
-            /* Barang Masuk */
-            var barangmasuk = {
-                chart: {
-                    id: "sparkline2",
-                    type: "line",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 60,
-                    sparkline: {
-                        enabled: true,
-                    },
-                    group: "sparkline2",
-                },
-                series: [{
-                    name: "Barang Masuk",
-                    color: "var(--bs-warning)",
-                    data: countsBarangMasuk, // Data dari API
-                }],
-                stroke: {
-                    curve: "smooth",
-                    width: 2,
-                },
-                markers: {
-                    size: 0,
-                },
-                tooltip: {
-                    theme: "dark",
-                    fixed: {
-                        enabled: true,
-                        position: "right",
-                    },
-                    x: {
-                        formatter: function(val, opts) {
-                            // Menampilkan tanggal pada tooltip
-                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
-                        }
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                }
-            };
-            new ApexCharts(document.querySelector("#total-barangmasuk"), barangmasuk).render();
-
-            /* Barang Keluar */
-            var barangkeluar = {
-                chart: {
-                    id: "sparkline3",
-                    type: "line",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 60,
-                    sparkline: {
-                        enabled: true,
-                    },
-                    group: "sparkline3",
-                },
-                series: [{
-                    name: "Barang Keluar",
-                    color: "var(--bs-success)",
-                    data: countsBarangKeluar, // Data dari API
-                }],
-                stroke: {
-                    curve: "smooth",
-                    width: 2,
-                },
-                markers: {
-                    size: 0,
-                },
-                tooltip: {
-                    theme: "dark",
-                    fixed: {
-                        enabled: true,
-                        position: "right",
-                    },
-                    x: {
-                        formatter: function(val, opts) {
-                            // Menampilkan tanggal pada tooltip
-                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
-                        }
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                }
-            };
-            new ApexCharts(document.querySelector("#total-barangkeluar"), barangkeluar).render();
-
-            /* Permintaan Barang */
-            var permintaan = {
-                chart: {
-                    id: "sparkline4",
-                    type: "line",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 60,
-                    sparkline: {
-                        enabled: true,
-                    },
-                    group: "sparkline4",
-                },
-                series: [{
-                    name: "Permintaan",
-                    color: "var(--bs-primary)",
-                    data: countsPermintaan, // Data dari API
-                }],
-                stroke: {
-                    curve: "smooth",
-                    width: 2,
-                },
-                markers: {
-                    size: 0,
-                },
-                tooltip: {
-                    theme: "dark",
-                    fixed: {
-                        enabled: true,
-                        position: "right",
-                    },
-                    x: {
-                        formatter: function(val, opts) {
-                            // Menampilkan tanggal pada tooltip
-                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
-                        }
-                    },
-                    y: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                },
-                yaxis: {
-                    labels: {
-                        formatter: function(val) {
-                            return Math.round(val);
-                        }
-                    }
-                }
-            };
-            new ApexCharts(document.querySelector("#total-permintaan"), permintaan).render();
-
-            ////////////////////
-
-            // -----------------------------------------------------------------------
-            // Subscriptions
-            // -----------------------------------------------------------------------
-
-            let months = @json($months);
-            let countsBarangMasuk6Bulan = @json($counts_barang_masuk_6months);
-            let countsBarangKeluar6Bulan = @json($counts_barang_keluar_6months);
-
-            var chart = {
-                series: [{
-                        name: "Masuk",
-                        // data: countsBarangMasuk6Bulan.map(count => count === 0 ? Math.floor(Math.random() *
-                        //     10) + 1 : count),
-                        data: countsBarangMasuk6Bulan,
-                    },
-                    {
-                        name: "Keluar",
-                        // data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
-                        //     .random() * 10) - 1 : -count),
-                        data: countsBarangKeluar6Bulan.map(count => -count),
-                    },
-                ],
-                chart: {
-                    toolbar: {
-                        show: false,
-                    },
-                    type: "bar",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 270,
-                    stacked: true,
-                    offsetX: -15,
-                },
-                colors: ["var(--bs-primary)", "var(--bs-danger)"],
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        barHeight: "60%",
-                        columnWidth: "15%",
-                        borderRadius: [6],
-                        borderRadiusApplication: "end",
-                        borderRadiusWhenStacked: "all",
-                    },
-                },
-                dataLabels: {
-                    enabled: false,
-                },
-                legend: {
-                    show: false,
-                },
-                grid: {
-                    show: true,
-                    padding: {
-                        top: 0,
-                        bottom: 0,
-                        right: 0,
-                    },
-                    borderColor: "rgba(0,0,0,0.05)",
-                    xaxis: {
-                        lines: {
-                            show: true,
+                /* Barang */
+                var barang = {
+                    chart: {
+                        id: "sparkline1",
+                        type: "line",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 60,
+                        sparkline: {
+                            enabled: true,
                         },
+                        group: "sparkline1",
                     },
-                    yaxis: {
-                        lines: {
-                            show: true,
-                        },
+                    series: [{
+                        name: "Barang",
+                        color: "var(--bs-danger)",
+                        data: countsBarang, // Data dari API
+                    }],
+                    stroke: {
+                        curve: "smooth",
+                        width: 2,
                     },
-                },
-                yaxis: {
-                    min: -5,
-                    max: 5,
-                },
-                xaxis: {
-                    axisBorder: {
-                        show: false,
+                    markers: {
+                        size: 0,
                     },
-                    axisTicks: {
-                        show: false,
-                    },
-                    categories: months.map(month => {
-                        const date = new Date(month);
-                        return date.toLocaleString('default', {
-                            month: 'short'
-                        });
-                    }),
-                    labels: {
-                        style: {
-                            fontSize: "13px",
-                            colors: "#adb0bb",
-                            fontWeight: "400"
+                    tooltip: {
+                        theme: "dark",
+                        fixed: {
+                            enabled: true,
+                            position: "right",
                         },
-                    },
-                },
-                yaxis: {
-                    tickAmount: 4,
-                },
-                tooltip: {
-                    theme: "dark",
-                },
-            };
-
-            var chart = new ApexCharts(
-                document.querySelector("#coming-out"),
-                chart
-            );
-            chart.render();
-
-            // Overview
-            var chart = {
-                series: [{
-                        name: "Masuk",
-                        data: countsBarangMasuk,
-                    },
-                    {
-                        name: "Keluar",
-                        data: countsBarangKeluar,
-                    },
-                    {
-                        name: "Permintaan",
-                        data: countsPermintaan,
-                    },
-                ],
-                chart: {
-                    toolbar: {
-                        show: false,
-                    },
-                    type: "area",
-                    fontFamily: "inherit",
-                    foreColor: "#adb0bb",
-                    height: 300,
-                    width: "100%",
-                    stacked: false,
-                    offsetX: -10,
-                },
-                colors: ["var(--bs-primary)", "var(--bs-danger)", "var(--bs-secondary)"],
-                plotOptions: {},
-                dataLabels: {
-                    enabled: false,
-                    formatter: function(val) {
-                        return val > 0 ? val : '';
-                    },
-                },
-                legend: {
-                    show: false,
-                },
-                stroke: {
-                    width: 2,
-                    curve: "monotoneCubic",
-                },
-                grid: {
-                    show: true,
-                    padding: {
-                        top: 0,
-                        bottom: 0,
-                    },
-                    borderColor: "rgba(0,0,0,0.05)",
-                    xaxis: {
-                        lines: {
-                            show: true,
-                        },
-                    },
-                    yaxis: {
-                        lines: {
-                            show: true,
-                        },
-                    },
-                },
-                fill: {
-                    type: "gradient",
-                    gradient: {
-                        shadeIntensity: 0,
-                        inverseColors: false,
-                        opacityFrom: 0.1,
-                        opacityTo: 0.01,
-                        stops: [0, 100],
-                    },
-                },
-                xaxis: {
-                    axisBorder: {
-                        show: false,
-                    },
-                    axisTicks: {
-                        show: false,
-                    },
-                    categories: dates.map(date => {
-                        const parsedDate = new Date(date);
-                        return parsedDate.getDate();
-                    }),
-                },
-                markers: {
-                    strokeColor: [
-                        "var(--bs-primary)",
-                        "var(--bs-secondary)",
-                        "var(--bs-danger)",
-                    ],
-                    strokeWidth: 2,
-                },
-                tooltip: {
-                    theme: "dark",
-                    x: {
-                        formatter: function(val, opts) {
-                            return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
-                        }
-                    },
-                },
-            };
-
-            var chart = new ApexCharts(
-                document.querySelector("#tiga-baris"),
-                chart
-            );
-            chart.render();
-
-            // Stok
-            const endDate = new Date().toISOString().split('T')[0];
-            const startDate = new Date(new Date().setDate(new Date().getDate() - 6)).toISOString().split('T')[0];
-
-            // Fetch data dari API
-            fetch(`{{ config('app.api_url') }}/laporan/stok?start_date=${startDate}&end_date=${endDate}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Ambil stok keseluruhan dari API
-                    const stokKeseluruhan = data.stok_keseluruhan;
-
-                    // Extract jumlah stok per hari
-                    const stokPerhari = data.stok_perhari;
-                    const dates = [];
-                    const stokData = [];
-
-                    // Generate array of dates from startDate to endDate
-                    let currentDate = new Date(startDate);
-                    const end = new Date(endDate);
-                    while (currentDate <= end) {
-                        dates.push(currentDate.toISOString().split('T')[0]);
-                        currentDate.setDate(currentDate.getDate() + 1);
-                    }
-
-                    // Fill stokData array with corresponding values or 0
-                    dates.forEach(date => {
-                        const stokEntry = stokPerhari.find(entry => entry.tanggal === date);
-                        stokData.push(stokEntry ? parseInt(stokEntry.jumlah) : 0);
-                    });
-
-                    // Update stok keseluruhan di HTML
-                    document.querySelector('#stok_seluruh').textContent = stokKeseluruhan.toLocaleString();
-
-                    // Update stok barang di HTML Stok Barang
-                    // document.querySelector('#stok_barang').textContent = stokKeseluruhan.toLocaleString();
-
-                    // Hitung surplus/defisit dari stok kemarin
-                    const stokYesterday = stokPerhari[stokPerhari.length - 2]?.jumlah || 0;
-                    const stokToday = stokPerhari[stokPerhari.length - 1]?.jumlah || 0;
-                    const stokChangePercent = stokYesterday ? (((stokToday - stokYesterday) / stokYesterday) *
-                        100).toFixed(2) : 0;
-
-                    // Update persentase di HTML
-                    const surplusElement = document.querySelector('#stok_surdef');
-                    if (stokChangePercent != 0) {
-                        surplusElement.textContent = stokChangePercent > 0 ? `+${stokChangePercent}%` :
-                            `${stokChangePercent}%`;
-
-                        // Update warna persentase berdasarkan positif atau negatif
-                        if (stokChangePercent > 0) {
-                            surplusElement.classList.remove('text-danger');
-                            surplusElement.classList.add('text-success');
-                        } else {
-                            surplusElement.classList.remove('text-success');
-                            surplusElement.classList.add('text-danger');
-                        }
-                    } else {
-                        surplusElement.textContent = '';
-                        surplusElement.classList.remove('text-success', 'text-danger');
-                    }
-
-                    // Inisialisasi chart dengan data stok dari API
-                    var options = {
-                        chart: {
-                            id: "stok",
-                            type: "area",
-                            height: 70,
-                            sparkline: {
-                                enabled: true,
-                            },
-                            group: "sparklines",
-                            fontFamily: "inherit",
-                            foreColor: "#adb0bb",
-                        },
-                        series: [{
-                            name: "stok",
-                            color: "var(--bs-primary)",
-                            data: stokData,
-                        }],
-                        stroke: {
-                            curve: "smooth",
-                            width: 2,
-                        },
-                        fill: {
-                            type: "gradient",
-                            color: "var(--bs-primary)",
-                            gradient: {
-                                shadeIntensity: 0,
-                                inverseColors: false,
-                                opacityFrom: 0.2,
-                                opacityTo: 0.1,
-                                stops: [100],
-                            },
-                        },
-                        markers: {
-                            size: 0,
-                        },
-                        tooltip: {
-                            theme: "dark",
-                            fixed: {
-                                enabled: true,
-                                position: "right",
-                            },
-                            x: {
-                                show: true,
-                                formatter: function(val, opts) {
-                                    return dates[opts.dataPointIndex];
-                                }
-                            },
-                        },
-                        xaxis: {
-                            categories: dates,
-                        },
-                    };
-                    new ApexCharts(document.querySelector("#stok"), options).render();
-                })
-                .catch(error => {
-                    console.error('Error fetching stok data:', error);
-                });
-
-
-            // Keseluruhan Stok Barang
-            // Basic Bar Chart -------> BAR CHART
-            // Fetch data from API
-            fetch(`{{ config('app.api_url') }}/laporan/stok`)
-                .then(response => response.json())
-                .then(data => {
-                    // Extracting the required data from the API response
-                    const barangData = data.data;
-
-                    // Combine quantities for items with the same barang_id
-                    const combinedBarangData = barangData.reduce((acc, item) => {
-                        const existingItem = acc.find(i => i.barang_id === item.barang_id);
-                        if (existingItem) {
-                            existingItem.jumlah = parseInt(existingItem.jumlah) + parseInt(item.jumlah);
-                        } else {
-                            acc.push({...item, jumlah: parseInt(item.jumlah)});
-                        }
-                        return acc;
-                    }, []);
-
-                    // Sort the data based on 'jumlah' in descending order
-                    const sortedBarangData = combinedBarangData.sort((a, b) => b.jumlah - a.jumlah);
-
-                    // Slice the first 6 items to display only 6 data points
-                    const top6BarangData = sortedBarangData.slice(0, 6);
-
-                    // Prepare data for the chart
-                    const jumlahBarang = top6BarangData.map(item => item.jumlah); // array of 'jumlah'
-                    const namaBarang = top6BarangData.map(item => item.nama_barang); // array of 'nama_barang'
-
-                    // Basic Bar Chart with sorted data
-                    var options_basic = {
-                        series: [{
-                            name: 'Jumlah Barang',
-                            data: jumlahBarang, // Sorted data from the API
-                        }],
-                        chart: {
-                            fontFamily: "inherit",
-                            type: "bar",
-                            height: 220,
-                            toolbar: {
-                                show: false,
-                            },
-                        },
-                        grid: {
-                            borderColor: "transparent",
-                        },
-                        colors: ['#635bff', '#7b6fff', '#9486ff', '#ac9dff', '#c5b4ff', '#ddcbff'],
-                        plotOptions: {
-                            bar: {
-                                horizontal: true,
-                                distributed: true,
-                            },
-                        },
-                        legend: {
-                            show: false,
-                        },
-                        dataLabels: {
-                            enabled: false,
-                        },
-                        xaxis: {
-                            categories: namaBarang,
-                            labels: {
-                                style: {
-                                    colors: "#a1aab2",
-                                },
-                                formatter: function (value) {
-                                    return Math.floor(value);
-                                }
-                            },
-                            tickAmount: 6,
-                        },
-                        yaxis: {
-                            labels: {
-                                style: {
-                                    colors: "#a1aab2",
-                                },
-                            },
-                        },
-                        tooltip: {
-                            theme: "dark",
-                            y: {
-                                title: {
-                                    formatter: function (seriesName, opts) {
-                                        return opts.w.globals.labels[opts.dataPointIndex];
-                                    }
-                                }
+                        x: {
+                            formatter: function(val, opts) {
+                                // Menampilkan tanggal pada tooltip
+                                return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
                             }
                         },
-                    };
+                        y: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    }
+                };
+                new ApexCharts(document.querySelector("#total-barang"), barang).render();
 
-                    // Render the chart
-                    var chart_bar_basic = new ApexCharts(
-                        document.querySelector("#stok-terbanyak"),
-                        options_basic
-                    );
-                    chart_bar_basic.render();
-                })
-                .catch(error => console.error('Error fetching data:', error));
+                /* Barang Masuk */
+                var barangmasuk = {
+                    chart: {
+                        id: "sparkline2",
+                        type: "line",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 60,
+                        sparkline: {
+                            enabled: true,
+                        },
+                        group: "sparkline2",
+                    },
+                    series: [{
+                        name: "Barang Masuk",
+                        color: "var(--bs-warning)",
+                        data: countsBarangMasuk, // Data dari API
+                    }],
+                    stroke: {
+                        curve: "smooth",
+                        width: 2,
+                    },
+                    markers: {
+                        size: 0,
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        fixed: {
+                            enabled: true,
+                            position: "right",
+                        },
+                        x: {
+                            formatter: function(val, opts) {
+                                // Menampilkan tanggal pada tooltip
+                                return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
+                            }
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    }
+                };
+                new ApexCharts(document.querySelector("#total-barangmasuk"), barangmasuk).render();
+
+                /* Barang Keluar */
+                var barangkeluar = {
+                    chart: {
+                        id: "sparkline3",
+                        type: "line",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 60,
+                        sparkline: {
+                            enabled: true,
+                        },
+                        group: "sparkline3",
+                    },
+                    series: [{
+                        name: "Barang Keluar",
+                        color: "var(--bs-success)",
+                        data: countsBarangKeluar, // Data dari API
+                    }],
+                    stroke: {
+                        curve: "smooth",
+                        width: 2,
+                    },
+                    markers: {
+                        size: 0,
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        fixed: {
+                            enabled: true,
+                            position: "right",
+                        },
+                        x: {
+                            formatter: function(val, opts) {
+                                // Menampilkan tanggal pada tooltip
+                                return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
+                            }
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    }
+                };
+                new ApexCharts(document.querySelector("#total-barangkeluar"), barangkeluar).render();
+
+                /* Permintaan Barang */
+                var permintaan = {
+                    chart: {
+                        id: "sparkline4",
+                        type: "line",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 60,
+                        sparkline: {
+                            enabled: true,
+                        },
+                        group: "sparkline4",
+                    },
+                    series: [{
+                        name: "Permintaan",
+                        color: "var(--bs-primary)",
+                        data: countsPermintaan, // Data dari API
+                    }],
+                    stroke: {
+                        curve: "smooth",
+                        width: 2,
+                    },
+                    markers: {
+                        size: 0,
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        fixed: {
+                            enabled: true,
+                            position: "right",
+                        },
+                        x: {
+                            formatter: function(val, opts) {
+                                // Menampilkan tanggal pada tooltip
+                                return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
+                            }
+                        },
+                        y: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    },
+                    yaxis: {
+                        labels: {
+                            formatter: function(val) {
+                                return Math.round(val);
+                            }
+                        }
+                    }
+                };
+                new ApexCharts(document.querySelector("#total-permintaan"), permintaan).render();
+
+                ////////////////////
+
+                // -----------------------------------------------------------------------
+                // Subscriptions
+                // -----------------------------------------------------------------------
+
+                let months = @json($months);
+                let countsBarangMasuk6Bulan = @json($counts_barang_masuk_6months);
+                let countsBarangKeluar6Bulan = @json($counts_barang_keluar_6months);
+
+                var chart = {
+                    series: [{
+                            name: "Masuk",
+                            // data: countsBarangMasuk6Bulan.map(count => count === 0 ? Math.floor(Math.random() *
+                            //     10) + 1 : count),
+                            data: countsBarangMasuk6Bulan,
+                        },
+                        {
+                            name: "Keluar",
+                            // data: countsBarangKeluar6Bulan.map(count => count === 0 ? -Math.floor(Math
+                            //     .random() * 10) - 1 : -count),
+                            data: countsBarangKeluar6Bulan.map(count => -count),
+                        },
+                    ],
+                    chart: {
+                        toolbar: {
+                            show: false,
+                        },
+                        type: "bar",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 270,
+                        stacked: true,
+                        offsetX: -15,
+                    },
+                    colors: ["var(--bs-primary)", "var(--bs-danger)"],
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            barHeight: "60%",
+                            columnWidth: "15%",
+                            borderRadius: [6],
+                            borderRadiusApplication: "end",
+                            borderRadiusWhenStacked: "all",
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false,
+                    },
+                    legend: {
+                        show: false,
+                    },
+                    grid: {
+                        show: true,
+                        padding: {
+                            top: 0,
+                            bottom: 0,
+                            right: 0,
+                        },
+                        borderColor: "rgba(0,0,0,0.05)",
+                        xaxis: {
+                            lines: {
+                                show: true,
+                            },
+                        },
+                        yaxis: {
+                            lines: {
+                                show: true,
+                            },
+                        },
+                    },
+                    yaxis: {
+                        min: -5,
+                        max: 5,
+                    },
+                    xaxis: {
+                        axisBorder: {
+                            show: false,
+                        },
+                        axisTicks: {
+                            show: false,
+                        },
+                        categories: months.map(month => {
+                            const date = new Date(month);
+                            return date.toLocaleString('default', {
+                                month: 'short'
+                            });
+                        }),
+                        labels: {
+                            style: {
+                                fontSize: "13px",
+                                colors: "#adb0bb",
+                                fontWeight: "400"
+                            },
+                        },
+                    },
+                    yaxis: {
+                        tickAmount: 4,
+                    },
+                    tooltip: {
+                        theme: "dark",
+                    },
+                };
+
+                var chart = new ApexCharts(
+                    document.querySelector("#coming-out"),
+                    chart
+                );
+                chart.render();
+
+                // Overview
+                var chart = {
+                    series: [{
+                            name: "Masuk",
+                            data: countsBarangMasuk,
+                        },
+                        {
+                            name: "Keluar",
+                            data: countsBarangKeluar,
+                        },
+                        {
+                            name: "Permintaan",
+                            data: countsPermintaan,
+                        },
+                    ],
+                    chart: {
+                        toolbar: {
+                            show: false,
+                        },
+                        type: "area",
+                        fontFamily: "inherit",
+                        foreColor: "#adb0bb",
+                        height: 300,
+                        width: "100%",
+                        stacked: false,
+                        offsetX: -10,
+                    },
+                    colors: ["var(--bs-primary)", "var(--bs-danger)", "var(--bs-secondary)"],
+                    plotOptions: {},
+                    dataLabels: {
+                        enabled: false,
+                        formatter: function(val) {
+                            return val > 0 ? val : '';
+                        },
+                    },
+                    legend: {
+                        show: false,
+                    },
+                    stroke: {
+                        width: 2,
+                        curve: "monotoneCubic",
+                    },
+                    grid: {
+                        show: true,
+                        padding: {
+                            top: 0,
+                            bottom: 0,
+                        },
+                        borderColor: "rgba(0,0,0,0.05)",
+                        xaxis: {
+                            lines: {
+                                show: true,
+                            },
+                        },
+                        yaxis: {
+                            lines: {
+                                show: true,
+                            },
+                        },
+                    },
+                    fill: {
+                        type: "gradient",
+                        gradient: {
+                            shadeIntensity: 0,
+                            inverseColors: false,
+                            opacityFrom: 0.1,
+                            opacityTo: 0.01,
+                            stops: [0, 100],
+                        },
+                    },
+                    xaxis: {
+                        axisBorder: {
+                            show: false,
+                        },
+                        axisTicks: {
+                            show: false,
+                        },
+                        categories: dates.map(date => {
+                            const parsedDate = new Date(date);
+                            return parsedDate.getDate();
+                        }),
+                    },
+                    markers: {
+                        strokeColor: [
+                            "var(--bs-primary)",
+                            "var(--bs-secondary)",
+                            "var(--bs-danger)",
+                        ],
+                        strokeWidth: 2,
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        x: {
+                            formatter: function(val, opts) {
+                                return dates[opts.dataPointIndex]; // Ambil tanggal dari array dates
+                            }
+                        },
+                    },
+                };
+
+                var chart = new ApexCharts(
+                    document.querySelector("#tiga-baris"),
+                    chart
+                );
+                chart.render();
+
+                // Stok
+                const endDate = new Date().toISOString().split('T')[0];
+                const startDate = new Date(new Date().setDate(new Date().getDate() - 6)).toISOString().split('T')[0];
+
+                // Fetch data dari API
+                fetch(`{{ config('app.api_url') }}/laporan/stok?start_date=${startDate}&end_date=${endDate}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Ambil stok keseluruhan dari API
+                        const stokKeseluruhan = data.stok_keseluruhan;
+
+                        // Extract jumlah stok per hari
+                        const stokPerhari = data.stok_perhari;
+                        const dates = [];
+                        const stokData = [];
+
+                        // Generate array of dates from startDate to endDate
+                        let currentDate = new Date(startDate);
+                        const end = new Date(endDate);
+                        while (currentDate <= end) {
+                            dates.push(currentDate.toISOString().split('T')[0]);
+                            currentDate.setDate(currentDate.getDate() + 1);
+                        }
+
+                        // Fill stokData array with corresponding values or 0
+                        dates.forEach(date => {
+                            const stokEntry = stokPerhari.find(entry => entry.tanggal === date);
+                            stokData.push(stokEntry ? parseInt(stokEntry.jumlah) : 0);
+                        });
+
+                        // Update stok keseluruhan di HTML
+                        document.querySelector('#stok_seluruh').textContent = stokKeseluruhan.toLocaleString();
+
+                        // Update stok barang di HTML Stok Barang
+                        // document.querySelector('#stok_barang').textContent = stokKeseluruhan.toLocaleString();
+
+                        // Hitung surplus/defisit dari stok kemarin
+                        const stokYesterday = stokPerhari[stokPerhari.length - 2]?.jumlah || 0;
+                        const stokToday = stokPerhari[stokPerhari.length - 1]?.jumlah || 0;
+                        const stokChangePercent = stokYesterday ? (((stokToday - stokYesterday) / stokYesterday) *
+                            100).toFixed(2) : 0;
+
+                        // Update persentase di HTML
+                        const surplusElement = document.querySelector('#stok_surdef');
+                        if (stokChangePercent != 0) {
+                            surplusElement.textContent = stokChangePercent > 0 ? `+${stokChangePercent}%` :
+                                `${stokChangePercent}%`;
+
+                            // Update warna persentase berdasarkan positif atau negatif
+                            if (stokChangePercent > 0) {
+                                surplusElement.classList.remove('text-danger');
+                                surplusElement.classList.add('text-success');
+                            } else {
+                                surplusElement.classList.remove('text-success');
+                                surplusElement.classList.add('text-danger');
+                            }
+                        } else {
+                            surplusElement.textContent = '';
+                            surplusElement.classList.remove('text-success', 'text-danger');
+                        }
+
+                        // Inisialisasi chart dengan data stok dari API
+                        var options = {
+                            chart: {
+                                id: "stok",
+                                type: "area",
+                                height: 70,
+                                sparkline: {
+                                    enabled: true,
+                                },
+                                group: "sparklines",
+                                fontFamily: "inherit",
+                                foreColor: "#adb0bb",
+                            },
+                            series: [{
+                                name: "stok",
+                                color: "var(--bs-primary)",
+                                data: stokData,
+                            }],
+                            stroke: {
+                                curve: "smooth",
+                                width: 2,
+                            },
+                            fill: {
+                                type: "gradient",
+                                color: "var(--bs-primary)",
+                                gradient: {
+                                    shadeIntensity: 0,
+                                    inverseColors: false,
+                                    opacityFrom: 0.2,
+                                    opacityTo: 0.1,
+                                    stops: [100],
+                                },
+                            },
+                            markers: {
+                                size: 0,
+                            },
+                            tooltip: {
+                                theme: "dark",
+                                fixed: {
+                                    enabled: true,
+                                    position: "right",
+                                },
+                                x: {
+                                    show: true,
+                                    formatter: function(val, opts) {
+                                        return dates[opts.dataPointIndex];
+                                    }
+                                },
+                            },
+                            xaxis: {
+                                categories: dates,
+                            },
+                        };
+                        new ApexCharts(document.querySelector("#stok"), options).render();
+                    })
+                    .catch(error => {
+                        console.error('Error fetching stok data:', error);
+                    });
+
+
+                // Keseluruhan Stok Barang
+                // Basic Bar Chart -------> BAR CHART
+                // Fetch data from API
+                fetch(`{{ config('app.api_url') }}/laporan/stok`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Extracting the required data from the API response
+                        const barangData = data.data;
+
+                        // Combine quantities for items with the same barang_id
+                        const combinedBarangData = barangData.reduce((acc, item) => {
+                            const existingItem = acc.find(i => i.barang_id === item.barang_id);
+                            if (existingItem) {
+                                existingItem.jumlah = parseInt(existingItem.jumlah) + parseInt(item.jumlah);
+                            } else {
+                                acc.push({
+                                    ...item,
+                                    jumlah: parseInt(item.jumlah)
+                                });
+                            }
+                            return acc;
+                        }, []);
+
+                        // Sort the data based on 'jumlah' in descending order
+                        const sortedBarangData = combinedBarangData.sort((a, b) => b.jumlah - a.jumlah);
+
+                        // Slice the first 6 items to display only 6 data points
+                        const top6BarangData = sortedBarangData.slice(0, 6);
+
+                        // Prepare data for the chart
+                        const jumlahBarang = top6BarangData.map(item => item.jumlah); // array of 'jumlah'
+                        const namaBarang = top6BarangData.map(item => item.nama_barang); // array of 'nama_barang'
+
+                        // Basic Bar Chart with sorted data
+                        var options_basic = {
+                            series: [{
+                                name: 'Jumlah Barang',
+                                data: jumlahBarang, // Sorted data from the API
+                            }],
+                            chart: {
+                                fontFamily: "inherit",
+                                type: "bar",
+                                height: 220,
+                                toolbar: {
+                                    show: false,
+                                },
+                            },
+                            grid: {
+                                borderColor: "transparent",
+                            },
+                            colors: ['#635bff', '#7b6fff', '#9486ff', '#ac9dff', '#c5b4ff', '#ddcbff'],
+                            plotOptions: {
+                                bar: {
+                                    horizontal: true,
+                                    distributed: true,
+                                },
+                            },
+                            legend: {
+                                show: false,
+                            },
+                            dataLabels: {
+                                enabled: false,
+                            },
+                            xaxis: {
+                                categories: namaBarang,
+                                labels: {
+                                    style: {
+                                        colors: "#a1aab2",
+                                    },
+                                    formatter: function(value) {
+                                        return Math.floor(value);
+                                    }
+                                },
+                                tickAmount: 6,
+                            },
+                            yaxis: {
+                                labels: {
+                                    style: {
+                                        colors: "#a1aab2",
+                                    },
+                                },
+                            },
+                            tooltip: {
+                                theme: "dark",
+                                y: {
+                                    title: {
+                                        formatter: function(seriesName, opts) {
+                                            return opts.w.globals.labels[opts.dataPointIndex];
+                                        }
+                                    }
+                                }
+                            },
+                        };
+
+                        // Render the chart
+                        var chart_bar_basic = new ApexCharts(
+                            document.querySelector("#stok-terbanyak"),
+                            options_basic
+                        );
+                        chart_bar_basic.render();
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
 
                 // -----------------------------------------------------------------------
                 // Customers Area
                 // -----------------------------------------------------------------------
                 var chart_users = {
-                series: [
-                    {
-                    name: "April 07 ",
-                    data: [0, 20, 15, 19, 14, 25, 30],
+                    series: [{
+                            name: "April 07 ",
+                            data: [0, 20, 15, 19, 14, 25, 30],
+                        },
+                        {
+                            name: "Last Week",
+                            data: [0, 8, 19, 13, 26, 16, 25],
+                        },
+                    ],
+                    chart: {
+                        fontFamily: "inherit",
+                        height: 100,
+                        type: "line",
+                        toolbar: {
+                            show: false,
+                        },
+                        sparkline: {
+                            enabled: true,
+                        },
                     },
-                    {
-                    name: "Last Week",
-                    data: [0, 8, 19, 13, 26, 16, 25],
-                    },
-                ],
-                chart: {
-                    fontFamily: "inherit",
-                    height: 100,
-                    type: "line",
-                    toolbar: {
-                    show: false,
-                    },
-                    sparkline: {
-                    enabled: true,
-                    },
-                },
-                colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-                grid: {
-                    show: false,
-                },
-                stroke: {
-                    curve: "smooth",
                     colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-                    width: 2,
-                },
-                markers: {
-                    colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
-                    strokeColors: "transparent",
-                },
-                tooltip: {
-                    theme: "dark",
-                    x: {
-                    show: false,
+                    grid: {
+                        show: false,
                     },
-                    followCursor: true,
-                },
+                    stroke: {
+                        curve: "smooth",
+                        colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+                        width: 2,
+                    },
+                    markers: {
+                        colors: ["var(--bs-primary)", "var(--bs-primary-bg-subtle)"],
+                        strokeColors: "transparent",
+                    },
+                    tooltip: {
+                        theme: "dark",
+                        x: {
+                            show: false,
+                        },
+                        followCursor: true,
+                    },
                 };
                 var chart_line_basic = new ApexCharts(
-                document.querySelector("#activity-area"),
-                chart_users
+                    document.querySelector("#activity-area"),
+                    chart_users
                 );
                 chart_line_basic.render();
 
 
-        });
-    </script>
+            });
+        </script>
 
 
-    {{-- <script>
+        {{-- <script>
         function checkSerialNumber() {
             fetch('/serialnumber', {
                     method: 'GET',
@@ -2617,4 +2679,4 @@
         }
         //setTimeout(() => {checkSerialNumber()}, 1000);
     </script> --}}
-@endsection
+    @endsection

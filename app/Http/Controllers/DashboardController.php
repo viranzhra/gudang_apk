@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         try {
-            $response = Http::get(config('app.api_url') . '/dashboard');
+            $response = Http::withToken(session('jwt_token'))->get(config('app.api_url') . '/dashboard');
             $response->throw();
             $data = $response->json();
 
@@ -38,9 +38,9 @@ class DashboardController extends Controller
                 'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
                 'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
 
-                'permintaan_ditolak' => $data['permintaan_ditolak'],
-                'permintaan_diterima' => $data['permintaan_diterima'],
-                'permintaan_pending' => $data['permintaan_pending'],
+                'req_rejected' => $data['req_rejected'],
+                'req_approved' => $data['req_approved'],
+                'req_pending' => $data['req_pending'],
             ]);
         } catch (\Exception $e) {
             abort(403, 'API tidak dapat diakses.');
