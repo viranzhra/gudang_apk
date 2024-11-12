@@ -80,32 +80,35 @@
         }
     </style>
 
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+    <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
             <strong id="notificationTitle">Notification</strong>
             <p id="notificationMessage"></p>
         </div>
 
-        <h4 class="mt-3" style="color: #8a8a8a;">Customer Management</h4>
-        {{-- <div id="notification" class="alert alert-dismissible fade" role="alert" style="display: none;">
-            <strong id="notificationTitle"></strong> <span id="notificationMessage"></span>
-            <button type="button" class="btn-close" aria-label="Close"></button>
-        </div> --}}
-        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
-            <!-- Add Button -->
-            <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center"
-                data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px;">
-                <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                Add
-            </a>
-            <!-- Delete Selected Button -->
-            <button id="deleteSelected" class="btn btn-danger d-none"
-                style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
-                <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
-                Delete Selected
-            </button>
+        <div class="d-flex align-items-center justify-content-between pb-3 pt-2">
+            <div class="d-flex align-items-center">
+                <h4>Customer Management</h4>
+            </div>
+
+            <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
+                <!-- Add Button -->
+                <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center"
+                    data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px;">
+                    <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                    Add
+                </a>
+                <!-- Delete Selected Button -->
+                <button id="deleteSelected" class="btn btn-danger d-none"
+                    style="background-color: #910a0a; border: none; height: 35px; display: flex; align-items: center; justify-content: center;">
+                    <iconify-icon icon="mdi:delete" style="font-size: 16px; margin-right: 5px;"></iconify-icon>
+                    Delete Selected
+                </button>
+            </div>
+
         </div>
+
         <div class="table-responsive">
             <table class="table table-bordered table-striped table-hover" id="customer-table" width="100%">
                 <thead class="thead-dark">

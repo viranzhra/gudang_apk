@@ -7,24 +7,31 @@
 .alert{border-radius: 18px !important}
 /* .alert-success{background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;height:80px}.alert-danger{background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;height:80px}.alert-info{background-color:#d1ecf1;color:#0c5460;border:1px solid #bee5eb;height:80px} */
 </style>
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
+    <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
             <strong id="notificationTitle" style="font-size: 15px">Notification</strong>
             <p id="notificationMessage" style="margin-top: 10px"></p>
         </div>
 
-        <h4 class="mt-3" style="color: #8a8a8a;">Stock Out Request</h4>
-        <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 10px">
-            <div class="d-flex gap-2">
-                <!-- Add Button -->
-                @can('item request.create')
-                <a type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
-                    href="{{ route('permintaanbarangkeluar.create') }}" style="width: 75px; height: 35px;">
-                    <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
-                    Add
-                </a>
-                @endcan
+        <div class="d-flex align-items-center justify-content-between pb-3">
+            <div class="d-flex align-items-center">
+                <h4 class="mt-3">Stock Out Request</h4>
+            </div>
+            
+            <div class="d-flex align-items-center">
+                <div class="d-flex align-items-center gap-3 justify-content-end">
+                    <div class="d-flex gap-2">
+                        <!-- Add Button -->
+                        @can('item request.create')
+                        <a type="button" class="btn btn-primary d-flex align-items-center justify-content-center"
+                            href="{{ route('permintaanbarangkeluar.create') }}" style="width: 75px; height: 35px;">
+                            <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
+                            Add
+                        </a>
+                        @endcan
+                    </div>
+                </div>
             </div>
         </div>
 

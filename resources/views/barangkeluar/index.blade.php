@@ -72,8 +72,8 @@
         }
     </style>
 
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 13px; width: 1160px;">
-        <h4 class="mt-3" style="color: #8a8a8a;">Outbound Item</h4>
+    <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
+        <h4 class="mt-3">Outbound Item</h4>
         <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 40px"></div>
 
         <table class="table table-bordered table-striped table-hover" id="outboundTable" width="100%">

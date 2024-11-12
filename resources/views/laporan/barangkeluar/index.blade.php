@@ -85,36 +85,44 @@
         }
     </style>
 
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
-        <h4 class="mt-3" style="color: #8a8a8a;">Outbound Item</h4>
+    <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
 
-        <!-- Filter and Export Buttons -->
-        <div class="filter-export">
-            <!-- Date Range Filter -->
-            <div class="filter-date">
-                <label for="startDate">From:</label>
-                <input style="height: 38px;" type="text" id="startDate" class="datepicker form-control date-input" placeholder="Start Date">
-        
-                <label for="endDate">To:</label>
-                <input style="height: 38px;" type="text" id="endDate" class="datepicker form-control date-input" placeholder="End Date">
-        
-                <button style="border-radius: 10px;" id="filterBtn" class="btn btn-primary d-flex align-items-center justify-content-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-filter-edit">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                        <path d="M10.97 20.344l-1.97 .656v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v1.5" />
-                        <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
-                    </svg>
-                    <span style="margin-left: 3px;">Filter</span>
-                </button>
+        <div class="d-flex align-items-center justify-content-between pb-3 mt-2">
+            <div class="d-flex align-items-center">
+                <h4>Outbound Item</h4>
             </div>
 
-            <!-- Export to Excel Button -->
-            <a href="#" id="exportExcelBtn" class="btn-action" title="Download Excel">
-                <div class="icon-excel">
-                    {{-- <iconify-icon icon="mdi:file-excel"></iconify-icon> --}}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff" viewBox="0 0 256 256"><path d="M156,208a8,8,0,0,1-8,8H120a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48h20A8,8,0,0,1,156,208ZM92.65,145.49a8,8,0,0,0-11.16,1.86L68,166.24,54.51,147.35a8,8,0,1,0-13,9.3L58.17,180,41.49,203.35a8,8,0,0,0,13,9.3L68,193.76l13.49,18.89a8,8,0,0,0,13-9.3L77.83,180l16.68-23.35A8,8,0,0,0,92.65,145.49Zm98.94,25.82c-4-1.16-8.14-2.35-10.45-3.84-1.25-.82-1.23-1-1.12-1.9a4.54,4.54,0,0,1,2-3.67c4.6-3.12,15.34-1.72,19.82-.56a8,8,0,0,0,4.07-15.48c-2.11-.55-21-5.22-32.83,2.76a20.58,20.58,0,0,0-8.95,14.95c-2,15.88,13.65,20.41,23,23.11,12.06,3.49,13.12,4.92,12.78,7.59-.31,2.41-1.26,3.33-2.15,3.93-4.6,3.06-15.16,1.55-19.54.35A8,8,0,0,0,173.93,214a60.63,60.63,0,0,0,15.19,2c5.82,0,12.3-1,17.49-4.46a20.81,20.81,0,0,0,9.18-15.23C218,179,201.48,174.17,191.59,171.31ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,1,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.68L160,51.31Z"></path></svg>
+            <div class="d-flex align-items-center">
+                <!-- Filter and Export Buttons -->
+                <div class="filter-export">
+                    <!-- Date Range Filter -->
+                    <div class="filter-date">
+                        <label for="startDate">From:</label>
+                        <input style="height: 38px;" type="text" id="startDate" class="datepicker form-control date-input" placeholder="Start Date">
+                
+                        <label for="endDate">To:</label>
+                        <input style="height: 38px;" type="text" id="endDate" class="datepicker form-control date-input" placeholder="End Date">
+                
+                        <button style="border-radius: 10px;" id="filterBtn" class="btn btn-primary d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-filter-edit">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M10.97 20.344l-1.97 .656v-8.5l-4.48 -4.928a2 2 0 0 1 -.52 -1.345v-2.227h16v2.172a2 2 0 0 1 -.586 1.414l-4.414 4.414v1.5" />
+                                <path d="M18.42 15.61a2.1 2.1 0 0 1 2.97 2.97l-3.39 3.42h-3v-3l3.42 -3.39z" />
+                            </svg>
+                            <span style="margin-left: 3px;">Filter</span>
+                        </button>
+                    </div>
+
+                    <!-- Export to Excel Button -->
+                    <a href="#" id="exportExcelBtn" class="btn-action" title="Download Excel">
+                        <div class="icon-excel">
+                            {{-- <iconify-icon icon="mdi:file-excel"></iconify-icon> --}}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff" viewBox="0 0 256 256"><path d="M156,208a8,8,0,0,1-8,8H120a8,8,0,0,1-8-8V152a8,8,0,0,1,16,0v48h20A8,8,0,0,1,156,208ZM92.65,145.49a8,8,0,0,0-11.16,1.86L68,166.24,54.51,147.35a8,8,0,1,0-13,9.3L58.17,180,41.49,203.35a8,8,0,0,0,13,9.3L68,193.76l13.49,18.89a8,8,0,0,0,13-9.3L77.83,180l16.68-23.35A8,8,0,0,0,92.65,145.49Zm98.94,25.82c-4-1.16-8.14-2.35-10.45-3.84-1.25-.82-1.23-1-1.12-1.9a4.54,4.54,0,0,1,2-3.67c4.6-3.12,15.34-1.72,19.82-.56a8,8,0,0,0,4.07-15.48c-2.11-.55-21-5.22-32.83,2.76a20.58,20.58,0,0,0-8.95,14.95c-2,15.88,13.65,20.41,23,23.11,12.06,3.49,13.12,4.92,12.78,7.59-.31,2.41-1.26,3.33-2.15,3.93-4.6,3.06-15.16,1.55-19.54.35A8,8,0,0,0,173.93,214a60.63,60.63,0,0,0,15.19,2c5.82,0,12.3-1,17.49-4.46a20.81,20.81,0,0,0,9.18-15.23C218,179,201.48,174.17,191.59,171.31ZM40,112V40A16,16,0,0,1,56,24h96a8,8,0,0,1,5.66,2.34l56,56A8,8,0,0,1,216,88v24a8,8,0,1,1-16,0V96H152a8,8,0,0,1-8-8V40H56v72a8,8,0,0,1-16,0ZM160,80h28.68L160,51.31Z"></path></svg>
+                        </div>
+                    </a>
                 </div>
-            </a>
+            </div>
+
         </div>
 
         <table class="table table-bordered table-striped table-hover" id="barangkeluar" width="100%">

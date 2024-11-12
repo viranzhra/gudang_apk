@@ -2,8 +2,8 @@
 
 @section('content')
     @can('roles.create')
-        <div class="container shadow-sm mt-3" style="border-radius: 20px;">
-            <h2>Create New Role</h2>
+        <div class="container mt-3 rounded-4 shadow-sm">
+            <h3>Create New Role</h3>
 
             @if ($errors->any())
                 <div class="alert alert-danger">

@@ -2,8 +2,9 @@
 
 @section('content')
     @can('roles.view')
-        <div class="container shadow-sm mt-3" style="border-radius: 20px;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
+
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
                 <h4>Manage Roles and User Roles</h4>
                 @can('roles.create')
                     <a href="{{ route('roles.create') }}" class="btn btn-primary">Add Role</a>
@@ -50,7 +51,7 @@
                                 render: function(data, type, row) {
                                     if (!data || data.length === 0) return '';
 
-                                    const displayLimit = 2;
+                                    const displayLimit = 3;
                                     const permissions = data.slice(0, displayLimit).map(permission =>
                                         permissionNames[permission] || permission);
                                     const joinedPermissions = permissions.join(', ');

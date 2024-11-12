@@ -415,8 +415,7 @@
         }
     </style>
 
-    <div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 10px; width: 1160px;">
-        <h4 class="mt-3" style="color: #8a8a8a;">Incoming Item</h4>
+    <div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
         <!-- Notification Element -->
         <div id="notification" class="alert" style="display: none;">
             <strong id="notificationTitle">Notification</strong>
@@ -511,74 +510,80 @@
 @endif --}}
 
 
-        <div class="d-flex align-items-center gap-3 justify-content-end pb-3 flex-wrap">
-            <!-- Tombol Unduh Template -->
-            <a href="{{ route('download.template') }}" class="btn btn-primary d-flex align-items-center"
-                title="Download Template" style="height: 40px;">
-                {{-- <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon> --}}
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff" viewBox="0 0 256 256">
-                    <path
-                        d="M216,48V160H179.31a8,8,0,0,0-5.66,2.34l-19.31,19.32a8,8,0,0,1-5.66,2.34H107.31a8,8,0,0,1-5.66-2.34L82.34,162.34A8,8,0,0,0,76.68,160H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z"
-                        opacity="0.2"></path>
-                    <path
-                        d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,16V152h-28.7A15.86,15.86,0,0,0,168,156.69L148.69,176H107.31L88,156.68A15.89,15.89,0,0,0,76.69,152H48V48Zm0,160H48V168H76.69L96,187.32A15.89,15.89,0,0,0,107.31,192h41.38A15.86,15.86,0,0,0,160,187.31L179.31,168H208v40ZM90.34,125.66a8,8,0,0,1,11.32-11.32L120,132.69V72a8,8,0,0,1,16,0v60.69l18.34-18.35a8,8,0,0,1,11.32,11.32l-32,32a8,8,0,0,1-11.32,0Z">
-                    </path>
-                </svg>
-                <span style="margin-left: 2px;">Template File</span>
-            </a>
+        <div class="d-flex align-items-center gap-3 justify-content-between pb-3 flex-wrap">
+            <div class="d-flex">
+                <h4 class="mt-3 absolute">Incoming Item</h4>
+            </div>
+            <div class="d-flex gap-3">
+                <!-- Tombol Unduh Template -->
+                <a href="{{ route('download.template') }}" class="btn btn-primary d-flex align-items-center"
+                    title="Download Template" style="height: 40px;">
+                    {{-- <iconify-icon icon="mdi:download" style="font-size: 20px; margin-right: 8px;"></iconify-icon> --}}
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                        viewBox="0 0 256 256">
+                        <path
+                            d="M216,48V160H179.31a8,8,0,0,0-5.66,2.34l-19.31,19.32a8,8,0,0,1-5.66,2.34H107.31a8,8,0,0,1-5.66-2.34L82.34,162.34A8,8,0,0,0,76.68,160H40V48a8,8,0,0,1,8-8H208A8,8,0,0,1,216,48Z"
+                            opacity="0.2"></path>
+                        <path
+                            d="M208,32H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32Zm0,16V152h-28.7A15.86,15.86,0,0,0,168,156.69L148.69,176H107.31L88,156.68A15.89,15.89,0,0,0,76.69,152H48V48Zm0,160H48V168H76.69L96,187.32A15.89,15.89,0,0,0,107.31,192h41.38A15.86,15.86,0,0,0,160,187.31L179.31,168H208v40ZM90.34,125.66a8,8,0,0,1,11.32-11.32L120,132.69V72a8,8,0,0,1,16,0v60.69l18.34-18.35a8,8,0,0,1,11.32,11.32l-32,32a8,8,0,0,1-11.32,0Z">
+                        </path>
+                    </svg>
+                    <span style="margin-left: 2px;">Template File</span>
+                </a>
 
-            <!-- Form untuk Unggah File Excel -->
-            <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
-                class="d-flex align-items-center gap-2" id="uploadForm">
-                @csrf
+                <!-- Form untuk Unggah File Excel -->
+                <form action="{{ route('upload.excel') }}" method="POST" enctype="multipart/form-data"
+                    class="d-flex align-items-center gap-2" id="uploadForm">
+                    @csrf
 
 
-                {{-- <div class="file-upload">
-                    <input type="file" name="file" id="file" required class="form-control"
-                        aria-label="Unggah File Excel">
-                    <label for="file" class="custom-file-upload">
-                        Upload File
-                    </label>
-                </div> --}}
-                <div class="file-upload">
-                    <input title="File excel" type="file" name="file" id="file" required class="form-control"
-                        aria-label="Unggah File Excel">
-                    <label for="file" class="custom-file-upload">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
-                            viewBox="0 0 256 256">
-                            <path d="M240,128a80,80,0,0,1-80,80H72A56,56,0,1,1,85.92,97.74l0,.1A80,80,0,0,1,240,128Z"
-                                opacity="0.2"></path>
-                            <path
-                                d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z">
-                            </path>
-                        </svg>
-                        <span style="margin-left: 3px;">Upload File</span>
-                    </label>
-                </div>
+                    {{-- <div class="file-upload">
+                <input type="file" name="file" id="file" required class="form-control"
+                    aria-label="Unggah File Excel">
+                <label for="file" class="custom-file-upload">
+                    Upload File
+                </label>
+            </div> --}}
+                    <div class="file-upload">
+                        <input title="File excel" type="file" name="file" id="file" required class="form-control"
+                            aria-label="Unggah File Excel">
+                        <label for="file" class="custom-file-upload">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ffffff"
+                                viewBox="0 0 256 256">
+                                <path d="M240,128a80,80,0,0,1-80,80H72A56,56,0,1,1,85.92,97.74l0,.1A80,80,0,0,1,240,128Z"
+                                    opacity="0.2"></path>
+                                <path
+                                    d="M178.34,165.66,160,147.31V208a8,8,0,0,1-16,0V147.31l-18.34,18.35a8,8,0,0,1-11.32-11.32l32-32a8,8,0,0,1,11.32,0l32,32a8,8,0,0,1-11.32,11.32ZM160,40A88.08,88.08,0,0,0,81.29,88.68,64,64,0,1,0,72,216h40a8,8,0,0,0,0-16H72a48,48,0,0,1,0-96c1.1,0,2.2,0,3.29.12A88,88,0,0,0,72,128a8,8,0,0,0,16,0,72,72,0,1,1,100.8,66,8,8,0,0,0,3.2,15.34,7.9,7.9,0,0,0,3.2-.68A88,88,0,0,0,160,40Z">
+                                </path>
+                            </svg>
+                            <span style="margin-left: 3px;">Upload File</span>
+                        </label>
+                    </div>
 
-                <div id="loadingIndicator" style="display: none;"><img style="width: 50px; height: 50px;"
-                        src="{{ asset('assets/images/icon/Spinner_load.gif') }}" alt=""></div>
-                <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
-                    title="Click to Upload">
-                    <iconify-icon id="uploadIcon" icon="mdi:upload"
-                        style="font-size: 20px; margin-right: 3px;"></iconify-icon>
-                    Import Data
+                    <div id="loadingIndicator" style="display: none;"><img style="width: 50px; height: 50px;"
+                            src="{{ asset('assets/images/icon/Spinner_load.gif') }}" alt=""></div>
+                    <button type="submit" class="btn btn-success d-none d-flex align-items-center" id="uploadButton"
+                        title="Click to Upload">
+                        <iconify-icon id="uploadIcon" icon="mdi:upload"
+                            style="font-size: 20px; margin-right: 3px;"></iconify-icon>
+                        Import Data
+                    </button>
+                </form>
+
+
+                <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
+                    style="height: 40px;" title="Add new data">
+                    <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 4px;"></iconify-icon>
+                    Add
+                </a>
+
+                <!-- Delete Selected Button -->
+                <button id="deleteSelected" class="btn btn-danger d-none d-flex align-items-center"
+                    style="height: 40px; background-color: #910a0a; border: none;">
+                    <iconify-icon icon="mdi:delete" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
+                    Delete Selected
                 </button>
-            </form>
-
-
-            <a href="{{ route('barangmasuk.create') }}" class="btn btn-primary d-flex align-items-center"
-                style="height: 40px;" title="Add new data">
-                <iconify-icon icon="mdi:plus-circle" style="font-size: 20px; margin-right: 4px;"></iconify-icon>
-                Add
-            </a>
-
-            <!-- Delete Selected Button -->
-            <button id="deleteSelected" class="btn btn-danger d-none d-flex align-items-center"
-                style="height: 40px; background-color: #910a0a; border: none;">
-                <iconify-icon icon="mdi:delete" style="font-size: 20px; margin-right: 8px;"></iconify-icon>
-                Delete Selected
-            </button>
+            </div>
         </div>
 
         <!-- Container for preview table -->
@@ -1135,31 +1140,37 @@
                                         Previous
                                     </button>
                                     ${totalPages <= 2 
-                                        ? Array.from({ length: totalPages }, (_, index) => `
-                                            <button style="height: 30px;" 
-                                                class="btn ${currentPage === index + 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
-                                                onclick="changePage(${index + 1})">
-                                                ${index + 1}
-                                            </button>
-                                        `).join('') 
-                                        : `
-                                            <button style="height: 30px;" 
-                                                class="btn ${currentPage === 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
-                                                onclick="changePage(1)">
-                                                1
-                                            </button>
-                                            <button style="height: 30px;" 
-                                                class="btn ${currentPage === 2 ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
-                                                onclick="changePage(2)">
-                                                2
-                                            </button>
-                                            <span class="btn btn-light btn-sm mx-1">...</span>
-                                            <button style="height: 30px;" 
-                                                class="btn ${currentPage === totalPages ? 'btn-primary' : 'btn-light'} btn-sm mx-1" 
-                                                onclick="changePage(${totalPages})">
-                                                ${totalPages}
-                                            </button>
-                                        `}
+                                        ? Array.from({ length: totalPages }, (_, index) => ` <
+                                button style = "height: 30px;"
+                            class =
+                            "btn ${currentPage === index + 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                            onclick = "changePage(${index + 1})" >
+                                $ {
+                                    index + 1
+                                } <
+                                /button>
+                            `).join('') 
+                                        : ` <
+                            button style = "height: 30px;"
+                            class = "btn ${currentPage === 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                            onclick = "changePage(1)" >
+                                1 <
+                                /button> <
+                                button style = "height: 30px;"
+                            class = "btn ${currentPage === 2 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                            onclick = "changePage(2)" >
+                                2 <
+                                /button> <
+                                span class = "btn btn-light btn-sm mx-1" > ... < /span> <
+                                button style = "height: 30px;"
+                            class =
+                            "btn ${currentPage === totalPages ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                            onclick = "changePage(${totalPages})" >
+                                $ {
+                                    totalPages
+                                } <
+                                /button>
+                            `}
                                     <button style="height: 30px;"
                                         class="btn ${currentPage === totalPages ? 'btn-light' : 'btn-primary'} btn-sm mx-1" 
                                         onclick="changePage(${currentPage + 1})" 
@@ -1167,12 +1178,13 @@
                                         Next
                                     </button>
                                 </div>
-                            ` : '';
+                            `: '';
 
                             // Update the pagination buttons section
                             const paginationContainer = document.getElementById('paginationButtons');
                             paginationContainer.innerHTML = paginationButtons;
-                            paginationContainer.className = totalPages > 1 ? 'mt-3' : 'd-none'; // Show/hide based on page count
+                            paginationContainer.className = totalPages > 1 ? 'mt-3' :
+                            'd-none'; // Show/hide based on page count
                         };
 
                         // Function to change page

@@ -39,9 +39,9 @@
     }
 </style>
 
-<div class="container mt-3" style="padding: 40px; padding-bottom: 15px; padding-top: 13px; width: 1160px;">
-    <h4 class="mt-3" style="color: #8a8a8a;">Stock Item</h4>
-    <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 40px">
+<div class="container mt-3 rounded-4 shadow-sm" style="padding-bottom: 15px; padding-top: 10px; min-width: 1160px;">
+    <h4 class="mt-3">Stock Item</h4>
+    <div class="d-flex align-items-center gap-3 justify-content-end" style="padding-bottom: 20px">
         {{-- <!-- Add Button -->
         <a href="#" class="btn btn-primary d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#tambahDataModal" style="width: 75px; height: 35px;">
             <iconify-icon icon="mdi:plus-circle" style="font-size: 18px; margin-right: 5px;"></iconify-icon>
