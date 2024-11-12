@@ -429,6 +429,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data.success) {
                 if (status === 'Processing') {
                     window.location.href = `/permintaanbarangkeluar/selectSN/${id}`;
+                } else if (status === 'Rejected') {
+                    showNotification('success', data.message);
+                    const table = $('#permintaan-table').DataTable();
+                    table.ajax.reload();
                 } else {
                     showNotification('success', data.message);
                     setTimeout(function() {
