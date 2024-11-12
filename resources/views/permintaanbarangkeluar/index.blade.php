@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="col-12 fw-bold">Date</div>
                             <div class="col-3 fw-bold ps-4">Request:</div>
                             <div class="col-9">${tanggalAwal || '—'}</div>
-                            ${extend == 1 ? `
+                            ${extend ? `
                                 <div class="col-3 fw-bold ps-4">${namaTanggalAkhir || '—'}:</div>
                                 <div class="col-9">${TanggalAkhir}</div>
                             ` : ''}
