@@ -38,6 +38,10 @@ class DashboardController extends Controller
                 'counts_barang_masuk_6months' => $data['counts_barang_masuk_6months'],
                 'counts_barang_keluar_6months' => $data['counts_barang_keluar_6months'],
 
+                'counts_req_pending' => $data['counts_req_pending'],
+                'counts_req_approved' => $data['counts_req_approved'],
+                'counts_req_rejected' => $data['counts_req_rejected'],
+                
                 'req_rejected' => $data['req_rejected'],
                 'req_approved' => $data['req_approved'],
                 'req_pending' => $data['req_pending'],
