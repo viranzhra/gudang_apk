@@ -437,7 +437,7 @@
                 @endcan
 
                 {{-- For Admin --}}
-                @canall(['item incoming.view', 'item outbound.view', 'item request.viewAll'])
+                @canall(['incoming item.view', 'outbound item.view', 'item request.viewAll'])
                 <div class="card-body pb-4">
                     <div class="d-md-flex align-items-center justify-content-between mb-4">
                         <div class="hstack align-items-center gap-3">

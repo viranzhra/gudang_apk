@@ -1140,37 +1140,30 @@
                                         Previous
                                     </button>
                                     ${totalPages <= 2 
-                                        ? Array.from({ length: totalPages }, (_, index) => ` <
-                                button style = "height: 30px;"
-                            class =
-                            "btn ${currentPage === index + 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
-                            onclick = "changePage(${index + 1})" >
-                                $ {
-                                    index + 1
-                                } <
-                                /button>
-                            `).join('') 
-                                        : ` <
-                            button style = "height: 30px;"
-                            class = "btn ${currentPage === 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
-                            onclick = "changePage(1)" >
-                                1 <
-                                /button> <
-                                button style = "height: 30px;"
-                            class = "btn ${currentPage === 2 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
-                            onclick = "changePage(2)" >
-                                2 <
-                                /button> <
-                                span class = "btn btn-light btn-sm mx-1" > ... < /span> <
-                                button style = "height: 30px;"
-                            class =
-                            "btn ${currentPage === totalPages ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
-                            onclick = "changePage(${totalPages})" >
-                                $ {
-                                    totalPages
-                                } <
-                                /button>
-                            `}
+                                        ? Array.from({ length: totalPages }, (_, index) => `
+                                            <button style="height: 30px;" 
+                                                class="btn ${currentPage === index + 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                                                onclick="changePage(${index + 1})">
+                                                ${index + 1}
+                                            </button>`).join('') 
+                                        : `
+                                            <button style="height: 30px;"
+                                                class="btn ${currentPage === 1 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                                                onclick="changePage(1)">
+                                                1
+                                            </button>
+                                            <button style="height: 30px;"
+                                                class="btn ${currentPage === 2 ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                                                onclick="changePage(2)">
+                                                2
+                                            </button>
+                                            <span class="btn btn-light btn-sm mx-1">...</span>
+                                            <button style="height: 30px;"
+                                                class="btn ${currentPage === totalPages ? 'btn-primary' : 'btn-light'} btn-sm mx-1"
+                                                onclick="changePage(${totalPages})">
+                                                ${totalPages}
+                                            </button>
+                                    `}
                                     <button style="height: 30px;"
                                         class="btn ${currentPage === totalPages ? 'btn-light' : 'btn-primary'} btn-sm mx-1" 
                                         onclick="changePage(${currentPage + 1})" 
