@@ -53,24 +53,8 @@
 </style>
 
 <div class="container mt-3" style="max-width: 700px; padding: 30px;">
-    <h4 class="text-center mb-4" style="color: #8a8a8a;">Edit Profil</h4>
+    <h3 class="mb-4">Edit Profil</h3>
     
-    {{-- <!-- Notification Messages -->
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ is_array($error) ? implode(', ', $error) : $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif --}}
-
     <!-- Notification Element -->
     <div id="notification" class="alert" style="display: none;">
         <strong id="notificationTitle">Notification</strong>
@@ -128,41 +112,86 @@
             });
     </script>
 
+    <!-- Edit Foto Form -->
+<div class="text-center mb-4" style="margin-top: 30px;">
+    <div class="d-inline-block position-relative">
+        <img id="previewPhoto" class="rounded-circle shadow-sm border" width="100" height="100" alt="Profile Photo" src="{{ $user['photo'] ? (($apiUrl = rtrim(env('API_URL'), '/api')) ? $apiUrl . '/assets/photo_profile/' . $user['photo'] : 'default_photo_url_here') : 'default_photo_url_here' }}">
+    </div>
+    
+    <div class="mt-3 text-center">
+        <label for="profile_photo" class="btn btn-primary fw-bold">
+            Change photo
+        </label>
+        <input type="file" class="form-control d-none" id="profile_photo" name="profile_photo" accept="image/*">
+    </div>
+</div>
+
+<!-- Modal Konfirmasi Upload -->
+<div class="modal fade" id="uploadPhotoModal" tabindex="-1" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadPhotoModalLabel">Upload Foto Profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalPreviewPhoto" class="rounded-circle border mb-3" width="150" height="150" alt="Preview Photo">
+                <p>Apakah Anda yakin ingin mengunggah foto ini?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="confirmUploadPhoto" class="btn btn-primary">Ya, Unggah</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Preview Foto dan Tampilkan Modal
+    document.getElementById('profile_photo').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                document.getElementById('previewPhoto').src = event.target.result;
+                document.getElementById('modalPreviewPhoto').src = event.target.result;
+                const modal = new bootstrap.Modal(document.getElementById('uploadPhotoModal'));
+                modal.show();
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Proses Upload Foto
+    document.getElementById('confirmUploadPhoto').addEventListener('click', function () {
+        const formData = new FormData();
+        const photo = document.getElementById('profile_photo').files[0];
+        formData.append('photo', photo);
+
+        fetch('{{ route('profile.photo.update') }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Foto berhasil diunggah.');
+                location.reload();
+            } else {
+                alert('Terjadi kesalahan: ' + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
+
     <!-- Profile Form -->
 <form method="POST" action="{{ route('profile.update') }}" id="profileForm">
     @csrf
     @method('PUT')
-
-    <!-- Profile Photo Section -->
-    <div class="text-center mb-4" style="margin-top: 30px;">
-        <div class="d-inline-block position-relative">
-            <!-- Conditional Display: Profile Photo or Default Icon -->
-            {{-- @if ($user->profile_photo_url) --}}
-                {{-- <img src="#" class="rounded-circle shadow-sm border" width="100" height="100" alt="Profile Photo"> --}}
-            {{-- @else --}}
-                <!-- Default Icon if no profile photo -->
-                <iconify-icon icon="line-md:person" class="bg-primary-subtle shadow-sm" style="color: rgb(70, 70, 70); font-size: 50px; border: 1px dashed #635bff; padding: 15px; border-radius: 50%;"></iconify-icon>
-            {{-- @endif --}}
-        </div>
-        
-        <div class="mt-3 text-center">
-            <label for="profile_photo" class="btn btn-primary fw-bold">
-                Change photo
-            </label>
-            <input type="file" class="form-control d-none" id="profile_photo" name="profile_photo" accept="image/*">
-        </div>
-    </div>
-
-    <!-- Nama Field -->
-    {{-- <div class="mb-3">
-        <label for="name" class="form-label">Name</label>
-        <div class="input-group">
-            <span class="input-group-text">
-                <i class="bi bi-person"></i>
-            </span>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $user['name'] }}" required>
-        </div>
-    </div> --}}
 
     <!-- Name Field with Icon Inside -->
     <div class="mb-3">
@@ -181,17 +210,6 @@
             <i class="bi bi-envelope position-absolute top-50 start-0 translate-middle-y ms-2"></i>
         </div>
     </div>
-
-    <!-- Email Field -->
-    {{-- <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <div class="input-group">
-            <span class="input-group-text">
-                <i class="bi bi-envelope"></i>
-            </span>
-            <input type="email" class="form-control" id="email" name="email" value="{{ $user['email'] }}" required>
-        </div>
-    </div> --}}
 
     <!-- Password Section -->
     <hr class="custom-hr">

@@ -24,16 +24,45 @@ class ProfileController extends Controller
         }
     }
 
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        try {
+            $http = Http::withToken(session('jwt_token'))
+                ->attach(
+                    'photo',
+                    file_get_contents($request->file('photo')->getPathname()),
+                    $request->file('photo')->getClientOriginalName()
+                )
+                ->asMultipart()
+                ->post(env('API_URL') . '/user/update-photo');
+
+            if ($http->successful()) {
+                return response()->json(['success' => true, 'message' => 'Foto berhasil diperbarui.']);
+            }
+
+            // Tambahkan logging error dari Laravel B
+            \Log::error('Error dari API Laravel B:', $http->json());
+            return response()->json(['success' => false, 'message' => 'Gagal mengunggah foto.', 'error' => $http->json()]);
+        } catch (\Exception $e) {
+            \Log::error('Error di Laravel A:', ['message' => $e->getMessage()]);
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan saat menghubungi API.', 'error' => $e->getMessage()]);
+        }
+    }
+
     /**
      * Proses pembaruan profil
      */
     public function update(Request $request)
     {
-        // Validasi input di Laravel A (opsional)
+        // Validasi input di Laravel A
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password' => 'nullable|string|min:6|confirmed',
         ]);
 
@@ -53,11 +82,11 @@ class ProfileController extends Controller
         $http = Http::withToken(session('jwt_token'));
 
         // Jika ada foto, lampirkan sebagai multipart
-        if ($request->hasFile('photo')) {
+        if ($request->hasFile('profile_photo')) {
             $http = $http->attach(
                 'photo',
-                file_get_contents($request->file('photo')->getPathname()),
-                $request->file('photo')->getClientOriginalName()
+                file_get_contents($request->file('profile_photo')->getPathname()),
+                $request->file('profile_photo')->getClientOriginalName()
             );
         }
 
@@ -71,4 +100,5 @@ class ProfileController extends Controller
             return back()->withErrors($response->json());
         }
     }
+
 }

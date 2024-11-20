@@ -578,7 +578,11 @@
                                     data-bs-toggle="dropdown" aria-expanded="false">
                                     {{-- <img src="{{ asset('assets/images/profile/user-3.jpg') }}" alt="" width="35"
                                         height="35" class="rounded-circle"> --}}
-                                    <iconify-icon icon="line-md:person" class="bg-primary-subtle" style="color:rgb(70, 70, 70);font-size:27px;border:1px dashed #635bff;padding:5px;border-radius:50%"></iconify-icon>
+                                    @if($user['photo'])
+                                        <img src="{{ rtrim(env('API_URL'), '/api') . '/assets/photo_profile/' . $user['photo'] }}" alt="" width="35" height="35" class="rounded-circle">
+                                    @else
+                                        <iconify-icon icon="line-md:person" class="bg-primary-subtle" style="color:rgb(70, 70, 70);font-size:27px;border:1px dashed #635bff;padding:5px;border-radius:50%"></iconify-icon>
+                                    @endif                                
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up"
                                     aria-labelledby="drop2">

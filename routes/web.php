@@ -65,6 +65,7 @@ Route::middleware('jwt_token')->group(function () {
     // });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::get('/supplier', [SupplierController::class, 'index'])->name('supplier.index')->middleware('check:supplier.view');

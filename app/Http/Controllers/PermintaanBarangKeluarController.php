@@ -240,7 +240,7 @@ class PermintaanBarangKeluarController extends Controller
             'serial_number_ids' => $validated['serial_number_ids']
         ];
 
-        \Log::info('Mengirim data ke API:', $payload);
+        // \Log::info('Mengirim data ke API:', $payload);
 
         $response = Http::withToken(session('jwt_token'))->post(config('app.api_url') . '/permintaanbarangkeluar/setSN', $payload);
 
