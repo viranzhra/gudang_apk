@@ -139,7 +139,6 @@
                 <p>Apakah Anda yakin ingin mengunggah foto ini?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                 <button type="button" id="confirmUploadPhoto" class="btn btn-primary">Ya, Unggah</button>
             </div>
         </div>
@@ -168,6 +167,10 @@
         const photo = document.getElementById('profile_photo').files[0];
         formData.append('photo', photo);
 
+        const confirmUploadButton = document.getElementById('confirmUploadPhoto');
+        confirmUploadButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...';
+        confirmUploadButton.disabled = true;
+
         fetch('{{ route('profile.photo.update') }}', {
             method: 'POST',
             headers: {
@@ -178,13 +181,19 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Foto berhasil diunggah.');
-                location.reload();
+                showNotification('success', 'Foto profil berhasil diunggah.');
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);            
             } else {
-                alert('Terjadi kesalahan: ' + data.message);
+                showNotification('error', 'Terjadi kesalahan saat mengunggah foto profil.');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            confirmUploadButton.innerHTML = 'Ya, Unggah';
+            confirmUploadButton.disabled = false;
+        });
     });
 </script>
 
