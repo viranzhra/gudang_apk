@@ -126,7 +126,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="deskripsi" class="form-label">Description</label>
-                        <input type="text" id="deskripsi" name="deskripsi" class="form-control" required />
+                        <input type="text" id="deskripsi" name="deskripsi" class="form-control" />
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
@@ -154,7 +154,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="edit-deskripsi" class="form-label">Description</label>
-                        <input type="text" id="edit-deskripsi" name="deskripsi" class="form-control" required />
+                        <input type="text" id="edit-deskripsi" name="deskripsi" class="form-control" />
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
@@ -221,11 +221,12 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'https://doaibutiri.my.id/gudang/api/jenisbarang',
+                url: '{{ env('API_URL') }}/jenisbarang',
                 headers: {
-                    'Authorization': 'Bearer ' + '{{ session('token') }}'
+                    'Authorization': 'Bearer ' + '{{ session('jwt_token') }}'
                 }
             },
+            order: [[2, 'asc']],
             columns: [
                 {
                     data: 'id',
@@ -259,19 +260,7 @@
                     }
                 }
             ],
-            // language: {
-            //     emptyTable: "Tidak ada data yang tersedia",
-            //     search: "Cari:",
-            //     lengthMenu: "Tampilkan _MENU_ entri",
-            //     paginate: {
-            //         first: "Pertama",
-            //         last: "Terakhir",
-            //         next: "Selanjutnya",
-            //         previous: "Sebelumnya"
-            //     }
-            // }
-        });
-        
+        });        
         // Function to show notifications
         function showNotification(title, message, type) {
             const notification = $('#notification');
@@ -291,7 +280,7 @@
             const id = $(this).data('id');
             const nama = $(this).data('nama');
             const deskripsi = $(this).data('deskripsi');
-            $('#editForm').attr('action', `https://doaibutiri.my.id/gudang/api/jenisbarang/${id}`);
+            $('#editForm').attr('action', `{{ env('API_URL') }}/jenisbarang/${id}`);
             $('#edit-nama').val(nama);
             $('#edit-deskripsi').val(deskripsi);
             $('#editData').modal('show');
@@ -302,7 +291,7 @@
             const id = $(this).data('id');
             const nama = $(this).data('nama');
             $('#itemName').text(nama);
-            $('#deleteForm').attr('action', `https://doaibutiri.my.id/gudang/api/jenisbarang/${id}`);
+            $('#deleteForm').attr('action', `{{ env('API_URL') }}/jenisbarang/${id}`);
             $('#deleteModal').modal('show');
         });
 
@@ -312,7 +301,7 @@
             const formData = $(this).serialize();
     
             $.ajax({
-                url: $(this).attr('action'),
+                url: `{{ env('API_URL') }}/jenisbarang`,
                 method: 'POST',
                 data: formData,
                 success: function(response) {
@@ -413,7 +402,7 @@
 
             if (selectedIds.length > 0) {
                 $.ajax({
-                    url: 'https://doaibutiri.my.id/gudang/api/jenisbarang/delete-selected',
+                    url: '{{ env('API_URL') }}/jenisbarang/delete-selected',
                     method: 'POST',
                     data: {
                         ids: selectedIds,

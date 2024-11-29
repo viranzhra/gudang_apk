@@ -373,7 +373,7 @@ $('#editForm').on('submit', function(e) {
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'https://doaibutiri.my.id/gudang/api/statusbarang',
+                url: '{{ env('API_URL') }}/statusbarang',
                 headers: {
                     'Authorization': 'Bearer ' + '{{ session('token') }}'
                 }

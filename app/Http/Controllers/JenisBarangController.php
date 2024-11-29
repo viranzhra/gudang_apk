@@ -67,7 +67,7 @@ class JenisBarangController extends Controller
     ];
 
     // Send a POST request to the external API
-    $response = Http::withoutVerifying()->post('https://doaibutiri.my.id/gudang/api/jenisbarang', $data);
+    $response = Http::withToken(session('jwt_token'))->post('{{ env(`API_URL`) }}/jenisbarang', $data);
 
     // Check if the API request was successful
     if ($response->successful()) {
@@ -85,7 +85,7 @@ class JenisBarangController extends Controller
 
 	// public function store(Request $request): RedirectResponse
 	// {
-	// 	$response = Http::withoutVerifying()->post('https://doaibutiri.my.id/gudang/api/jenisbarang/' . $request->all());
+	// 	$response = Http::withoutVerifying()->post('{{ env(`API_URL`) }}/jenisbarang/' . $request->all());
 
 	// 	$request->validate([
 	// 		'nama' => 'required|string|max:255',
@@ -115,7 +115,7 @@ class JenisBarangController extends Controller
 
 	// public function edit($id)
 	// {
-	// 	$response = Http::withoutVerifying()->get('https://doaibutiri.my.id/gudang/api/jenisbarang/' . $id);
+	// 	$response = Http::withoutVerifying()->get('{{ env(`API_URL`) }}/jenisbarang/' . $id);
 
 
 	// 	$data = JenisBarang::find($id);
@@ -139,7 +139,7 @@ class JenisBarangController extends Controller
 		}
 
 		// Send a PUT request to the external API
-		$response = Http::withoutVerifying()->put('https://doaibutiri.my.id/gudang/api/jenisbarang/' . $id, $request->all());
+		$response = Http::withoutVerifying()->put('{{ env(`API_URL`) }}/jenisbarang/' . $id, $request->all());
 
 		if ($response->successful()) {
 			$data->nama = $request->nama;
@@ -154,7 +154,7 @@ class JenisBarangController extends Controller
 
 	// public function update($id, Request $request): RedirectResponse
 	// {
-	// 	$response = Http::withoutVerifying()->put('https://doaibutiri.my.id/gudang/api/jenisbarang/' . $id, $request->all());
+	// 	$response = Http::withoutVerifying()->put('{{ env(`API_URL`) }}/jenisbarang/' . $id, $request->all());
 
 	// 	$request->validate([
 	// 		'nama' => 'required|string|max:255',
@@ -174,7 +174,7 @@ class JenisBarangController extends Controller
 
 	public function delete($id)
 	{
-		$response = Http::withoutVerifying()->delete('https://doaibutiri.my.id/gudang/api/jenisbarang/' . $id);
+		$response = Http::withoutVerifying()->delete('{{ env(`API_URL`) }}/jenisbarang/' . $id);
 
 		$data = JenisBarang::find($id);
 

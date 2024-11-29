@@ -47,7 +47,7 @@ class StatusBarangController extends Controller
 
 	public function store(Request $request): RedirectResponse
 	{
-		$response = Http::post('https://doaibutiri.my.id/gudang/api/statusbarang', $request->all());
+		$response = Http::post('{{ env(`API_URL`) }}/statusbarang', $request->all());
 
         if ($response->successful()) {
             return redirect('/statusbarang')->with('success', 'Data berhasil ditambahkan!');
@@ -58,7 +58,7 @@ class StatusBarangController extends Controller
 
 	public function edit($id)
 	{
-		$response = Http::get('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id);
+		$response = Http::get('{{ env(`API_URL`) }}/statusbarang/' . $id);
 
         if ($response->successful()) {
             $data = $response->json();
@@ -70,7 +70,7 @@ class StatusBarangController extends Controller
 
 	public function update($id, Request $request): RedirectResponse
 	{
-		$response = Http::put('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id, $request->all());
+		$response = Http::put('{{ env(`API_URL`) }}/statusbarang/' . $id, $request->all());
 
         if ($response->successful()) {
             return redirect('/statusbarang')->with('success', 'Data berhasil diperbarui!');
@@ -81,7 +81,7 @@ class StatusBarangController extends Controller
 
 	public function delete($id)
 	{
-		$response = Http::delete('https://doaibutiri.my.id/gudang/api/statusbarang/' . $id);
+		$response = Http::delete('{{ env(`API_URL`) }}/statusbarang/' . $id);
 
         if ($response->successful()) {
             return redirect('/statusbarang')->with('success', 'Data berhasil dihapus!');
