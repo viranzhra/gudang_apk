@@ -1,6 +1,7 @@
 @extends('layouts.navigation')
 
 @section('content')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         .icon-edit {
             background-color: #01578d;
@@ -269,14 +270,15 @@
                 autoHideAlert('.alert-danger', 3000);
             });
 
-            $('#deleteModal').on('show.bs.modal', function(event) {
-                const button = $(event.relatedTarget);
-                const itemId = button.data('id');
-                const itemName = button.closest('tr').find('td:nth-child(3)').text();
+            function openDeleteModal(id, name) {
+                document.getElementById('itemName').textContent = name || 'Unknown Item';
 
-                $('#itemName').text(itemName);
-                $('#deleteForm').attr('action', `/barang/delete/${itemId}`);
-            });
+                const deleteForm = document.getElementById('deleteForm');
+                deleteForm.setAttribute('action', `/barang/delete/${id || ''}`);
+
+                const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+                deleteModal.show();
+            }
         </script>
     @endcan
 
@@ -458,22 +460,21 @@
                                 orderable: false,
                                 render: function(data, type, row) {
                                     return `
-                    @can('item.edit')
-                    <button type="button" class="btn-edit btn-action" 
-                        data-id="${row.id}" 
-                        data-nama="${row.nama_barang}"
-                        data-bs-toggle="modal" data-bs-target="#editData"
-                        aria-label="Edit">
-                        <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
-                    </button>
-                    @endcan
-                    @can('item.delete')
-                    <button type="button" data-id="${row.id}" class="btn-action" aria-label="Hapus"
-                        data-bs-toggle="modal" data-bs-target="#deleteModal">
-                        <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
-                    </button>
-                    @endcan
-                `;
+                                        @can('item.edit')
+                                        <button type="button" class="btn-edit btn-action" 
+                                            data-id="${row.id}" 
+                                            data-nama="${row.nama_barang}"
+                                            data-bs-toggle="modal" data-bs-target="#editData"
+                                            aria-label="Edit">
+                                            <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
+                                        </button>
+                                        @endcan
+                                        @can('item.delete')
+                                        <button type="button" onclick="openDeleteModal(${row.id}, '${row.nama_barang}')" class="btn-action" aria-label="Hapus">
+                                            <iconify-icon icon="mdi:delete" class="icon-delete"></iconify-icon>
+                                        </button>
+                                        @endcan
+                                    `;
                                 }
                             }
                         @endcanany
@@ -570,8 +571,9 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Authorization': 'Bearer ' + '{{ $jwt_token }}'
+                            },                            
                             body: JSON.stringify({
                                 ids: selected
                             })
