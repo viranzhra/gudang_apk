@@ -229,16 +229,13 @@
                     {
                         data: 'nama_keperluan'
                     },
-                    // {
-                    //     data: 'tanggal_awal'
-                    // },
                     {
-    data: 'tanggal_awal',
-    render: function(data, type, row) {
-        moment.locale('id'); // Set locale to Indonesian
-        return moment(data).format('dddd, DD MMMM YYYY'); // Format to Indonesian date
-    }
-},
+                        data: 'tanggal',
+                        render: function(data, type, row) {
+                            moment.locale('id');
+                            return moment(data).format('dddd, DD MMMM YYYY');
+                        }
+                    },
                     {
                         data: null,
                         orderable: false,

@@ -121,7 +121,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: 'https://doaibutiri.my.id/gudang/api/barangkeluar',
+                    url: '{{ env('API_URL') }}/barangkeluar',
                     error: function(xhr, error, thrown) {
                         console.error('Ajax error:', error);
                         alert('An error occurred while fetching data. Please try again later.');
@@ -181,7 +181,7 @@
 
                         // Fetch details from the server
                         $.ajax({
-                            url: `https://doaibutiri.my.id/gudang/api/laporan/barangkeluar/${permintaanId}`,
+                            url: `{{ env('API_URL') }}/laporan/barangkeluar/${permintaanId}`,
                             type: 'GET',
                             headers: {
                                 'Authorization': 'Bearer ' + '{{ session('token') }}',

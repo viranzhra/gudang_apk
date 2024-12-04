@@ -168,8 +168,8 @@
                         <input type="text" id="nama" name="nama" class="form-control" required />
                     </div>
                     <div class="mb-3">
-                        <label for="edit-warna" class="form-label">Warna</label>
-                        <input type="color" id="edit-warna" name="warna" class="form-control" required />
+                        <label for="warna" class="form-label">Warna</label>
+                        <input type="color" id="warna" name="warna" class="form-control" required />
                     </div>
                     <button type="submit" class="btn btn-primary">Save</button>
                 </form>                
@@ -212,7 +212,7 @@
                 <form id="editForm" method="post" action="" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
-                
+                    <input type="hidden" id="edit-id" />
                     <div class="mb-3">
                         <label for="edit-nama" class="form-label">Item Status</label>
                         <input type="text" id="edit-nama" name="nama" class="form-control" required />
@@ -229,29 +229,23 @@
     </div>
 </div>
 
-<!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<!-- DataTables Bootstrap 4 integration -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
 <script src="https://cdn.datatables.net/1.13.1/js/dataTables.bootstrap4.min.js"></script>
 
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> --}}
-
 <script>
 $(document).on('click', '.btn-edit', function() {
-    const itemId = $(this).data('id');  // Get the ID of the item
-    const itemName = $(this).data('nama');  // Get the item name
+    const itemId = $(this).data('id');
+    const itemName = $(this).data('nama');
+    const itemWarna = $(this).data('warna');
 
-    // Update the form action URL with the correct item ID
-    $('#editForm').attr('action', `/statusbarang/update/${itemId}`);
+    $('#editForm').attr('action', '{{ url('statusbarang/update') }}/' + itemId);
 
-    // Populate form fields with the item data
+    $('#edit-id').val(itemId);
     $('#edit-nama').val(itemName);
+    $('#edit-warna').val(itemWarna);
 
-    // Show the modal
     $('#editData').modal('show');
 });
 </script>
@@ -335,19 +329,23 @@ $('#editForm').on('submit', function(e) {
     e.preventDefault(); // Mencegah form dari pengiriman default
     
     const form = $(this);
+    $('#editForm').attr('action', '{{ env('API_URL') }}/statusbarang/' + $('#edit-id').val());    
     const actionUrl = form.attr('action');
 
     $.ajax({
         url: actionUrl,
         type: 'POST',
+        method: 'PUT',
+        headers: {
+            'Authorization': 'Bearer ' + '{{ $jwt_token }}'
+        },
         data: form.serialize(),
         success: function(response) {
-            // If addition is successful, show success notification
             showNotification('success', 'Data edit successfully!');
-            $('#editData').modal('hide'); // Hide modal
+            $('#editData').modal('hide');
+            $('#statusbarangtable').DataTable().ajax.reload();
         },
         error: function() {
-            // If error occurs, show error notification
             showNotification('error', 'Failed to edit the item.');
         }
     });
@@ -364,8 +362,8 @@ $('#editForm').on('submit', function(e) {
                         notification.removeClass('alert-success alert-danger').addClass(type === 'success' ?
                             'alert-success' : 'alert-danger');
                         notification.fadeIn().delay(3000).fadeOut().promise().done(function() {
-                            location.reload();
-                        }); // Show for 3 seconds then reload
+                            //location.reload();
+                        });
                     }
 
     $(document).ready(function() {
@@ -408,6 +406,7 @@ $('#editForm').on('submit', function(e) {
                         <button type="button" class="btn-edit btn-action" 
                             data-id="${row.id}" 
                             data-nama="${row.nama}"
+                            data-warna="${row.warna}"
                             data-bs-toggle="modal" data-bs-target="#editData"
                             aria-label="Edit">
                             <iconify-icon icon="mdi:pencil" class="icon-edit"></iconify-icon>
