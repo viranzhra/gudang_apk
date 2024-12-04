@@ -25,17 +25,28 @@ class AuthController extends Controller
             'password' => $request->password,
         ]);
 
+        $data = $response->json();
+            
+        if (isset($data['error'])) {
+            if ($response->status() === 404) {
+                return back()->withErrors(['error' => 'Email tidak ditemukan']);
+            }
+            if ($response->status() === 401) {
+                return back()->withErrors(['error' => 'Password tidak valid']);
+            }
+            return back()->withErrors(['error' => $data['error']]);
+        }
+
         if ($response->successful()) {
-            $data = $response->json();
             session(['jwt_token' => $data['token']]);
             session(['user_name' => $data['user']['name']]);
 
-            return redirect()->route('dashboard')->with('success', 'Login berhasil');
+            return redirect()->route('dashboard')->with('success', $data['message'] ?? 'Login berhasil');
         } else {
             return back()->withErrors(['error' => 'Login gagal, periksa kredensial Anda.']);
         }
     }
-
+    
     /**
      * Menampilkan form registrasi
      */
