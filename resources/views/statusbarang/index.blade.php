@@ -150,7 +150,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="addForm" method="post" action="{{ route('statusbarang.store') }}" enctype="multipart/form-data">
+                <form id="addForm" method="post" action="{{ env('API_URL') }}/statusbarang" enctype="multipart/form-data">
                     @csrf
                     @if ($errors->any())
                     <div class="alert alert-danger">
@@ -279,10 +279,11 @@ $('#deleteModal').on('show.bs.modal', function(event) {
     const itemName = button.closest('tr').find('td:nth-child(3)').text();
 
     $('#itemName').text(itemName);
-    $('#deleteForm').attr('action', `/statusbarang/delete/${itemId}`);
+    $('#deleteForm').attr('action', `{{ env('API_URL') }}/statusbarang/${itemId}`);
 });
+
 $('#deleteForm').on('submit', function(e) {
-    e.preventDefault(); // Mencegah form dari pengiriman default
+    e.preventDefault();
     
     const form = $(this);
     const actionUrl = form.attr('action');
@@ -292,19 +293,18 @@ $('#deleteForm').on('submit', function(e) {
         type: 'POST',
         data: form.serialize(),
         success: function(response) {
-            // Jika penghapusan berhasil, tampilkan notifikasi sukses
             showNotification('success', 'Item deleted successfully!');
-            $('#deleteModal').modal('hide'); // Sembunyikan modal
+            $('#deleteModal').modal('hide');
+            $('#statusbarangtable').DataTable().ajax.reload();
         },
         error: function() {
-            // Jika terjadi error, tampilkan notifikasi error
             showNotification('error', 'Failed to delete the item.');
         }
     });
 });
 
 $('#addForm').on('submit', function(e) {
-    e.preventDefault(); // Mencegah form dari pengiriman default
+    e.preventDefault();
     
     const form = $(this);
     const actionUrl = form.attr('action');
@@ -317,6 +317,7 @@ $('#addForm').on('submit', function(e) {
             // If addition is successful, show success notification
             showNotification('success', 'Data added successfully!');
             $('#tambahDataModal').modal('hide'); // Hide modal
+            $('#statusbarangtable').DataTable().ajax.reload();
         },
         error: function() {
             // If error occurs, show error notification
