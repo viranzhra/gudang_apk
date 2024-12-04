@@ -2,8 +2,13 @@
 
 @section('content')
     <div class="container mt-3 shadow-sm p-4" style="border-radius: 20px;width:768px">
-        <h5 style="font-weight:700;margin-bottom: 30px">Select Serial Number</h5>
-    
+        <div class="d-flex align-items-center mb-4" style="margin-left:-5px !important;">
+            <a href="{{ url()->previous() }}" class="btn btn-link p-0 me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M328 112L184 256l144 144"/></svg>
+            </a>
+            <h5 style="font-weight:700;margin-bottom: 0">Select Serial Number</h5>
+        </div>   
+
         <form action="{{ route('permintaanbarangkeluar.setSN') }}" method="POST">
             @csrf
             <input type="hidden" name="permintaan_id" value="{{ $id }}">
