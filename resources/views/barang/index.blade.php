@@ -278,7 +278,23 @@
 
                 const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
                 deleteModal.show();
-            }
+
+                deleteForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    deleteModal.hide();
+                    $.ajax({
+                        url: deleteForm.getAttribute('action'),
+                        type: 'GET',
+                        success: function(response) {
+                            showNotification('success', 'Item was deleted successfully!');
+                            $('#barang-table').DataTable().ajax.reload();
+                        },
+                        error: function(xhr) {
+                            console.error('Error:', xhr);
+                        }
+                    });
+                });
+            }        
         </script>
     @endcan
 
