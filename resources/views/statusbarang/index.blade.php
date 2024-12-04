@@ -469,6 +469,7 @@ $('#editForm').on('submit', function(e) {
                     }).then(response => {
                         if (response.ok) {
                                 showNotification('success', 'Anda berhasil menghapus data!');
+                                $('#statusbarangtable').DataTable().ajax.reload();
                         } else {
                             alert('Gagal menghapus data.');
                         }
